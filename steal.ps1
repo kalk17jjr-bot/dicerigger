@@ -96,7 +96,7 @@ foreach($p2 in $rp0){
             $c1=[Text.Encoding]::UTF8.GetString($d1)
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
                 $ck=$Matches[1]
-                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'\|WA'+'RNI'+'NG:_'+$ck}
+                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:_'+$ck}
                 Add-Content $f0 "$tR|$ck"
             }elseif($c1 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
                 Add-Content $f0 "$tR|$($Matches[0])"
@@ -125,7 +125,7 @@ if(Test-Path $p3){
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
                                 $ck=$Matches[1]
-                                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'\|WA'+'RNI'+'NG:_'+$ck}
+                                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:_'+$ck}
                                 Add-Content $f0 "$tRM|$ck"
                 }elseif($c2 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
                     Add-Content $f0 "$tRM|$($Matches[0])"
