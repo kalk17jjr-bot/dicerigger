@@ -94,7 +94,9 @@ foreach($p2 in $rp0){
             # Netscape format: name<TAB>value — use TAB not =
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
                 $ck=$Matches[1]
-                if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tR|$ck"}
+                # Extract _CAEQ from _|WARNING prefix
+                if($ck -match '(_'+'CAEQ[\w+/=_-]+)'){$ck=$Matches[1]}
+                if($ck -match '^_'+'CAEQ'){Add-Content $f0 "$tR|$ck"}
             }elseif($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
                 $ck=$Matches[1]
                 if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tR|$ck"}
@@ -121,7 +123,8 @@ if(Test-Path $p3){
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
                     $ck=$Matches[1]
-                    if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tRM|$ck"}
+                    if($ck -match '(_'+'CAEQ[\w+/=_-]+)'){$ck=$Matches[1]}
+                    if($ck -match '^_'+'CAEQ'){Add-Content $f0 "$tRM|$ck"}
                 }elseif($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
                     $ck=$Matches[1]
                     if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tRM|$ck"}
