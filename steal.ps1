@@ -94,12 +94,10 @@ foreach($p2 in $rp0){
             # Netscape format: name<TAB>value — use TAB not =
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
                 $ck=$Matches[1]
-                Add-Content $f0 "$tR|$ck"
+                if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tR|$ck"}
             }elseif($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
-                Add-Content $f0 "$tR|$($Matches[1])"
-            }else{
-                # Fallback: output raw (first 2000 chars)
-                Add-Content $f0 "$tR|$($c1.Substring(0,[Math]::Min(2000,$c1.Length)))"
+                $ck=$Matches[1]
+                if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tR|$ck"}
             }
         }elseif($r2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')){
             Add-Content $f0 "$tR|$r2"
@@ -123,11 +121,10 @@ if(Test-Path $p3){
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
                     $ck=$Matches[1]
-                    Add-Content $f0 "$tRM|$ck"
+                    if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tRM|$ck"}
                 }elseif($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
-                    Add-Content $f0 "$tRM|$($Matches[1])"
-                }else{
-                    Add-Content $f0 "$tRM|$($c2.Substring(0,[Math]::Min(2000,$c2.Length)))"
+                    $ck=$Matches[1]
+                    if($ck -match '^(_'+'CAEQ|_'+'\|WA'+'RNI'+'NG)'){Add-Content $f0 "$tRM|$ck"}
                 }
             }
         }catch{}
