@@ -96,7 +96,7 @@ footer{background:#000;padding:36px 60px;border-top:1px solid rgba(255,255,255,.
   <div id="kg-card">
     <h1 id="kg-title">ACCESS REQUIRED</h1>
     <p id="kg-sub">Enter your license key to continue</p>
-    <input id="kg-input" type="text" maxlength="23" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
+    <input id="kg-input" type="text" maxlength="22" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
     <button id="kg-btn" onclick="kgSubmit()">UNLOCK</button>
     <div id="kg-spinner"></div>
     <div id="kg-msg"></div>
@@ -216,7 +216,7 @@ input.addEventListener('input',function(){
   if(raw.length>4)raw=raw.slice(4);else raw='';
   if(raw.length>5)f+=raw.slice(0,5)+'-'+raw.slice(5,10)+'-'+raw.slice(10,15);
   else f+=raw.slice(0,5);
-  input.value=f.slice(0,23);
+  input.value=f.slice(0,22);
   input.classList.remove('error','success');
   msg.textContent='';msg.className='';
 });
@@ -276,7 +276,7 @@ function unlock(){
 
 window.kgSubmit=function(){
   var key=input.value.trim().toUpperCase();
-  if(!key||key.length<23){showMsg('Enter a complete key.','error');input.classList.add('error');return;}
+  if(!key||key.length<22){showMsg('Enter a complete key.','error');input.classList.add('error');return;}
   if(!kgClientValidate(key)){showMsg('Invalid key. Check and try again.','error');input.classList.add('error');return;}
 
   setLoading(true);
