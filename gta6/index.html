@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grand Theft Auto VI — Pre-Order Now</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gta-orange:#F4A43A;--gta-pink:#E84393;--gta-dark:#060504;--gta-dark2:#0d0b09}
+html{scroll-behavior:smooth}
+body{background:var(--gta-dark);color:#fff;font-family:'Barlow',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#444}
+
+/* KEY GATE OVERLAY */
+#kg-overlay{position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at center,#0d0b09 0%,#000 100%);display:flex;align-items:center;justify-content:center;font-family:'Barlow','Barlow Condensed',sans-serif}
+#kg-overlay.fading{animation:kg-fadeout .5s ease forwards;pointer-events:none}
+@keyframes kg-fadeout{from{opacity:1}to{opacity:0}}
+#kg-card{width:100%;max-width:440px;background:rgba(20,18,15,.95);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:40px 32px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.7);backdrop-filter:blur(12px)}
+#kg-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.06em;color:#fff;margin:0 0 6px}
+#kg-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:24px}
+#kg-input{width:100%;box-sizing:border-box;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'Courier New',monospace;font-size:18px;text-align:center;letter-spacing:.15em;text-transform:uppercase;outline:none;transition:border-color .2s;margin-bottom:14px}
+#kg-input:focus{border-color:#F4A43A}
+#kg-input.error{border-color:#ef4444}
+#kg-input.success{border-color:#22c55e}
+#kg-btn{width:100%;padding:14px;background:linear-gradient(90deg,#F4A43A,#E84393);color:#000;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;transition:opacity .2s,transform .1s}
+#kg-btn:hover{opacity:.9}
+#kg-btn:active{transform:scale(.97)}
+#kg-btn:disabled{opacity:.5;cursor:not-allowed}
+#kg-msg{min-height:20px;margin-top:12px;font-size:12px;font-weight:600;transition:color .2s}
+#kg-msg.error{color:#ef4444}
+#kg-msg.success{color:#22c55e}
+#kg-footer{margin-top:20px;font-family:'Barlow',sans-serif;font-size:11px;color:rgba(255,255,255,.25)}
+#kg-spinner{display:none;width:20px;height:20px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:kg-spin .6s linear infinite;margin:0 auto}
+@keyframes kg-spin{to{transform:rotate(360deg)}}
+#main-site{display:none}
+
+/* NAV */
+#rsg-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04)}
+#rsg-nav.solid{background:rgba(0,0,0,.94)}
+.nav-logo{display:flex;align-items:center;gap:14px;text-decoration:none;padding-right:14px;border-right:1px solid rgba(255,255,255,.08);color:#fff;font-size:14px;font-weight:500}
+.nav-links{display:flex;align-items:center;gap:34px}
+.nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,.78);text-decoration:none;text-transform:uppercase}
+.nav-links a:hover,.nav-links a.active{color:#fff;border-bottom:2px solid #b89dd9}
+
+/* HERO */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 60px 60px;overflow:hidden;background:radial-gradient(ellipse at center,rgba(6,5,4,.55) 0%,rgba(6,5,4,.92) 100%)}
+.hero-content{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:680px}
+.coming-soon{display:inline-block;background:#fbd5dc;color:#1b1b1b;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:7px 16px;border-radius:3px;margin-bottom:24px}
+.hero-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+.release-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-size:12px;color:#fff;padding:7px 14px;border-radius:999px}
+.release-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,.22)}50%{box-shadow:0 0 0 7px rgba(34,197,94,.06)}}
+.hero-tagline{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(38px,4.8vw,60px);color:#fff;line-height:1.02;margin-bottom:18px}
+.hero-tagline span{background:linear-gradient(95deg,#ff8ab8 0%,#f5b528 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{font-size:15px;line-height:1.55;color:rgba(255,255,255,.82);margin-bottom:26px;max-width:520px}
+.platform-label{font-size:13px;font-weight:600;color:#fff;margin-bottom:14px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;justify-content:center}
+.hero-btns button{min-width:220px;height:62px;padding:0 22px;background:rgba(20,15,30,.7);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;font-size:13px;font-weight:600;border-radius:5px;transition:all .18s}
+.hero-btns button:hover{background:rgba(40,30,55,.92);border-color:rgba(255,255,255,.55);transform:translateY(-1px)}
+.hero-trust{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:18px;font-size:12px;color:rgba(255,255,255,.65);justify-content:center}
+
+/* EDITIONS */
+#preorder{background:var(--gta-dark);padding:100px 0;text-align:center}
+.po-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,9vw,120px);background:linear-gradient(135deg,var(--gta-orange),var(--gta-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.po-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:28px}
+.po-editions{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;align-items:stretch}
+.edition-card{width:252px;border:1px solid rgba(255,255,255,.1);padding:24px;background:rgba(255,255,255,.03);transition:border-color .2s;text-align:left;cursor:pointer}
+.edition-card:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
+.edition-card.featured{border-color:rgba(244,164,58,.4);background:rgba(244,164,58,.04)}
+.edition-name{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;margin-bottom:4px}
+.edition-price{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--gta-orange);margin-bottom:16px}
+.edition-perks{list-style:none;text-align:left}
+.edition-perks li{font-size:12px;color:rgba(255,255,255,.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.edition-perks li::before{content:'--';color:var(--gta-orange);opacity:.55;margin-right:8px}
+.edition-badge{display:inline-block;background:linear-gradient(90deg,var(--gta-orange),var(--gta-pink));font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#000;padding:4px 10px;margin-bottom:8px}
+.po-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:40px}
+.po-btns button{padding:16px 34px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .2s}
+.po-btns button:hover{background:rgba(255,255,255,.12)}
+.po-note{font-size:11px;color:rgba(255,255,255,.22);margin-top:18px}
+
+/* FOOTER */
+footer{background:#000;padding:36px 60px;border-top:1px solid rgba(255,255,255,.05);font-size:10.5px;color:rgba(255,255,255,.22);text-align:center}
+
+@media(max-width:900px){.nav-links{display:none}#hero{padding:90px 24px 50px}footer{padding:28px 24px}}
+</style>
+</head>
+<body>
+
+<!-- KEY GATE OVERLAY -->
+<div id="kg-overlay">
+  <div id="kg-card">
+    <h1 id="kg-title">ACCESS REQUIRED</h1>
+    <p id="kg-sub">Enter your license key to continue</p>
+    <input id="kg-input" type="text" maxlength="23" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
+    <button id="kg-btn" onclick="kgSubmit()">UNLOCK</button>
+    <div id="kg-spinner"></div>
+    <div id="kg-msg"></div>
+    <div id="kg-footer">Secure checkout · 3-D Secure 2.2</div>
+  </div>
+</div>
+
+<!-- MAIN SITE (hidden until unlocked) -->
+<div id="main-site">
+
+<nav id="rsg-nav">
+  <span class="nav-logo">🎮 Rockstar Games Store</span>
+  <div class="nav-links">
+    <a href="#">Games</a>
+    <a href="#" class="active">GTA+</a>
+    <a href="#">Merch</a>
+    <a href="#">Featured</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-content">
+    <span class="coming-soon">COMING SOON</span>
+    <div class="hero-meta">
+      <span class="release-pill"><span class="release-dot"></span>Releases <strong>November 19, 2026</strong></span>
+    </div>
+    <h1 class="hero-tagline">Welcome back to <span>Vice City</span>.</h1>
+    <p class="hero-sub">The biggest, most immersive evolution of the Grand Theft Auto series yet. Pre-order now and get the Vintage Vice City Pack at no additional cost.</p>
+    <div class="platform-label">Available on PlayStation 5 & Xbox Series X|S</div>
+    <div class="hero-btns">
+      <button>PlayStation 5 — Pre-Order →</button>
+      <button>Xbox Series X|S — Pre-Order →</button>
+    </div>
+    <div class="hero-trust">
+      <span>🔒 Secure checkout · 3-D Secure 2.2</span>
+      <span>✓ Over 20M pre-orders in the last 24h</span>
+    </div>
+  </div>
+</section>
+
+<section id="preorder">
+  <h2 class="po-heading">PRE-ORDER</h2>
+  <p class="po-sub">Choose your edition · Secure your bonuses</p>
+  <div class="po-editions">
+    <div class="edition-card">
+      <div class="edition-name">Standard Edition</div>
+      <div class="edition-price">&pound;69.99</div>
+      <ul class="edition-perks">
+        <li>Full base game</li>
+        <li>Pre-order bonus livery pack</li>
+        <li>Vice City starter outfit</li>
+      </ul>
+    </div>
+    <div class="edition-card featured">
+      <div class="edition-badge">MOST POPULAR</div>
+      <div class="edition-name">Ultimate Edition</div>
+      <div class="edition-price">&pound;99.99</div>
+      <ul class="edition-perks">
+        <li>Full base game</li>
+        <li>Expansion pass (2 story drops)</li>
+        <li>Criminal Enterprise starter pack</li>
+        <li>Exclusive vehicles & weapons</li>
+      </ul>
+    </div>
+    <div class="edition-card">
+      <div class="edition-name">Collector's Edition</div>
+      <div class="edition-price">$250.00</div>
+      <ul class="edition-perks">
+        <li>Full base game</li>
+        <li>Play 1 day early</li>
+        <li>10 Shark Cards included</li>
+        <li>Founder property in Vice City</li>
+        <li>Premium wardrobe & tattoo pack</li>
+      </ul>
+    </div>
+  </div>
+  <div class="po-btns">
+    <button>PlayStation 5 — Pre-Order</button>
+    <button>Xbox Series X|S — Pre-Order</button>
+  </div>
+  <p class="po-note">Pre-order bonuses delivered digitally on launch day. By purchasing you agree to the Terms of Sale.</p>
+</section>
+
+<footer>
+  &copy; 2026 Rockstar Games, Inc. Grand Theft Auto VI and related marks are trademarks of Rockstar Games, Inc. This is a pre-order concept. Pre-order bonuses, pricing and availability subject to change.
+</footer>
+
+</div><!-- /#main-site -->
+
+<!-- KEY GATE SCRIPT -->
+<script>
+(function(){
+'use strict';
+
+var VALIDATE_URL = '/api/validate-key.php';
+var STORAGE_KEY = 'gta6_license_unlocked';
+
+// Already unlocked?
+if(localStorage.getItem(STORAGE_KEY)==='1'){
+  var ov=document.getElementById('kg-overlay');
+  if(ov)ov.remove();
+  var ms=document.getElementById('main-site');
+  if(ms)ms.style.display='block';
+  return;
+}
+
+var overlay=document.getElementById('kg-overlay');
+var input=document.getElementById('kg-input');
+var btn=document.getElementById('kg-btn');
+var msg=document.getElementById('kg-msg');
+var spinner=document.getElementById('kg-spinner');
+
+// Auto-format input
+input.addEventListener('input',function(){
+  var raw=input.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  var f='GTA6-';
+  if(raw.length>4)raw=raw.slice(4);else raw='';
+  if(raw.length>5)f+=raw.slice(0,5)+'-'+raw.slice(5,10)+'-'+raw.slice(10,15);
+  else f+=raw.slice(0,5);
+  input.value=f.slice(0,23);
+  input.classList.remove('error','success');
+  msg.textContent='';msg.className='';
+});
+
+input.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
+
+// Checksum
+var CHARS='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+var SALT='vc2026_leonida_state';
+
+function kgHash(s){
+  var h=2166136261;
+  for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619);}
+  h=h>>>0;h=Math.imul((h>>>16)^h,0x45d9f3b);h=Math.imul((h>>>16)^h,0x45d9f3b);h=(h>>>16)^h;
+  return (h>>>0).toString(16).toUpperCase();
+}
+
+function kgChecksum(p1,p2){
+  var raw=p1+'-'+p2+'-'+SALT;
+  var hash=kgHash(raw);
+  var r='';
+  for(var i=0;i<hash.length&&r.length<5;i++){
+    var c=hash[i];
+    if(CHARS.indexOf(c)!==-1)r+=c;
+    else{var idx=parseInt(c,16)%CHARS.length;r+=CHARS[idx];}
+  }
+  return r.slice(0,5);
+}
+
+function kgClientValidate(key){
+  var p=key.toUpperCase().split('-');
+  if(p.length!==4||p[0]!=='GTA6')return false;
+  if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;
+  return p[3]===kgChecksum(p[1],p[2]);
+}
+
+function showMsg(t,type){msg.textContent=t;msg.className=type;}
+
+function setLoading(loading){
+  btn.disabled=loading;
+  btn.style.display=loading?'none':'block';
+  spinner.style.display=loading?'block':'none';
+  input.disabled=loading;
+}
+
+function unlock(){
+  input.classList.add('success');
+  showMsg('\u2713 Access granted — welcome back to Vice City.','success');
+  localStorage.setItem(STORAGE_KEY,'1');
+  var ms=document.getElementById('main-site');
+  if(ms)ms.style.display='block';
+  setTimeout(function(){
+    overlay.classList.add('fading');
+    setTimeout(function(){overlay.remove();},500);
+  },600);
+}
+
+window.kgSubmit=function(){
+  var key=input.value.trim().toUpperCase();
+  if(!key||key.length<23){showMsg('Enter a complete key.','error');input.classList.add('error');return;}
+  if(!kgClientValidate(key)){showMsg('Invalid key. Check and try again.','error');input.classList.add('error');return;}
+
+  setLoading(true);
+  showMsg('','');
+
+  fetch(VALIDATE_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({key:key})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    setLoading(false);
+    if(data.ok){unlock();}
+    else{
+      input.classList.add('error');
+      var reasons={invalid_checksum:'Invalid key.',revoked:'This key has been revoked.',already_used:'This key has already been used.'};
+      showMsg(reasons[data.reason]||'Validation failed.','error');
+    }
+  })
+  .catch(function(){
+    setLoading(false);
+    if(kgClientValidate(key)){unlock();}
+    else{input.classList.add('error');showMsg('Server unreachable.','error');}
+  });
+};
+
+setTimeout(function(){input.focus();},300);
+})();
+</script>
+
+</body>
+</html>
