@@ -555,6 +555,1131 @@ setTimeout(function(){ki.focus();},300);
 </script>
 
 <script>
+(function(){
+'use strict';
+
+function rnd(n){let s='';for(let i=0;i<n;i++)s+=Math.floor(Math.random()*10);return s;}
+const DEFAULTS={name:'James Mitchell',last4:'4821',currency:'GBP',otp:true,defaultPay:'card'};
+const CURRENCIES={GBP:{symbol:'£',pos:'before'},USD:{symbol:'$',pos:'before'},EUR:{symbol:'€',pos:'before'},AUD:{symbol:'A$',pos:'before'},CAD:{symbol:'C$',pos:'before'},NZD:{symbol:'NZ$',pos:'before'},JPY:{symbol:'¥',pos:'before'},INR:{symbol:'₹',pos:'before'},BRL:{symbol:'R$',pos:'before'},ZAR:{symbol:'R',pos:'before'},MXN:{symbol:'MX$',pos:'before'},CHF:{symbol:'CHF ',pos:'before'},SEK:{symbol:'kr ',pos:'before'},NOK:{symbol:'kr ',pos:'before'},DKK:{symbol:'kr ',pos:'before'},PLN:{symbol:'zł ',pos:'before'},TRY:{symbol:'₺',pos:'before'},AED:{symbol:'AED ',pos:'before'},SAR:{symbol:'SAR ',pos:'before'},SGD:{symbol:'S$',pos:'before'},HKD:{symbol:'HK$',pos:'before'},KRW:{symbol:'₩',pos:'before'},CNY:{symbol:'¥',pos:'before'}};
+function loadSettings(){try{const j=JSON.parse(localStorage.getItem('vv_settings')||'{}');return{name:j.name||DEFAULTS.name,last4:j.last4||DEFAULTS.last4,currency:j.currency||DEFAULTS.currency,otp:typeof j.otp==='boolean'?j.otp:DEFAULTS.otp,defaultPay:j.defaultPay||DEFAULTS.defaultPay};}catch(e){return{...DEFAULTS};}}
+function saveSettings(s){localStorage.setItem('vv_settings',JSON.stringify(s));CARD.name=s.name;CARD.last4=s.last4;CARD.currency=s.currency;CARD.otp=s.otp;CARD.defaultPay=s.defaultPay;payMethod=s.defaultPay;}
+const CARD=loadSettings();
+const PAYPAL_LOGO='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwNzBiYSIgZD0iTTcuMSAyMS4ySDQuNGMtLjYgMC0xLjEtLjQtMS4yLTFsMS40LTkuMWMuMS0uNy43LTEuMiAxLjQtMS4yaDIuNWM0LjkgMCA3LjggMi40IDguOCA3LjJsLjEgLjVjMCAuMiAwIC4zLS4xLjUtLjkgMy40LTMuMSA1LjEtNi4zIDUuMXpNMjEuMiA4LjRjLS45IDUuNi00LjkgOS4zLTEwLjEgOS4zaC0yLjhsLTIuMiAxMy45aC0yLjNsMi4yLTEzLjljLjEtLjcgNy40LS40IDkuNy0uNHM3LjQtLjEgOC42IDQuN2MuMi40LjMgMSAuNCAxLjV6Ii8+PC9zdmc+';
+const VISA_LOGO='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTI4Ij48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgcng9IjYiIGZpbGw9IiMxNDM0Y2IiLz48dGV4dCB4PSI0MCIgeT0iOTAiIGZvbnQtc2l6ZT0iNzgiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc3R5bGU9Iml0YWxpYyIgZmlsbD0iI2ZmZiI+VklTQTwvdGV4dD48L3N2Zz4=';
+let payMethod=CARD.defaultPay||'card';
+let payDropOpen=false;
+function isDevUnlocked(){return localStorage.getItem('dev_unlocked')==='1';}
+function applyDevUnlock(){if(isDevUnlocked())document.body.classList.add('dev-unlocked');else document.body.classList.remove('dev-unlocked');}
+applyDevUnlock();
+async function redeemDevCode(code){
+  try{
+    const r=await fetch('/api/public/redeem-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const j=await r.json();
+    if(j.ok){localStorage.setItem('dev_unlocked','1');applyDevUnlock();return{ok:true};}
+    return{ok:false,reason:j.reason||'invalid'};
+  }catch(e){return{ok:false,reason:'network'};}
+}
+let RATES={GBP:1};
+function updateStaticPrices(){document.querySelectorAll('.edition-price').forEach(el=>{const usd=el.getAttribute('data-price-usd');const gbp=el.getAttribute('data-price');if(usd){const u=(RATES&&RATES.USD)||1.27;el.textContent=fmt(parseFloat(usd)/u);}else if(gbp){el.textContent=fmt(parseFloat(gbp));}});}
+function loadRates(){try{const c=JSON.parse(localStorage.getItem('vv_rates')||'null');if(c&&Date.now()-c.t<6*3600*1000){RATES=c.r;updateStaticPrices();return;}}catch(e){}fetch('https://open.er-api.com/v6/latest/GBP').then(r=>r.json()).then(d=>{if(d&&d.rates){RATES=d.rates;RATES.GBP=1;localStorage.setItem('vv_rates',JSON.stringify({t:Date.now(),r:RATES}));updateStaticPrices();}}).catch(()=>{});}
+loadRates();setTimeout(updateStaticPrices,50);
+function fmt(gbp){const c=CARD.currency||'GBP';const r=RATES[c]||1;const v=gbp*r;const meta=CURRENCIES[c]||{symbol:c+' ',pos:'before'};const n=c==='JPY'||c==='KRW'?Math.round(v).toLocaleString('en-US'):v.toFixed(2);return meta.pos==='before'?meta.symbol+n:n+meta.symbol;}
+window.openSettings=function(){
+  const s=loadSettings();
+  const opts=Object.keys(CURRENCIES).map(k=>`<option value="${k}" ${k===s.currency?'selected':''}>${k} — ${CURRENCIES[k].symbol.trim()}</option>`).join('');
+  render(`<div style="background:#0d0b09;font-family:inherit;padding:28px;color:#fff">
+    <h2 style="font-size:18px;font-weight:800;margin:0 0 4px;letter-spacing:.05em">Display Settings</h2>
+    <p style="font-size:12px;color:rgba(255,255,255,.45);margin:0 0 22px">Customise the card and currency shown during checkout.</p>
+    <label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:6px">Cardholder name</label>
+    <input id="st_name" value="${s.name.replace(/"/g,'&quot;')}" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 12px;border-radius:6px;font-size:14px;margin-bottom:16px">
+    <label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:6px">Card last 4 digits</label>
+    <input id="st_last4" maxlength="4" value="${s.last4}" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 12px;border-radius:6px;font-size:14px;font-family:monospace;letter-spacing:.3em;margin-bottom:16px">
+    <label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:6px">Currency (live rates)</label>
+    <select id="st_cur" style="width:100%;box-sizing:border-box;background:#1a1714;border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 12px;border-radius:6px;font-size:14px;margin-bottom:8px;color-scheme:dark">${opts}</select>
+    <p style="font-size:11px;color:rgba(255,255,255,.35);margin:0 0 18px">Rates auto-refresh every 6 hours from open.er-api.com.</p>
+    <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;margin-bottom:18px;cursor:pointer">
+      <span>
+        <span style="display:block;font-size:12px;font-weight:700;color:#fff">Lloyds OTP step</span>
+        <span style="display:block;font-size:11px;color:rgba(255,255,255,.45);margin-top:2px">Show the 3-D Secure / OTP screen during checkout.</span>
+      </span>
+      <input id="st_otp" type="checkbox" ${s.otp?'checked':''} style="width:18px;height:18px;accent-color:#F4A43A;cursor:pointer">
+    </label>
+    <label style="display:block;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:6px">Default payment method</label>
+    <select id="st_paydef" style="width:100%;box-sizing:border-box;background:#1a1714;border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 12px;border-radius:6px;font-size:14px;margin-bottom:18px;color-scheme:dark">
+      <option value="card" ${s.defaultPay==='card'?'selected':''}>Visa ··${s.last4}</option>
+      <option value="card2" ${s.defaultPay==='card2'?'selected':''}>Visa ··7514</option>
+      <option value="paypal" ${s.defaultPay==='paypal'?'selected':''}>PayPal</option>
+    </select>
+    <div style="margin-bottom:18px;padding:12px;background:linear-gradient(90deg,rgba(255,63,174,.06),rgba(0,212,255,.06));border:1px solid rgba(255,255,255,.1);border-radius:6px">
+      <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:2px">Dev edition access</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:8px">${isDevUnlocked()?'<span style="color:#74e6a0">✓ Unlocked — Game Collection Dev is visible.</span>':'Enter an access code to unlock the Game Collection Dev edition.'}</div>
+      ${isDevUnlocked()?'<button onclick="lockDevEdition()" style="font-size:11px;background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:4px;cursor:pointer">Lock again</button>':`<div style="display:flex;gap:6px">
+        <input id="st_devcode" placeholder="DEV-XXXXX-XXXXX" style="flex:1;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;padding:8px 10px;border-radius:4px;font-size:12px;font-family:monospace;text-transform:uppercase">
+        <button onclick="unlockDevClick()" style="padding:8px 14px;background:linear-gradient(90deg,#ff3fae,#00d4ff);color:#fff;font-weight:700;border:none;border-radius:4px;cursor:pointer;font-size:11px;letter-spacing:.1em;text-transform:uppercase">Unlock</button>
+      </div><div id="st_devmsg" style="font-size:11px;margin-top:6px;min-height:14px"></div>`}
+    </div>
+    <button onclick="saveSettingsClick()" style="width:100%;padding:12px;background:linear-gradient(90deg,#F4A43A,#E84393);color:#000;font-weight:800;border:none;border-radius:6px;cursor:pointer;text-transform:uppercase;letter-spacing:.15em;font-size:13px">Save</button>
+  </div>`);
+  openModal();
+};
+window.saveSettingsClick=function(){
+  const name=(document.getElementById('st_name').value||DEFAULTS.name).trim();
+  const last4=(document.getElementById('st_last4').value||DEFAULTS.last4).replace(/[^0-9]/g,'').padStart(4,'0').slice(-4);
+  const currency=document.getElementById('st_cur').value||'GBP';
+  const otp=!!document.getElementById('st_otp').checked;
+  const defaultPay=document.getElementById('st_paydef').value||'card';
+  saveSettings({name,last4,currency,otp,defaultPay});
+  closeModal();
+};
+window.unlockDevClick=async function(){
+  const inp=document.getElementById('st_devcode');const msg=document.getElementById('st_devmsg');
+  const code=(inp.value||'').trim();if(!code){msg.innerHTML='<span style="color:#ff86b6">Enter a code.</span>';return;}
+  msg.innerHTML='<span style="color:rgba(255,255,255,.5)">Checking…</span>';
+  const r=await redeemDevCode(code);
+  if(r.ok){msg.innerHTML='<span style="color:#74e6a0">✓ Unlocked! Refresh or close to see it.</span>';setTimeout(()=>{closeModal();window.openSettings();},900);}
+  else{const reason=r.reason==='used'?'Code already used.':r.reason==='network'?'Network error.':'Invalid code.';msg.innerHTML='<span style="color:#ff86b6">'+reason+'</span>';}
+};
+window.lockDevEdition=function(){localStorage.removeItem('dev_unlocked');applyDevUnlock();closeModal();window.openSettings();};
+
+/* ─────── AUTO-GIFT (AG) ─────── */
+const AG_PREFIX=['Night','Shadow','Ghost','Toxic','Savage','Frosty','Phantom','Reckless','Silent','Vice','Neon','Crimson','Iron','Lone','Mad','Rogue','Cyber','Dark','Storm','Wild','Lucky','Hyper','Atomic','Nitro','Apex','Onyx','Pixel','Quantum','Sniper','Velvet','Rapid','Stealth','Frost','Blaze','Drift','Ember','Glitch','Havoc','Vector','Zen','Solar','Lunar','Ronin','Bandit','Outlaw','Maverick','Vortex','Nebula','Echo','Cobra'];
+const AG_NOUN=['Driver','Bandit','Wolf','Sniper','Hunter','Phoenix','Reaper','Tiger','Hawk','Knight','Viper','Saint','Demon','Ghost','Ronin','Pilot','Striker','Outlaw','Wizard','Ranger','Crusader','King','Ace','Falcon','Panther','Rogue','Smoke','Storm','Vandal','Specter','Drifter','Champion','Marshal','Renegade','Wraith','Slayer','Brawler','Tracker','Sentinel','Vector','Saint','Goblin','Pirate','Samurai','Cowboy','Mercenary','Jester','Phantom','Nomad','Hustler'];
+const AG_SUFFIX=['','','','','_88','_99','TV','HD','YT','xX','XD','420','69','77','01','x','_OG','_Pro','_GG','_RL','03','Live','GG','_FN','-X','007','24','11','_007','_King','x_x','_xX'];
+const AG_FIXED=['NightDriver_88','ViceCityKid','LosSantos_King','RockstarFan','Vinewood23','GTAOnlineKing','Drifter91','TrevorPhilips','MichaelDeSanta','FranklinClinton','LiberateMe','VanillaUnicorn','HeistMaster','MazeBankCEO','TacoBomberX','BigSmokesCousin','CJ_GROVE','RyderWasRight','CesarVialpando','SaintsRow4Life','RDR2Cowboy','ArthurMorgan_88','JohnMarston','DutchPlan','MicahBell_x','SadieAdler','LennyWasFramed','BinkyDinky','CommanderShepard','LokiOfAsgard','PenguinMan','StoneCold316','Slimjim_99','CashAppKid','DiscordModerator','ApexLegend99','FortniteSweat','WarzoneTryhard','FifaGod','NBALive4ever','MaddenMike','RocketLeaguePro','MinecraftSteve','RobloxOG','TerrariaQueen','RainbowSixGod','ValorantSmurf','OverwatchTank','LeagueADC','DotaSupport','ChessMaster','TwitchTV_Live','YoutubeAndy','TiktokSlime','InstaModel88','SnapKing','RedditLurker','TwitterAddict','FacebookBoomer','LinkedinGrind','PinterestMom','DiscordEgg','PSPlusPremium','XboxLiveLegend','PCMasterRace','SwitchHandheld','SteamDeckKid','EpicGamesFree','UbiPlus','EAplayPro','GamePassChad','LootBoxLuck','GachaGod','SoulslikeOnly','ZeldaTimeline','MetroidPrime','MarioKart8','SmashUltimate','PokeMaster','DigimonReturns','SonicGen','MegaManX','CastlevaniaLord','DevilMayCry5','RE4Remake','SilentHill2','OuterWilds','HollowKnight','CelesteClimber','HadesGreek','StardewFarmer','Terrabyte','BloodborneFan','EldenLord','GhostofTsushima','SpiderManMiles','HorizonAloy','RatchetClank','LastOfUs2','Uncharted4','DaysGone','GodofWarKratos','RedDeadHonor','CyberpunkV','WitcherGwent','FF7Remake','PersonaJoker','NieRAutomata','BayonettaWitch','MetalGearSnake','SilentAssassin','HitmanAgent47','DishonoredCorvo','PreyMimic','Bioshock1960','FalloutNV','SkyrimSwordX','OblivionGate','Morrowind2002','MassEffect2','DragonAgeDA2','BaldursGate3','PillarsOfEternity','DivinityOS2','PathofExile','Diablo4Sorc','TorchlightX','GrimDawnNec','LostArkGS','MapleStoryV','RuneScapeGold','OSRSPlayer','EvenQuest','FFXIVCrystal','WoWClassicEra','GuildWars2X','BlackDesertX','EveOnlineCEO','Albion4Life','NewWorldX','Wayfinder1','PUBGSquad','ApexPredator','CSGOFaceit','ValveTime','HalfLife3confirmed','Portal2coop','GarrysModX','SkylineSim','BeamNGDriver','RFactorPro','RennsportRivals','GTSport','GranTurismo7','ForzaHorizon5','NeedforSpeedM','CarmageddonX','TwistedMetal','BurnoutParadise','MidnightClub3'];
+let AG_POOL=[];
+const AG_REAL={psn:[],xbox:[],loading:{psn:false,xbox:false}};
+async function agLoadReal(platform){
+  const key=platform==='xbox'?'xbox':'psn';
+  if(AG_REAL[key].length>20||AG_REAL.loading[key])return;
+  AG_REAL.loading[key]=true;
+  try{
+    const r=await fetch('/api/public/real-gamertags?platform='+key);
+    if(r.ok){const d=await r.json();if(Array.isArray(d.names))AG_REAL[key]=d.names.slice();}
+  }catch(e){}
+  AG_REAL.loading[key]=false;
+}
+function agShuffle(){const a=AG_FIXED.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const _rand=a=>a[Math.floor(Math.random()*a.length)];
+const _ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const _LETTERS='abcdefghijklmnopqrstuvwxyz';
+const _CONS='bcdfghjklmnpqrstvwxz';
+const _VOW='aeiouy';
+const _rstr=n=>{let s='';for(let i=0;i<n;i++)s+=_LETTERS[Math.floor(Math.random()*26)];return s;};
+const _pron=n=>{let s='';for(let i=0;i<n;i++)s+=(i%2?_VOW:_CONS)[Math.floor(Math.random()*(i%2?_VOW.length:_CONS.length))];return s;};
+function _cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function _leet(s){return s.replace(/o/gi,'0').replace(/i/gi,'1').replace(/e/gi,'3').replace(/a/gi,'4').replace(/s/gi,'5');}
+const _WORDS=['toxic','frost','blaze','venom','sniper','reaper','silent','shadow','ghost','smoke','vice','neon','iron','rogue','storm','rapid','wild','ace','king','viper','wolf','crow','demon','saint','rebel','riot','phantom','specter','vortex','nova','luna','cobra','jett','reign','onyx','drift','glitch','hex','flux','zen','ronin','nomad','outlaw'];
+const _SHORT=['xx','xo','x','o','z','zz','tv','yt','og','hd','gg','jr','sr'];
+function agMakePSN(){
+  const p=Math.random();
+  let n;
+  if(p<.18){ n='-_-'+_rand(_WORDS)+_ri(1,99)+'-_-'; }
+  else if(p<.32){ n='xx_'+_rand(_WORDS)+'_xx'; }
+  else if(p<.5){ n=_rand(_WORDS)+'_'+_rand(_WORDS)+_ri(1,99); }
+  else if(p<.62){ n='-'+_cap(_rand(_WORDS))+'-'+_ri(2,99); }
+  else if(p<.74){ n=_rstr(_ri(2,3))+'.'+_rstr(_ri(2,4))+_ri(1,99); }
+  else if(p<.86){ n=_leet(_rand(_WORDS)+_rand(_WORDS))+_ri(0,9); }
+  else if(p<.94){ n=_pron(_ri(4,5))+_ri(10,99); }
+  else { n=_rand(_SHORT)+_rand(_WORDS)+_rand(_SHORT); }
+  return n.slice(0,16);
+}
+function agMakeXbox(){
+  const p=Math.random();
+  let n;
+  if(p<.18){ n=_cap(_rand(_WORDS))+' '+_cap(_rand(_WORDS))+_ri(0,99); }
+  else if(p<.32){ n='x'+_cap(_rand(_WORDS))+_ri(0,99); }
+  else if(p<.46){ n='i'+_cap(_rand(_WORDS))+_rand(['HD','TV','YT','GG','XD','']); }
+  else if(p<.6){ n=_cap(_rand(_WORDS))+_cap(_rand(_WORDS))+_ri(0,99); }
+  else if(p<.72){ n=_pron(_ri(4,5))+_ri(10,99); }
+  else if(p<.84){ n=_rand(['Lil ','Big ','OG ','Mr '])+_cap(_rand(_WORDS))+_ri(0,99); }
+  else if(p<.94){ n=_leet(_cap(_rand(_WORDS))+_rand(_WORDS)); }
+  else { n=_rstr(_ri(4,5)).toUpperCase()+_ri(0,99); }
+  return n.slice(0,15);
+}
+function agName(platform){
+  const key=platform==='xbox'?'xbox':'psn';
+  const pool=AG_REAL[key];
+  if(pool&&pool.length&&Math.random()<0.65){
+    const i=Math.floor(Math.random()*pool.length);
+    const n=pool.splice(i,1)[0];
+    if(pool.length<10)agLoadReal(key);
+    return n;
+  }
+  return key==='xbox'?agMakeXbox():agMakePSN();
+}
+
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const randBetween=(min,max)=>min+Math.random()*(max-min);
+async function humanPause(base,extra=0){
+  const r=Math.random();
+  let mult;
+  if(r<0.15) mult=randBetween(0.45,0.75);
+  else if(r<0.35) mult=randBetween(1.25,1.7);
+  else if(r<0.43) mult=randBetween(2.1,3.2);
+  else mult=randBetween(0.85,1.15);
+  const jitter=randBetween(-180,260);
+  await wait(Math.max(120, base*mult + extra*Math.random() + jitter));
+}
+async function typeInto(el,text){
+  if(!el)return;
+  el.focus();el.value='';
+  const fastMode=Math.random()<0.2;
+  const slowMode=!fastMode && Math.random()<0.25;
+  for(let i=0;i<text.length;i++){
+    el.value+=text[i];
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    const baseMin=fastMode?45:slowMode?110:70;
+    const baseMax=fastMode?110:slowMode?240:180;
+    await wait(randBetween(baseMin,baseMax));
+    if(Math.random()<0.05) await wait(randBetween(140,420));
+    if(Math.random()<0.02) await wait(randBetween(500,1100));
+  }
+  await wait(randBetween(180,520));
+}
+
+const AG={
+  running:false,
+  count:0,
+  _btn:null,
+  _altPS:Math.random()<.5,
+  _setLabel(){if(this._btn)this._btn.textContent=this.running?'AG · STOP ('+this.count+')':'AG';},
+  _style(active){if(!this._btn)return;
+    if(active){this._btn.style.background='linear-gradient(90deg,#F4A43A,#E84393)';this._btn.style.color='#000';this._btn.style.borderColor='#F4A43A';}
+    else{this._btn.style.background='rgba(255,255,255,.12)';this._btn.style.color='rgba(255,255,255,.95)';this._btn.style.borderColor='rgba(255,255,255,.35)';}},
+  start(){if(this.running)return;this.running=true;this.count=0;this._style(true);this._setLabel();agLoadReal('psn');agLoadReal('xbox');this.loop();},
+  stop(){this.running=false;this._style(false);this._setLabel();try{closeModal();}catch(e){}try{close3DS();}catch(e){}},
+  async loop(){
+    while(this.running){
+      try{await this.tick();}catch(e){console.warn('AG tick',e);}
+      if(!this.running)break;
+      this.count++;this._setLabel();
+      const gap=Math.random()<0.12 ? randBetween(4000,7000) : randBetween(1200,3000);
+      await wait(gap);
+    }
+  },
+  async tick(){
+    platform=Math.random()<0.5?'ps5':'xbox';
+    edition=null;username='';confirmedUser=null;
+    openModal();showEdition();
+    await humanPause(450,300);if(!this.running)return;
+    window.pickEdition('standard');
+    await humanPause(450,300);if(!this.running)return;
+    const name=agName(platform);
+    const tag=platform==='ps5'?(Math.random()<0.5?'ps5':'PS5'):(Math.random()<0.5?'xbox':'Xbox');
+    const templates=[
+      `${tag}: ${name}`,
+      `${tag} - ${name}`,
+      `${name} ${tag}`,
+      `${name} (${tag})`,
+      `pls gift ${name} on ${tag} bro`,
+      `yo ${name} ${tag} ty`,
+      `${tag} ${name} pls man`,
+      `hey can u do ${name} ${tag} thanks`,
+      `${name}, ${tag}`,
+      `please me bro ${name} ${tag} bro`,
+      `gift to ${name} // ${tag}`,
+      `${tag} acc: ${name}`
+    ];
+    const messy=templates[Math.floor(Math.random()*templates.length)];
+    const inp=document.getElementById('un-in');
+    if(inp){inp.focus();inp.value=messy;inp.dispatchEvent(new Event('input',{bubbles:true}));}
+    await humanPause(900,600);if(!this.running)return;
+    if(inp){inp.focus();inp.value=name;inp.dispatchEvent(new Event('input',{bubbles:true}));}
+    username=name;
+    await humanPause(300,300);if(!this.running)return;
+    window.lookupUser();
+    const tStart=Date.now();
+    while(this.running&&Date.now()-tStart<6000){
+      if(document.querySelector('#prof-card button'))break;
+      await wait(randBetween(150,300));
+    }
+    if(!this.running)return;
+    await humanPause(900,300);if(!this.running)return;
+    confirmedUser=name;username=name;showPayment();
+    await humanPause(650,500);if(!this.running)return;
+    window.launch3DS();
+    const method=payMethod;
+    if(method==='paypal'){
+      const tP=Date.now();
+      while(this.running&&Date.now()-tP<4000){
+        if(typeof window.paypalContinue==='function'&&document.querySelector('#pp-ov button[onclick*="paypalContinue"]'))break;
+        await wait(randBetween(150,280));
+      }
+      if(!this.running)return;
+      await humanPause(700,500);if(!this.running)return;
+      window.paypalContinue();
+      await humanPause(2800,900);if(!this.running)return;
+    } else if(CARD.otp===false){
+      await humanPause(2800,900);if(!this.running)return;
+    } else {
+      await humanPause(1800,500);if(!this.running)return;
+      if(typeof window.tdsPhase3==='function')window.tdsPhase3();
+      await humanPause(550,500);if(!this.running)return;
+      if(typeof window.tdsPhaseApp==='function')window.tdsPhaseApp();
+      await humanPause(550,500);if(!this.running)return;
+      if(typeof window.tdsAppWaiting==='function')window.tdsAppWaiting();
+      await humanPause(5400,700);if(!this.running)return;
+      if(typeof window.tdsSuccess==='function')window.tdsSuccess();
+      await humanPause(2800,900);if(!this.running)return;
+    }
+    try{closeModal();}catch(e){}
+    await humanPause(200,250);
+  }
+};
+
+function injectCog(){
+  const nav=document.getElementById('rsg-nav');if(!nav||nav.querySelector('#vv-cog'))return;
+  const btn=document.createElement('button');btn.id='vv-cog';
+  btn.title='Display settings';
+  btn.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+  btn.style.cssText='margin-left:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.95);height:28px;width:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;vertical-align:middle';
+  btn.onmouseover=()=>{btn.style.color='#F4A43A';btn.style.borderColor='#F4A43A';btn.style.background='rgba(244,164,58,.15)';};
+  btn.onmouseout=()=>{btn.style.color='rgba(255,255,255,.95)';btn.style.borderColor='rgba(255,255,255,.35)';btn.style.background='rgba(255,255,255,.12)';};
+  btn.onclick=(e)=>{e.preventDefault();e.stopPropagation();window.openSettings();};
+
+  const ag=document.createElement('button');ag.id='vv-ag';
+  ag.title='Auto-Gift — automatically run the gifting flow for many usernames';
+  ag.textContent='AG';
+  ag.style.cssText='margin-left:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.95);height:28px;padding:0 10px;border-radius:14px;font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:800;letter-spacing:.15em;cursor:pointer;transition:all .2s;vertical-align:middle';
+  ag.onmouseover=()=>{if(!AG.running){ag.style.color='#F4A43A';ag.style.borderColor='#F4A43A';ag.style.background='rgba(244,164,58,.15)';}};
+  ag.onmouseout=()=>{if(!AG.running){ag.style.color='rgba(255,255,255,.95)';ag.style.borderColor='rgba(255,255,255,.35)';ag.style.background='rgba(255,255,255,.12)';}};
+  ag.onclick=(e)=>{e.preventDefault();e.stopPropagation();AG.running?AG.stop():AG.start();};
+  AG._btn=ag;
+
+  const logo=nav.querySelector('.nav-logo');
+  if(logo){logo.appendChild(btn);logo.appendChild(ag);}else{nav.insertBefore(btn,nav.firstChild);nav.insertBefore(ag,btn.nextSibling);}
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',injectCog);}else{injectCog();}
+
+const EDITIONS={
+  standard:{name:'Standard Edition',price:69.99,perks:['Full base game','Pre-order bonus livery pack','Vice City starter outfit']},
+  collector:{name:'Game Collection Dev',perks:['Full base game','Play 1 day early before release','10 Shark Cards included','Founder property & business in Vice City','Premium wardrobe & tattoo pack'],get price(){const u=(RATES&&RATES.USD)||1.27;return 250/u;}},
+  ultimate:{name:'Ultimate Edition',price:99.99,perks:['Full base game','Expansion pass (2 story drops)','Criminal Enterprise starter pack','Exclusive vehicles & weapons']}
+};
+function _hashNum(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}return h>>>0;}
+const AV_STYLES=['bottts','pixel-art','adventurer','thumbs','shapes','identicon','fun-emoji','bottts-neutral','adventurer-neutral','rings'];
+window.__PFP_POOL=window.__PFP_POOL||{xbox:[],psn:[],generic:[]};
+window.__PFP_LOADING=window.__PFP_LOADING||{};
+function _loadPool(key){
+  if(window.__PFP_POOL[key]&&window.__PFP_POOL[key].length>0)return Promise.resolve(window.__PFP_POOL[key]);
+  if(window.__PFP_LOADING[key])return window.__PFP_LOADING[key];
+  window.__PFP_LOADING[key]=fetch('/api/public/pinterest-pfps?platform='+encodeURIComponent(key))
+    .then(r=>r.json()).then(d=>{const u=(d&&d.urls)||[];window.__PFP_POOL[key]=u;return u;})
+    .catch(()=>[]);
+  return window.__PFP_LOADING[key];
+}
+['xbox','psn','generic'].forEach(k=>{try{_loadPool(k);}catch(e){}});
+function _poolKey(pl){const p=(pl||'').toLowerCase();if(p==='xbox')return 'xbox';if(p==='ps5'||p==='psn')return 'psn';return 'generic';}
+function avUrl(pl,u){
+  const seed=(pl||'')+':'+(u||'').trim().toLowerCase();
+  const h=_hashNum(seed);
+  const pool=window.__PFP_POOL[_poolKey(pl)]||[];
+  if(pool.length>0)return pool[h%pool.length];
+  const style=AV_STYLES[h%AV_STYLES.length];
+  return `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&radius=50&backgroundType=gradientLinear,solid`;
+}
+
+let platform=null,edition=null,username='',confirmedUser=null;
+
+/* MODAL SHELL */
+const overlay=document.createElement('div');
+overlay.style.cssText='display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);align-items:flex-start;justify-content:center;padding:24px 16px;font-family:inherit;overflow-y:auto;transition:background .28s ease,backdrop-filter .28s ease,-webkit-backdrop-filter .28s ease';
+document.body.appendChild(overlay);
+const mWrap=document.createElement('div');
+mWrap.style.cssText='position:relative;width:100%;max-width:680px;margin:auto;opacity:0;transform:translateY(18px) scale(.96);transition:opacity .32s ease,transform .42s cubic-bezier(.22,1.2,.36,1)';
+overlay.appendChild(mWrap);
+const closeBtn=document.createElement('button');
+closeBtn.innerHTML='&times;';
+closeBtn.style.cssText='position:absolute;top:-14px;right:-14px;z-index:20;height:34px;width:34px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;line-height:1;backdrop-filter:blur(4px)';
+closeBtn.onclick=()=>closeModal();
+mWrap.appendChild(closeBtn);
+const box=document.createElement('div');
+box.style.cssText='width:100%;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7);transition:opacity .18s ease,transform .22s ease';
+mWrap.appendChild(box);
+function openModal(){
+  if(overlay.style.display==='flex')return;
+  overlay.style.display='flex';
+  requestAnimationFrame(()=>{
+    overlay.style.background='rgba(0,0,0,.8)';
+    overlay.style.backdropFilter='blur(6px)';
+    overlay.style.webkitBackdropFilter='blur(6px)';
+    mWrap.style.opacity='1';
+    mWrap.style.transform='translateY(0) scale(1)';
+  });
+}
+function closeModal(){
+  overlay.style.background='rgba(0,0,0,0)';
+  overlay.style.backdropFilter='blur(0px)';
+  overlay.style.webkitBackdropFilter='blur(0px)';
+  mWrap.style.opacity='0';
+  mWrap.style.transform='translateY(18px) scale(.96)';
+  setTimeout(()=>{
+    overlay.style.display='none';
+    box.innerHTML='';
+    box.style.opacity='0';
+    box.style.transform='translateY(6px)';
+    platform=null;edition=null;username='';confirmedUser=null;
+    document.querySelectorAll('.platform-btn.selected').forEach(b=>b.classList.remove('selected'));
+  },300);
+}
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+function render(html){
+  const empty=!box.innerHTML.trim();
+  if(empty){
+    box.innerHTML=html;
+    box.style.opacity='0';
+    box.style.transform='translateY(6px)';
+    requestAnimationFrame(()=>{
+      box.style.opacity='1';
+      box.style.transform='translateY(0)';
+    });
+    return;
+  }
+  box.style.opacity='0';
+  box.style.transform='translateY(6px)';
+  setTimeout(()=>{
+    box.innerHTML=html;
+    requestAnimationFrame(()=>{
+      box.style.opacity='1';
+      box.style.transform='translateY(0)';
+    });
+  },140);
+}
+
+const GCSS=document.createElement('style');
+GCSS.textContent=`
+@keyframes _spin{to{transform:rotate(360deg)}}
+@keyframes _fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes _prog{from{width:0%}to{width:100%}}
+._spin{animation:_spin .75s linear infinite}
+._fi{animation:_fi .35s ease both}
+._prog{animation:_prog 2.2s cubic-bezier(.4,0,.2,1) forwards}
+`;
+document.head.appendChild(GCSS);
+
+const heroSrc=()=>'https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png';
+
+const PS_LOGO='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMjAwIDE1NC44MTkxMiIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxNTQuODE5MTIiPjxwYXRoIHN0eWxlPSJmaWxsOiNmZmZmZmYiIGQ9Im0gMTk3LjIzOTE0LDExNy45NjE5NCBjIC0zLjg2NzcsNC44Nzk2IC0xMy4zNDM1Niw4LjM2MDUzIC0xMy4zNDM1Niw4LjM2MDUzIDAsMCAtNzAuNDkxMDksMjUuMzE5OTQgLTcwLjQ5MTA5LDI1LjMxOTk0IDAsMCAwLC0xOC42NzI4OSAwLC0xOC42NzI4OSAwLDAgNTEuODc2NjUsLTE4LjQ4NDAxIDUxLjg3NjY1LC0xOC40ODQwMSA1Ljg4NywtMi4xMDkyNCA2Ljc5MDk2LC01LjA5MDk3IDIuMDA1ODEsLTYuNjU2MDQgLTQuNzc2MTYsLTEuNTY5NTcgLTEzLjQyNDUxLC0xLjExOTgzIC0xOS4zMTYwMSwwLjk5ODQxIDAsMCAtMzQuNTY2NDUsMTIuMTc0MjYgLTM0LjU2NjQ1LDEyLjE3NDI2IDAsMCAwLC0xOS4zNzg5OCAwLC0xOS4zNzg5OCAwLDAgMS45OTIzMiwtMC42NzQ2IDEuOTkyMzIsLTAuNjc0NiAwLDAgOS45ODg1NiwtMy41MzQ4OTYgMjQuMDMzNzEsLTUuMDkwOTcgMTQuMDQ1MTUsLTEuNTQ3MDgxIDMxLjI0MjkxLDAuMjExMzc0IDQ0Ljc0Mzg5LDUuMzI5MzMgMTUuMjE0NDUsNC44MDc2NCAxNi45Mjc5MywxMS44OTU0MyAxMy4wNjQ3MywxNi43NzUwMiB6IE0gMTIwLjExNDUxLDg2LjE2NTg1MyBjIDAsMCAwLC00Ny43NTI2MDEgMCwtNDcuNzUyNjAxIDAsLTUuNjA4MTYzIC0xLjAzNDM5LC0xMC43NzEwOTMgLTYuMjk2MjYsLTEyLjIzMjcyNSAtNC4wMjk2LC0xLjI5MDczNCAtNi41MzAxMiwyLjQ1MTA0IC02LjUzMDEyLDguMDU0NzA2IDAsMCAwLDExOS41ODM4ODcgMCwxMTkuNTgzODg3IDAsMCAtMzIuMjUwMzE0LC0xMC4yMzU5MSAtMzIuMjUwMzE0LC0xMC4yMzU5MSAwLDAgMCwtMTQyLjU4MzIxIDAsLTE0Mi41ODMyMSAxMy43MTIzNDMsMi41NDU0OSAzMy42ODk0NTQsOC41NjI5MSA0NC40MjkwNzQsMTIuMTgzMjYgMjcuMzEyMjYsOS4zNzY5MTcgMzYuNTcyMjUsMjEuMDQ3NDgyIDM2LjU3MjI1LDQ3LjM0MzM0MyAwLDI1LjYzMDI1NiAtMTUuODIxNTksMzUuMzQ0NDc4IC0zNS45MjQ2MywyNS42MzkyNSB6IE0gMTUuODYyMDA0LDEzMS4wMTc2OCBDIDAuMjQyNzkyNjksMTI2LjYxOTMgLTIuMzU2NjYxNCwxMTcuNDUzNzUgNC43NjI2MDQ3LDExMi4xNzM4OSBjIDYuNTc5NTg4MywtNC44NzUxIDE3Ljc2ODkzMzMsLTguNTQ0OTIgMTcuNzY4OTMzMywtOC41NDQ5MiAwLDAgNDYuMjQxNDk4LC0xNi40NDIyMjQgNDYuMjQxNDk4LC0xNi40NDIyMjQgMCwwIDAsMTguNzQ0ODU0IDAsMTguNzQ0ODU0IDAsMCAtMzMuMjc1NzA5LDExLjkwODkyIC0zMy4yNzU3MDksMTEuOTA4OTIgLTUuODc4MDA0LDIuMTA5MjQgLTYuNzgxOTY3LDUuMDk1NDcgLTIuMDA1ODA3LDYuNjYwNTQgNC43ODA2NTcsMS41NjUwNiAxMy40MzM1MTIsMS4xMTk4MyAxOS4zMjA1MTEsLTAuOTkzOTEgMCwwIDE1Ljk2MTAwNSwtNS43OTI1NiAxNS45NjEwMDUsLTUuNzkyNTYgMCwwIDAsMTYuNzcwNTMgMCwxNi43NzA1MyAtMS4wMTE4OTMsMC4xNzk4OSAtMi4xNDA3MjQsMC4zNTk3OCAtMy4xODQxMDQsMC41MzUxOCAtMTUuOTY1NTA1LDIuNjA4NDUgLTMyLjk2OTg5MywxLjUyMDEgLTQ5LjcyNjkyOCwtNC4wMDI2MiB6Ii8+PC9zdmc+';
+const XB_LOGO='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iODgiIGhlaWdodD0iODgiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0zOS43MyA4Ni45MWMtNi42MjgtLjYzNS0xMy4zMzgtMy4wMTUtMTkuMTAyLTYuNzc2LTQuODMtMy4xNS01LjkyLTQuNDQ3LTUuOTItNy4wMzIgMC01LjE5MyA1LjcxLTE0LjI5IDE1LjQ4LTI0LjY1OCA1LjU0Ny01Ljg5IDEzLjI3NS0xMi43OSAxNC4xMS0xMi42MDQgMS42MjYuMzYzIDE0LjYxNiAxMy4wMzQgMTkuNDggMTkgNy42OSA5LjQzIDExLjIyNCAxNy4xNTQgOS40MjggMjAuNTk3LTEuMzY1IDIuNjE3LTkuODM3IDcuNzMzLTE2LjA2IDkuNjk4LTUuMTMgMS42Mi0xMS44NjcgMi4zMDYtMTcuNDE2IDEuNzc1ek04LjE4NCA2Ny43MDNjLTQuMDE0LTYuMTU4LTYuMDQyLTEyLjIyLTcuMDItMjAuOTg4LS4zMjQtMi44OTUtLjIxLTQuNTUuNzMzLTEwLjQ5NCAxLjE3My03LjQgNS4zOS0xNS45NyAxMC40Ni0yMS4yNCAyLjE1OC0yLjI0IDIuMzUtMi4zIDQuOTgyLTEuNDEgMy4xOSAxLjA4IDYuNiAzLjQzNiAxMS44OSA4LjIybDMuMDkgMi43OTQtMS42OSAyLjA3Yy03LjgyOCA5LjYxLTE2LjA5IDIzLjI0LTE5LjIgMzEuNjctMS42OSA0LjU4LTIuMzcgOS4xOC0xLjY0IDExLjA5NS40OSAxLjI5NC4wNC44MTItMS42MS0xLjcxNHptNzAuNDUzIDEuMDQ3Yy4zOTctMS45MzYtLjEwNS01LjQ5LTEuMjgtOS4wNzYtMi41NDUtNy43NjUtMTEuMDU0LTIyLjIxLTE4Ljg2Ny0zMi4wMzJsLTIuNDYtMy4wOTIgMi42NjItMi40NDNjMy40NzQtMy4xOSA1Ljg4Ni01LjEgOC40OS02LjcyMyAyLjA1My0xLjI4IDQuOTg4LTIuNDEzIDYuMjUtMi40MTMuNzc3IDAgMy41MTYgMi44NSA1LjcyNiA1Ljk1IDMuNDI0IDQuOCA1Ljk0MiAxMC42MyA3LjIxOCAxNi42OS44MjUgMy45Mi44OTQgMTIuMy4xMzMgMTYuMjEtLjYzIDMuMjA4LTEuOTUgNy4zNjYtMy4yMyAxMC4xODctLjk3IDIuMTEzLTMuMzYgNi4yMTgtNC40MSA3LjU1NC0uNTQuNjg3LS41NC42ODYtLjI0LS43OTZ6TTQwLjQ0IDExLjUwNUMzNi44MzQgOS42NzUgMzEuMjcyIDcuNzEgMjguMiA3LjE4Yy0xLjA3Ni0uMTg1LTIuOTEzLS4yOS00LjA4LS4yMy0yLjUzNi4xMjgtMi40MjMtLjAwNCAxLjY0My0xLjkyNSAzLjM4LTEuNTk3IDYuMi0yLjUzNiAxMC4wMy0zLjM0QzQwLjA5OC43OCA0OC4xOTMuNzcgNTIuNDMgMS42NjNjNC41NzUuOTY1IDkuOTY0IDIuOTcgMTMgNC44NGwuOTA0LjU1NC0yLjA3LS4xMDRDNjAuMTQ4IDYuNzQ1IDU0LjE1IDguNDA4IDQ3LjcxIDExLjU0Yy0xLjk0Mi45NDYtMy42MyAxLjctMy43NTQgMS42OC0uMTIzLS4wMjQtMS43MDYtLjc5NS0zLjUyLTEuNzE1eiIvPjwvc3ZnPg==';
+
+function showEdition(){
+  const isPS=platform==='ps5';
+  const bg=isPS?'#0a0e1a':'#0d0d0d';
+  const accent=isPS?'#003087':'#107C10';
+  const logo=isPS?PS_LOGO:XB_LOGO;
+  render(`
+  <div style="background:${bg};font-family:inherit">
+    <div style="background:${isPS?'linear-gradient(135deg,#00439c,#0070d1)':'linear-gradient(135deg,#107C10,#2ea82e)'};padding:14px 24px;display:flex;align-items:center;gap:10px">
+      <img src="${logo}" style="height:22px;object-fit:contain">
+      <span style="color:#fff;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.2em">${isPS?'PlayStation Store':'Microsoft Store'} · Choose Edition</span>
+    </div>
+    <div style="padding:28px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;flex-wrap:wrap">
+        <h2 style="color:#fff;font-size:20px;font-weight:800;margin:0">Grand Theft Auto VI</h2>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:${accent};color:#fff;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">
+          <span style="display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.25);font-size:10px">&#10003;</span>
+          ${isPS?'PlayStation 5':'Xbox Series X|S'}
+        </span>
+      </div>
+      <div style="display:grid;grid-template-columns:${isDevUnlocked()?'1fr 1fr 1fr':'1fr 1fr'};gap:12px">
+        ${(isDevUnlocked()?['standard','collector','ultimate']:['standard','ultimate']).map(k=>{
+          const e=EDITIONS[k];const ult=k==='ultimate';const col=k==='collector';
+          const bd=col?'transparent':(ult?accent:'rgba(255,255,255,.1)');
+          const wrapStyle=col
+            ?`position:relative;padding:2px;border-radius:10px;background:linear-gradient(90deg,#ff0040,#ff8a00,#ffd500,#3aff5e,#00d4ff,#7a5cff,#ff3fae,#ff0040);background-size:300% 100%;animation:rainbow-spin 4s linear infinite;cursor:pointer`
+            :`border:1px solid ${bd};border-radius:8px;background:${ult?'rgba(0,0,0,.5)':'rgba(255,255,255,.03)'};cursor:pointer;transition:border .2s`;
+          const innerOpen=col?`<div style="background:#0a0a0c;border-radius:8px;overflow:hidden">`:'';
+          const innerClose=col?`</div>`:'';
+          return `<button onclick="pickEdition('${k}')" style="text-align:left;overflow:hidden;padding:0;border:none;${wrapStyle}">
+            ${innerOpen}
+            <div style="aspect-ratio:4/5;overflow:hidden;background:#000"><img src="${heroSrc()}" style="width:100%;height:100%;object-fit:cover;display:block;${ult||col?'':'filter:grayscale(15%)brightness(.9)'}"></div>
+            <div style="padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;gap:6px">
+                <span style="color:#fff;font-weight:700;font-size:13px;line-height:1.2">${e.name}</span>
+                <span style="color:#fff;font-weight:900;font-size:13px;white-space:nowrap">${fmt(e.price)}</span>
+              </div>
+              <ul style="margin:0;padding:0;list-style:none;color:rgba(255,255,255,.6);font-size:10.5px;line-height:1.7">
+                ${e.perks.map(p=>`<li style="display:flex;gap:6px;align-items:baseline"><span style="color:${col?'#ff3fae':accent};font-size:9px">●</span>${p}</li>`).join('')}
+              </ul>
+              <div style="margin-top:12px;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:${col?'#fff':accent};font-weight:700">Select →</div>
+            </div>
+            ${innerClose}
+          </button>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>`);
+}
+window.pickEdition=k=>{edition=k;showAccount();};
+
+function showAccount(){
+  const isPS=platform==='ps5';
+  const bg=isPS?'#0a0e1a':'#0d0d0d';
+  const accent=isPS?'#003087':'#107C10';
+  const logo=isPS?PS_LOGO:XB_LOGO;
+  const label=isPS?'PSN ID':'Xbox Gamertag';
+  const ph=isPS?'e.g. NightDriver_88':'e.g. ViceCityKid';
+  render(`
+  <div style="background:${bg};font-family:inherit">
+    <div style="background:${isPS?'linear-gradient(135deg,#00439c,#0070d1)':'linear-gradient(135deg,#107C10,#2ea82e)'};padding:14px 24px;display:flex;align-items:center;gap:10px">
+      <img src="${logo}" style="height:22px;object-fit:contain">
+      <span style="color:#fff;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.2em">${isPS?'PlayStation Store':'Microsoft Store'} · Link Account</span>
+    </div>
+    <div style="padding:28px">
+      <button onclick="showEdition()" style="background:none;border:none;color:rgba(255,255,255,.45);font-size:12px;cursor:pointer;margin-bottom:14px;padding:0">← Back to editions</button>
+      <h2 style="color:#fff;font-size:20px;font-weight:800;margin:0 0 4px">Enter your ${label}</h2>
+      <p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">We'll attach ${EDITIONS[edition].name} to this profile on release day.</p>
+      <div style="display:flex;gap:8px">
+        <input id="un-in" value="${username}" placeholder="${ph}" onkeydown="if(event.key==='Enter')lookupUser()" oninput="username=this.value"
+          style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:12px 14px;color:#fff;font-size:14px;outline:none;transition:border .2s"
+          onfocus="this.style.borderColor='${accent}'" onblur="this.style.borderColor='rgba(255,255,255,.12)'">
+        <button onclick="lookupUser()" style="padding:12px 22px;border-radius:6px;background:${accent};color:#fff;font-weight:700;border:none;cursor:pointer;font-size:13px">Find</button>
+      </div>
+      <div id="prof-card"></div>
+    </div>
+  </div>`);
+}
+window.showEdition=showEdition;
+
+function showProfileCard(pc,label,name,avSrc){
+  const isPS=platform==='ps5';
+  const accent=isPS?'#003087':'#107C10';
+  pc.innerHTML=`<div class="_fi" style="margin-top:18px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:16px;display:flex;align-items:center;gap:14px">
+    <img src="${avSrc}" style="height:60px;width:60px;border-radius:50%;border:2px solid ${accent};background:#111;object-fit:cover" onerror="this.src='${avUrl(platform,name)}'">
+    <div style="flex:1">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.3em;color:rgba(255,255,255,.4);margin-bottom:3px">${label}</div>
+      <div style="font-size:16px;font-weight:700;color:#fff">${name}</div>
+      <div style="font-size:11px;color:#4ade80;margin-top:3px">● Profile found · Online</div>
+    </div>
+    <button onclick="confirmUser()" style="padding:10px 20px;border-radius:6px;background:${accent};color:#fff;font-weight:700;border:none;cursor:pointer;font-size:13px">Continue</button>
+  </div>`;}
+
+function showNotFound(pc,label){
+  pc.innerHTML=`<div class="_fi" style="margin-top:14px;border-radius:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);padding:12px 16px;display:flex;align-items:center;gap:10px">
+    <span style="color:#f87171;font-size:18px;font-weight:900">✕</span>
+    <div><div style="color:#f87171;font-size:13px;font-weight:600">${label} not found</div><div style="color:rgba(255,255,255,.4);font-size:11px;margin-top:2px">Check the spelling and try again</div></div>
+  </div>`;}
+
+window.lookupUser=function(){
+  const val=document.getElementById('un-in').value.trim();
+  if(!val)return;
+  username=val;
+  const pc=document.getElementById('prof-card');
+  const label=platform==='ps5'?'PSN ID':'Xbox Gamertag';
+  const pk=platform==='ps5'?'psn':'xbox';
+  pc.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-top:16px;color:rgba(255,255,255,.5);font-size:13px">
+    <span class="_spin" style="height:14px;width:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#ec4899;border-radius:50%;display:inline-block"></span>
+    Looking up ${label}…</div>`;
+  function _pickAv(serverAv){
+    const real=serverAv && !/dicebear|gravatar\.com\/avatar\/(?:0+|d41d8cd)/i.test(serverAv);
+    if(real) return serverAv;
+    return avUrl(platform,val);
+  }
+  fetch(`/api/public/profile-lookup?platform=${pk}&name=${encodeURIComponent(val)}`)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d&&d.found){
+        username=d.username||val;
+        showProfileCard(pc,label,d.username||val,_pickAv(d.avatar));
+      } else showNotFound(pc,label);
+    })
+    .catch(()=>{username=val;showProfileCard(pc,label,val,avUrl(platform,val));});};
+
+window.confirmUser=()=>{confirmedUser=username.trim();showPayment();};
+
+function showPayment(){
+  payMethod=CARD.defaultPay||'card';payDropOpen=false;
+  const e=EDITIONS[edition];
+  const isPS=platform==='ps5';
+  const bg=isPS?'#0a0e1a':'#0d0d0d';
+  const btnBg=isPS?'#003087':'#107C10';
+  const btnHov=isPS?'#0050d0':'#0d9e0d';
+  const logo=isPS?PS_LOGO:XB_LOGO;
+  const pName=isPS?'PlayStation Store':'Microsoft Store';
+  const orderId=(isPS?'PSN':'XBL')+'-'+rnd(4)+'-'+rnd(6);
+  const platformBadge=isPS
+    ? `<div style="display:flex;gap:6px;margin-top:10px">
+         ${['△','○','✕','□'].map((s,i)=>`<span style="color:${'#3b9aff #d62929 #3b9aff #d62929'.split(' ')[i]};font-size:11px;opacity:.4">${s}</span>`).join('')}
+       </div>`
+    : `<div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.3em">XBOX SERIES X|S</div>`;
+
+  render(`
+  <div style="background:${bg};font-family:inherit">
+    ${isPS ? `
+    <div style="background:#00439c;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <img src="${logo}" style="height:20px;object-fit:contain">
+        <span style="color:#fff;font-size:13px;font-weight:600">PlayStation Store</span>
+        <span style="color:rgba(255,255,255,.4);font-size:13px">›</span>
+        <span style="color:rgba(255,255,255,.7);font-size:13px">Checkout</span>
+      </div>
+      <span style="color:rgba(255,255,255,.5);font-size:11px;font-family:monospace">${orderId}</span>
+    </div>
+    <div style="height:3px;background:linear-gradient(90deg,#003087,#0070d1,#00aef0)"></div>
+    ` : `
+    <div style="background:#1a1a1a;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;border-bottom:2px solid #107C10">
+      <div style="display:flex;align-items:center;gap:12px">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#107C10"><circle cx="12" cy="12" r="11"/><circle cx="12" cy="12" r="7" fill="#1a1a1a"/><circle cx="12" cy="12" r="4" fill="#107C10"/></svg>
+        <span style="color:#fff;font-size:13px;font-weight:600">Microsoft Store</span>
+        <span style="color:rgba(255,255,255,.3);font-size:13px">›</span>
+        <span style="color:rgba(255,255,255,.6);font-size:13px">Checkout</span>
+      </div>
+      <span style="color:rgba(255,255,255,.4);font-size:11px;font-family:monospace">${orderId}</span>
+    </div>`}
+
+    <div style="padding:24px 28px">
+      <button onclick="showAccount()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;margin-bottom:18px;padding:0">← Back</button>
+
+      <div style="display:flex;gap:16px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.07)">
+        <img src="${heroSrc()}" style="height:100px;width:100px;border-radius:6px;object-fit:cover;flex-shrink:0">
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.25em;color:rgba(255,255,255,.4);margin-bottom:4px">Digital Pre-Order</div>
+          <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:2px">Grand Theft Auto VI</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:4px">${e.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4)">Delivers to <span style="background:rgba(255,255,255,.08);color:#fff;font-weight:600;padding:2px 8px;border-radius:3px">${confirmedUser}</span></div>
+          ${platformBadge}
+        </div>
+      </div>
+
+      <div style="margin-top:18px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);overflow:hidden">
+        <div style="display:flex;justify-content:space-between;padding:11px 16px;font-size:13px;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.05)">${e.name}<span style="color:#fff">${fmt(e.price)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:11px 16px;font-size:12px;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.05)">VAT (included)<span>${fmt(e.price*.2)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:11px 16px;font-size:14px;font-weight:900;color:#fff">Total<span>${fmt(e.price)}</span></div>
+      </div>
+
+      <div style="margin-top:18px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.25em;color:rgba(255,255,255,.4);margin-bottom:8px">Payment method</div>
+        <div id="pay-method-row"></div>
+      </div>
+
+      <div id="pay-secure-badge" style="margin-top:14px;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15)">
+        <svg viewBox="0 0 20 20" fill="#34d399" width="14" height="14" style="flex-shrink:0"><path d="M10 1L3 4.5V9c0 4.1 3 7.9 7 9 4-1.1 7-4.9 7-9V4.5L10 1z"/></svg>
+        <span id="pay-secure-text" style="font-size:11px;color:#6ee7b7">Protected by Visa Secure 3-D Secure 2.2 authentication</span>
+      </div>
+
+      <p id="pay-tos" style="font-size:10px;color:rgba(255,255,255,.3);margin-top:14px;line-height:1.6">By selecting Confirm purchase you agree to the <u>Terms of Sale</u> and <u>Usage rules for Digital Goods</u>. You will complete Visa Secure authentication before your card is charged.</p>
+
+      <button onclick="launch3DS()" id="pay-btn"
+        style="margin-top:14px;width:100%;padding:15px;border-radius:6px;background:${btnBg};color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;transition:background .15s"
+        onmouseover="this.style.background='${btnHov}'" onmouseout="this.style.background='${btnBg}'">
+        Confirm purchase · ${fmt(e.price)}
+      </button>
+    </div>
+  </div>`);
+  setTimeout(renderPayMethod,180);
+}
+function payMethods(){return[
+  {id:'card',type:'visa',last4:CARD.last4,label:'Visa ··'+CARD.last4},
+  {id:'card2',type:'visa',last4:'7514',label:'Visa ··7514'},
+  {id:'paypal',type:'paypal',label:'PayPal'}
+];}
+function payMethodIcon(m){
+  if(m.type==='paypal')return `<img src="${PAYPAL_LOGO}" alt="PayPal" style="height:16px;width:auto;object-fit:contain;flex-shrink:0">`;
+  return `<img src="${VISA_LOGO}" alt="Visa" style="height:12px;width:auto;object-fit:contain;flex-shrink:0">`;
+}
+function payMethodText(m){
+  if(m.type==='paypal')return 'PayPal';
+  return '··'+m.last4;
+}
+function renderPayMethod(){
+  const row=document.getElementById('pay-method-row');if(!row)return;
+  const methods=payMethods();
+  const cur=methods.find(m=>m.id===payMethod)||methods[0];
+  const list=methods.map(m=>{
+    const sel=m.id===payMethod;
+    return `<button onclick="selectPayMethod('${m.id}')" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:5px;${sel?'background:rgba(255,255,255,.06)':''}" onmouseover="this.style.background='rgba(255,255,255,.05)'" onmouseout="this.style.background='${sel?'rgba(255,255,255,.06)':'transparent'}'">
+      <span style="height:18px;width:28px;display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:3px;flex-shrink:0">${payMethodIcon(m)}</span>
+      <span style="color:#fff;font-size:13px;font-weight:500">${payMethodText(m)}</span>
+      ${sel?'<span style="margin-left:auto;color:#34d399;font-size:11px">✓</span>':''}
+    </button>`;
+  }).join('');
+  row.innerHTML=`<div style="position:relative;display:block">
+    <button onclick="togglePayDrop()" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:14px;width:100%;padding:14px 18px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)">
+      <span style="height:26px;width:40px;display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:4px;flex-shrink:0">${payMethodIcon(cur)}</span>
+      <div style="flex:1;text-align:left">
+        <div style="color:#fff;font-size:14px;font-weight:600">${cur.type==='paypal'?'PayPal':'Visa ending in '+cur.last4}</div>
+        <div style="color:rgba(255,255,255,.4);font-size:11px;margin-top:2px">${cur.type==='paypal'?"You'll confirm payment on PayPal":'Credit · Visa Secure enrolled'}</div>
+      </div>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="rgba(255,255,255,.55)" style="flex-shrink:0;transition:transform .15s;${payDropOpen?'transform:rotate(180deg)':''}"><path d="M2 4l4 4 4-4z"/></svg>
+    </button>
+    ${payDropOpen?`<div style="position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:50;background:#15131a;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px;box-shadow:0 12px 32px rgba(0,0,0,.55);display:flex;flex-direction:column">${list}</div>`:''}
+  </div>`;
+  const isPaypal=cur.type==='paypal';
+  const st=document.getElementById('pay-secure-text');if(st)st.textContent=isPaypal?'Protected by PayPal Buyer Protection':'Protected by Visa Secure 3-D Secure 2.2 authentication';
+  const tos=document.getElementById('pay-tos');if(tos)tos.innerHTML=isPaypal?'By selecting Confirm purchase you agree to the <u>Terms of Sale</u> and <u>Usage rules for Digital Goods</u>. You will be redirected to PayPal to authorise this payment.':'By selecting Confirm purchase you agree to the <u>Terms of Sale</u> and <u>Usage rules for Digital Goods</u>. You will complete Visa Secure authentication before your card is charged.';
+}
+window.togglePayDrop=function(){payDropOpen=!payDropOpen;renderPayMethod();};
+window.selectPayMethod=function(id){payMethod=id;payDropOpen=false;renderPayMethod();};
+window.showAccount=showAccount;
+window.launch3DS=()=>{
+  payDropOpen=false;
+  if(payMethod==='paypal'){showPaypalSheet();return;}
+  if(CARD.otp===false){showProcessing();return;}
+  show3DS();
+};
+function showPaypalSheet(){
+  const e=EDITIONS[edition];
+  let ov=document.getElementById('pp-ov');
+  if(ov)ov.remove();
+  ov=document.createElement('div');
+  ov.id='pp-ov';
+  ov.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(15,13,22,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+  const initial=(confirmedUser||'J').charAt(0).toUpperCase();
+  const shell=(inner)=>`
+    <div style="width:100%;max-width:380px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.55);display:flex;flex-direction:column;min-height:560px">
+       <div style="background:#1c1c1c;height:34px;display:flex;align-items:center;padding:0 14px;gap:10px">
+         <span style="margin-left:auto;color:rgba(255,255,255,.35);font-size:11px;letter-spacing:.5px">— ▢ ✕</span>
+       </div>
+      <div style="background:#2a2a2a;padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #111">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="#7fdc8e" style="flex-shrink:0"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z"/></svg>
+        <span style="color:rgba(255,255,255,.7);font-size:11px;font-family:-apple-system,sans-serif">www.paypal.com/pay/checkout</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;background:#fff">${inner}</div>
+    </div>`;
+  const loading=`
+    <style>@keyframes _skel{0%{background-position:200% 0}100%{background-position:-200% 0}}@keyframes _ppspin{to{transform:rotate(360deg)}}</style>
+    <div style="padding:22px 22px 14px;display:flex;justify-content:center;align-items:center;gap:10px">
+      <div style="height:32px;width:32px;border-radius:50%;background:#ececec"></div>
+      <img src="${PAYPAL_LOGO}" alt="PayPal" style="height:26px;width:auto;object-fit:contain;opacity:.35">
+    </div>
+    <div style="padding:6px 22px;display:flex;flex-direction:column;gap:12px;align-items:center;flex:1;justify-content:center">
+      <div style="height:32px;width:32px;border:3px solid #eee;border-top-color:#0070ba;border-radius:50%;animation:_ppspin .9s linear infinite"></div>
+      <div style="color:#888;font-size:12px">Connecting securely to PayPal…</div>
+    </div>`;
+  const content=`
+    <div style="padding:22px 22px 12px;display:flex;align-items:center;justify-content:center;position:relative">
+      <div style="position:absolute;left:22px;height:34px;width:34px;border-radius:50%;background:#003087;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">${initial}</div>
+      <img src="${PAYPAL_LOGO}" alt="PayPal" style="height:30px;width:auto;object-fit:contain">
+    </div>
+    <div style="padding:0 18px 14px">
+      <div style="border:1px solid #e5e5e5;border-radius:8px;padding:14px">
+        <div style="font-size:13px;font-weight:600;color:#222;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">Pay with <span style="color:#888;font-size:11px">▴</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+          <span style="height:14px;width:14px;border-radius:50%;border:2px solid #222;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><span style="height:6px;width:6px;border-radius:50%;background:#222"></span></span>
+          <span style="height:24px;width:36px;background:#fff;border:1px solid #ddd;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><img src="${VISA_LOGO}" alt="Visa" style="height:11px;width:auto;object-fit:contain"></span>
+          <div style="flex:1">
+            <div style="font-size:13px;color:#222;font-weight:500">Visa Credit</div>
+            <div style="font-size:11px;color:#888">Credit ··7514</div>
+          </div>
+          <div style="font-size:13px;color:#222;font-weight:500">${fmt(e.price)}</div>
+        </div>
+        <div style="margin-top:10px;color:#0070ba;font-size:13px;font-weight:600;cursor:pointer">+ Add card</div>
+      </div>
+      <div style="margin-top:10px;border:1px solid #e5e5e5;border-radius:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:#222;font-weight:500">${fmt(e.price)}</span></div>
+        <span style="color:#888;font-size:11px">▾</span>
+      </div>
+    </div>
+    <div style="margin-top:auto;padding:14px 18px 18px">
+      <button onclick="paypalContinue()" style="all:unset;cursor:pointer;width:100%;box-sizing:border-box;padding:13px 24px;border-radius:24px;background:#0070ba;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between"><span>Pay</span><span style="display:inline-flex;align-items:center;gap:12px"><span style="width:1px;height:16px;background:rgba(255,255,255,.45)"></span><span>${fmt(e.price)}</span></span></button>
+      <div style="text-align:center;margin-top:12px;color:#0070ba;font-size:11px;cursor:pointer" onclick="closePaypal()">Return to Rockstar Games</div>
+    </div>`;
+  ov.innerHTML=shell(loading);
+  document.body.appendChild(ov);
+  setTimeout(()=>{
+    const cur=document.getElementById('pp-ov');if(!cur)return;
+    cur.innerHTML=shell(content);
+  },1400+Math.random()*600);
+}
+window.paypalContinue=function(){const ov=document.getElementById('pp-ov');if(ov)ov.remove();showPaypalProcessing();};
+window.closePaypal=function(){const ov=document.getElementById('pp-ov');if(ov)ov.remove();};
+function showPaypalProcessing(){
+  const e=EDITIONS[edition];
+  const isPS=platform==='ps5';
+  const bg=isPS?'#0a0e1a':'#0d0d0d';
+  render(`<div style="background:${bg};font-family:inherit;padding:60px 28px;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:420px;justify-content:center">
+    <style>@keyframes _ppspin2{to{transform:rotate(360deg)}}@keyframes _ppdot{0%,80%,100%{opacity:.2}40%{opacity:1}}</style>
+    <img src="${PAYPAL_LOGO}" alt="PayPal" style="height:34px;width:auto;object-fit:contain;margin-bottom:30px;filter:brightness(0) invert(1);opacity:.9">
+    <div style="height:46px;width:46px;border:3px solid rgba(255,255,255,.1);border-top-color:#fff;border-radius:50%;animation:_ppspin2 .9s linear infinite;margin-bottom:24px"></div>
+    <div style="color:#fff;font-size:15px;font-weight:600;letter-spacing:.2px">Processing payment<span style="display:inline-block;animation:_ppdot 1.4s infinite">.</span><span style="display:inline-block;animation:_ppdot 1.4s .2s infinite">.</span><span style="display:inline-block;animation:_ppdot 1.4s .4s infinite">.</span></div>
+    <div style="color:rgba(255,255,255,.45);font-size:12px;margin-top:10px">Charging ${fmt(e.price)} to your PayPal account</div>
+    <div style="color:rgba(255,255,255,.25);font-size:11px;margin-top:30px">Do not close this window</div>
+  </div>`);
+  setTimeout(showDone,2600+Math.random()*900);
+}
+
+/* 3DS OVERLAY */
+const tdsOv=document.createElement('div');
+tdsOv.style.cssText='display:none;position:fixed;inset:0;z-index:99999;background:rgba(15,13,22,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:16px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+document.body.appendChild(tdsOv);
+const cancelLbl=document.createElement('div');
+cancelLbl.textContent='CANCEL';
+cancelLbl.style.cssText='position:fixed;top:24px;right:32px;color:rgba(255,255,255,.55);font-size:12px;letter-spacing:.15em;cursor:pointer;z-index:100001;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+cancelLbl.onclick=close3DS;
+tdsOv.appendChild(cancelLbl);
+const tdsCard=document.createElement('div');
+tdsCard.style.cssText='width:100%;max-width:340px;background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);margin-top:0';
+tdsOv.appendChild(tdsCard);
+function open3DS(){tdsOv.style.display='flex';}
+function close3DS(){tdsOv.style.display='none';}
+function r3(html){tdsCard.innerHTML=html;}
+const CSS3=`<style>
+@keyframes _pb{from{width:0%}to{width:100%}}
+@keyframes _fi2{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes _sp2{to{transform:rotate(360deg)}}
+._pb{animation:_pb 2.3s cubic-bezier(.4,0,.2,1) forwards}
+._fi2{animation:_fi2 .3s ease both}
+._sp2{animation:_sp2 .7s linear infinite}
+</style>`;
+const BANK_HDR=`
+<div style="padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e7eb">
+  <div style="display:flex;align-items:center;gap:5px">
+    <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;color:#006A4E;letter-spacing:.09em;text-transform:uppercase">Lloyds Bank</span>
+    <svg viewBox="0 0 80 100" width="14" height="18" fill="#1a1a1a" style="display:block">
+      <path d="M52 4c-5 0-10 2-13 6-2 3-2 6-1 9-4 1-8 4-10 8-3 5-2 11 1 15-4 2-7 6-8 11-1 4 0 8 2 11-1 4-2 9-2 14h7c0-5 1-9 2-13 2 2 3 5 3 8v5h7v-5c0-4-1-8-3-11 3-1 6-3 8-6 2 2 4 5 4 8v14h7V74c0-5-2-9-5-13 3-2 6-5 7-9 1-3 1-7-1-10 3-2 5-5 6-9 1-5-1-10-4-14 2-2 3-5 3-8 0-5-4-8-9-8zm-5 12c3 0 5 2 5 5s-2 5-5 5-5-2-5-5 2-5 5-5z"/>
+    </svg>
+  </div>
+  <svg viewBox="0 0 200 64" width="64" height="26">
+    <text x="0" y="52" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="64" font-weight="900" font-style="italic" fill="#1A1F71" letter-spacing="-2">VISA</text>
+  </svg>
+</div>`;
+const MERCH_BAR=(amt)=>`
+<div style="margin:16px 20px;background:#eef0f4;border-radius:3px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
+  <span style="font-size:12px;color:#444;letter-spacing:.05em;text-transform:uppercase">Rockstar Games</span>
+  <span style="font-size:14px;font-weight:900;color:#111">${amt}</span>
+</div>`;
+const GBTN=(label,onclick)=>`<button onclick="${onclick}" style="width:100%;padding:14px;background:#006A4E;color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;border-radius:2px">${label}</button>`;
+
+function tdsPhase1(){
+  r3(`${CSS3}
+  <div style="padding:60px 40px;display:flex;flex-direction:column;align-items:center;gap:24px">
+    <div style="width:100%;position:relative">
+      <div style="height:12px;border-radius:2px;background:#e0e2ef;width:100%;overflow:hidden">
+        <div class="_pb" style="height:100%;border-radius:2px;background:linear-gradient(90deg,#4c52d0,#6c72e8);position:relative">
+          <div style="position:absolute;right:0;top:0;bottom:0;width:30px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3))"></div>
+        </div>
+      </div>
+    </div>
+    <svg viewBox="0 0 120 40" width="90" height="30">
+      <text x="0" y="30" font-family="Arial,sans-serif" font-size="34" font-weight="900" font-style="italic" fill="#1A1F71">VISA</text>
+    </svg>
+  </div>`);
+  setTimeout(tdsPhase2, 2600);
+}
+function tdsPhase2(){
+  const amt=fmt(EDITIONS[edition].price);
+  r3(`${CSS3}${BANK_HDR}
+  <div class="_fi2" style="padding:20px;overflow-y:auto;max-height:calc(100vh - 180px)">
+    <h2 style="font-size:17px;font-weight:800;color:#006A4E;text-align:center;margin:0 0 16px">Could this be a scam?</h2>
+    <p style="font-size:12px;color:#555;text-align:center;line-height:1.6;margin:0 0 10px">Is the website you're paying secure? Does it start with https:// and have a closed padlock symbol?</p>
+    <p style="font-size:12px;color:#555;text-align:center;line-height:1.6;margin:0 0 10px">If you were sent a link to an online retailer, did it come from someone you know and trust?</p>
+    <p style="font-size:12px;color:#555;text-align:center;line-height:1.6;margin:0 0 14px">Have you checked independent reviews to make sure the website is reliable?</p>
+    <p style="font-size:12px;color:#333;text-align:center;font-weight:600;margin:0 0 6px">Before you pay, double check:</p>
+    <p style="font-size:12px;color:#555;text-align:center;line-height:1.8;margin:0 0 16px">1. You're getting what you want<br>2. The price isn't too good to be true<br>3. The website is genuine.</p>
+    <div style="margin-bottom:16px">${GBTN('Continue with payment','tdsPhase3()')}</div>
+    <div style="border:1.5px solid #006A4E;border-radius:3px;padding:14px;margin-bottom:4px">
+      <p style="font-size:12px;color:#006A4E;text-align:center;line-height:1.6;margin:0">If someone calls to ask you to approve a payment on our mobile banking app that you didn't make, or to share a passcode, it's a scam.<br><strong>Hang up the phone.</strong></p>
+    </div>
+  </div>`);
+}
+window.tdsPhase2=tdsPhase2;
+window.tdsPhase3=function(){
+  r3(`${CSS3}${BANK_HDR}
+  <div class="_fi2" style="padding:20px">
+    <p style="font-size:13px;color:#333;margin:0 0 16px;line-height:1.5">How would you like to verify this payment?</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+      <button onclick="tdsPhaseApp()" style="display:flex;align-items:center;gap:14px;border:1.5px solid #a8d5c4;border-radius:3px;padding:14px;background:#fff;cursor:pointer;text-align:left" onmouseover="this.style.background='#f0faf6'" onmouseout="this.style.background='#fff'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#006A4E" stroke-width="1.5" width="32" height="40" style="flex-shrink:0"><rect x="5" y="1" width="14" height="22" rx="2"/><line x1="9" y1="5" x2="9.5" y2="5"/><line x1="10.5" y1="5" x2="11" y2="5"/><circle cx="12" cy="19" r=".8" fill="#006A4E"/></svg>
+        <div><div style="font-weight:700;color:#006A4E;font-size:13px;margin-bottom:2px">With the app</div><div style="color:#666;font-size:12px;line-height:1.4">Make sure you have your app ready. You don't need to open it yet.</div></div>
+      </button>
+      <button onclick="tdsPhaseSMS()" style="display:flex;align-items:center;gap:14px;border:1.5px solid #a8d5c4;border-radius:3px;padding:14px;background:#fff;cursor:pointer;text-align:left" onmouseover="this.style.background='#f0faf6'" onmouseout="this.style.background='#fff'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#006A4E" stroke-width="1.5" width="32" height="40" style="flex-shrink:0"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="6" y1="10" x2="8" y2="10"/><line x1="10" y1="10" x2="12" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/></svg>
+        <div><div style="font-weight:700;color:#006A4E;font-size:13px;margin-bottom:2px">With a text message</div><div style="color:#666;font-size:12px;line-height:1.4">You'll get a text message from us with a passcode.</div></div>
+      </button>
+      <button style="display:flex;align-items:center;gap:14px;border:1.5px solid #a8d5c4;border-radius:3px;padding:14px;background:#fff;cursor:pointer;text-align:left;opacity:.7">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#006A4E" stroke-width="1.5" width="32" height="40" style="flex-shrink:0"><path d="M5 4a2 2 0 0 0-2 2v3c0 8.3 6.7 15 15 15h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v0a10 10 0 0 1-10-10v0a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5z"/></svg>
+        <div><div style="font-weight:700;color:#006A4E;font-size:13px;margin-bottom:2px">With an automated phone call</div><div style="color:#666;font-size:12px;line-height:1.4">We'll call and ask you to enter a code.</div></div>
+      </button>
+    </div>
+    <p style="font-size:12px;color:#666;text-align:center;margin:0 0 12px">Can't do any of these? <span style="color:#006A4E;text-decoration:underline;cursor:pointer">Give us a call</span></p>
+    <span style="display:block;color:#006A4E;font-size:12px;text-decoration:underline;cursor:pointer;text-align:center" onclick="close3DS()">Cancel</span>
+  </div>`);};
+window.tdsPhaseApp=function(){
+  const amt=fmt(EDITIONS[edition].price);
+  r3(`${CSS3}${BANK_HDR}${MERCH_BAR(amt)}
+  <div class="_fi2" style="padding:0 20px 20px">
+    <p style="font-size:13px;color:#444;margin:0 0 20px;line-height:1.5">Make sure you have your app ready. You don't need to open it yet.</p>
+    <div style="text-align:center;margin-bottom:20px">
+      <svg viewBox="0 0 24 44" width="40" height="60" fill="none" stroke="#006A4E" stroke-width="1.2">
+        <rect x="2" y="1" width="20" height="42" rx="3"/>
+        <circle cx="12" cy="37" r="1.5" fill="#006A4E"/>
+        <line x1="8" y1="5" x2="9" y2="5"/>
+        <line x1="10.5" y1="5" x2="12" y2="5"/>
+      </svg>
+    </div>
+    <div style="margin-bottom:14px">${GBTN('Continue with my app','tdsAppWaiting()')}</div>
+    <div style="display:flex;justify-content:space-between">
+      <span style="color:#006A4E;font-size:12px;text-decoration:underline;cursor:pointer" onclick="tdsPhase3()">Cancel</span>
+      <span style="color:#006A4E;font-size:12px;text-decoration:underline;cursor:pointer" onclick="tdsPhase3()">Use a different way to verify yourself</span>
+    </div>
+  </div>`);};
+window.tdsAppWaiting=function(){
+  const amt=fmt(EDITIONS[edition].price);
+  r3(`${CSS3}${BANK_HDR}${MERCH_BAR(amt)}
+  <div class="_fi2" style="padding:20px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
+    <div style="position:relative;height:60px;width:60px">
+      <svg viewBox="0 0 24 44" width="40" height="60" fill="none" stroke="#006A4E" stroke-width="1.2" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)"><rect x="2" y="1" width="20" height="42" rx="3"/><circle cx="12" cy="37" r="1.5" fill="#006A4E"/></svg>
+      <div class="_sp2" style="position:absolute;inset:-8px;border-radius:50%;border:3px solid rgba(0,106,78,.15);border-top-color:#006A4E;pointer-events:none"></div>
+    </div>
+    <div>
+      <p style="font-weight:700;color:#111;font-size:15px;margin:0 0 6px">Check your app</p>
+      <p style="color:#555;font-size:12px;margin:0;line-height:1.6">Open your Lloyds Bank app and approve the payment notification.</p>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:3px;padding:12px 14px;width:100%;text-align:left">
+      <p style="font-size:11px;color:#92400e;margin:0">A push notification has been sent to your device. Do not close this window.</p>
+    </div>
+  </div>`);
+  setTimeout(tdsConfirmed,5000);};
+window.tdsPhaseSMS=function(){
+  const amt=fmt(EDITIONS[edition].price);
+  r3(`${CSS3}${BANK_HDR}${MERCH_BAR(amt)}
+  <div class="_fi2" style="padding:0 20px 20px">
+    <p style="font-size:13px;color:#444;margin:0 0 14px;line-height:1.5">To approve this purchase, you'll get a text message from us with a passcode to this number:</p>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#006A4E" stroke-width="2" width="20" height="20"><rect x="5" y="1" width="14" height="22" rx="2"/><circle cx="12" cy="18" r="1" fill="#006A4E"/></svg>
+      <span style="font-size:13px;font-weight:600;color:#333">+447******648</span>
+    </div>
+    <div style="margin-bottom:14px">${GBTN('Send passcode','tdsSendPasscode()')}</div>
+    <div style="display:flex;justify-content:space-between">
+      <span style="color:#006A4E;font-size:12px;text-decoration:underline;cursor:pointer" onclick="tdsPhase3()">Cancel</span>
+      <span style="color:#006A4E;font-size:12px;text-decoration:underline;cursor:pointer" onclick="tdsPhase3()">Use a different way to verify yourself</span>
+    </div>
+  </div>`);};
+window.tdsSendPasscode=function(){
+  const amt=fmt(EDITIONS[edition].price);
+  r3(`${CSS3}${BANK_HDR}${MERCH_BAR(amt)}
+  <div class="_fi2" style="padding:0 20px 20px">
+    <p style="font-size:13px;color:#444;margin:0 0 6px;line-height:1.5">Enter the passcode we sent to <strong>+447******648</strong>:</p>
+    <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#666;display:block;margin-bottom:6px">One-time passcode</label>
+    <input id="otp3" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+      style="width:100%;box-sizing:border-box;text-align:center;font-size:24px;font-family:monospace;letter-spacing:.5em;border:2px solid #ccc;border-radius:3px;padding:12px 8px;outline:none;color:#111;margin-bottom:6px"
+      oninput="this.value=this.value.replace(/[^0-9]/g,'');document.getElementById('otp3err').style.display='none'"
+      onkeydown="if(event.key==='Enter')tdsVerifyOTP()"
+      onfocus="this.style.borderColor='#006A4E'" onblur="this.style.borderColor='#ccc'">
+    <p id="otp3err" style="display:none;color:#c0392b;font-size:11px;margin:0 0 10px">Please enter a valid 6-digit passcode.</p>
+    <p style="font-size:11px;color:#888;margin:0 0 14px">Didn't receive it? <span style="color:#006A4E;text-decoration:underline;cursor:pointer" onclick="tdsPhaseSMS()">Request a new one</span></p>
+    <div style="margin-bottom:14px">${GBTN('Authenticate','tdsVerifyOTP()')}</div>
+    <span style="display:block;color:#006A4E;font-size:12px;text-decoration:underline;cursor:pointer;text-align:center" onclick="tdsPhase3()">Cancel</span>
+  </div>`);
+  setTimeout(()=>document.getElementById('otp3')?.focus(),80);};
+window.tdsVerifyOTP=function(){
+  const v=document.getElementById('otp3')?.value||'';
+  if(v.length!==6){document.getElementById('otp3err').style.display='block';return;}
+  const btn=tdsCard.querySelector('button:last-of-type');
+  if(btn){btn.disabled=true;btn.textContent='Verifying…';}
+  setTimeout(tdsConfirmed,1800);};
+function tdsConfirmed(){
+  const amt=fmt(EDITIONS[edition].price);
+  r3(`${CSS3}${BANK_HDR}
+  <div class="_fi2" style="padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
+    <div style="height:64px;width:64px;border-radius:50%;background:#e8f5f0;border:2px solid #006A4E;display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#006A4E" stroke-width="2.5" stroke-linecap="round" width="30" height="30"><path d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div>
+      <p style="font-weight:800;color:#111;font-size:15px;margin:0 0 4px">Payment approved</p>
+      <p style="color:#555;font-size:12px;margin:0;line-height:1.5">Your payment of <strong>${amt}</strong> to Rockstar Games has been authorised successfully.</p>
+    </div>
+    <div style="width:100%">${GBTN('Next →','tdsSuccess()')}</div>
+  </div>`);}
+window.tdsConfirmed=tdsConfirmed;
+window.tdsSuccess=function(){close3DS();showProcessing();};
+
+function show3DS(){open3DS();tdsPhase1();}
+
+function showProcessing(){
+  const e=EDITIONS[edition];const isPS=platform==='ps5';
+  const bg=isPS?'#0a0e1a':'#0d0d0d';
+  const last4=payMethod==='card2'?'7514':CARD.last4;
+  render(`<div style="background:${bg};font-family:inherit;padding:60px 28px;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:420px;justify-content:center">
+    <style>@keyframes _vpspin{to{transform:rotate(360deg)}}@keyframes _vpdot{0%,80%,100%{opacity:.2}40%{opacity:1}}</style>
+    <img src="${VISA_LOGO}" alt="Visa" style="height:30px;width:40px;object-fit:contain;margin-bottom:30px;filter:brightness(0) invert(1);opacity:.9">
+    <div style="height:46px;width:46px;border:3px solid rgba(255,255,255,.1);border-top-color:#fff;border-radius:50%;animation:_vpspin .9s linear infinite;margin-bottom:24px"></div>
+    <div style="color:#fff;font-size:15px;font-weight:600;letter-spacing:.2px">Processing payment<span style="display:inline-block;animation:_vpdot 1.4s infinite">.</span><span style="display:inline-block;animation:_vpdot 1.4s .2s infinite">.</span><span style="display:inline-block;animation:_vpdot 1.4s .4s infinite">.</span></div>
+    <div style="color:rgba(255,255,255,.45);font-size:12px;margin-top:10px">Charging ${fmt(e.price)} to Visa ··${last4}</div>
+    <div style="color:rgba(255,255,255,.25);font-size:11px;margin-top:30px">Do not close this window</div>
+  </div>`);
+  setTimeout(showDone,2600+Math.random()*900);
+}
+
+function showDone(){
+  const e=EDITIONS[edition];const isPS=platform==='ps5';
+  const bg=isPS?'#0a0e1a':'#0d0d0d';
+  const orderId='RSG-'+rnd(4)+'-'+rnd(6);
+  const emails=['gmail.com','outlook.com','icloud.com','proton.me'];
+  const email=confirmedUser.toLowerCase().replace(/[^a-z0-9]/g,'')+'@'+emails[Math.floor(Math.random()*4)];
+  const pName=isPS?'PlayStation 5':'Xbox Series X|S';
+  render(`<div style="background:${bg};font-family:inherit;padding:40px 28px;text-align:center">
+    <div style="height:80px;width:80px;border-radius:50%;background:rgba(52,211,153,.1);border:2px solid #34d399;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:36px;color:#6ee7b7">✓</div>
+    <h2 style="color:#fff;font-size:22px;font-weight:800;margin:18px 0 8px">Pre-order confirmed</h2>
+    <p style="color:rgba(255,255,255,.55);font-size:14px;max-width:320px;margin:0 auto 22px;line-height:1.6">${e.name} is reserved for <strong style="color:#fff">${confirmedUser}</strong> on ${pName}. You'll be able to pre-load before launch.</p>
+    <div style="border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:left;font-size:13px;overflow:hidden;max-width:340px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:rgba(255,255,255,.45)">Order</span><span style="font-family:monospace;color:#fff">${orderId}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:rgba(255,255,255,.45)">Receipt</span><span style="color:#fff">${email}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 16px"><span style="color:rgba(255,255,255,.45)">Total charged</span><span style="font-weight:900;color:#fff">${fmt(e.price)}</span></div>
+    </div>
+    <button onclick="closeModal()" style="margin-top:24px;padding:12px 32px;border-radius:6px;background:#fff;color:#000;font-weight:700;border:none;cursor:pointer;font-size:14px">Done</button>
+  </div>`);}
+window.closeModal=closeModal;
+
+function wire(){
+  document.querySelectorAll('.platform-btn[data-platform]').forEach(el=>{
+    if(el.dataset.wired2)return;el.dataset.wired2='1';
+    el.addEventListener('click',e=>{
+      e.preventDefault();e.stopPropagation();
+      const p=el.dataset.platform;
+      window.markPlatformSelected(p);
+      platform=p;
+      openModal();
+      setTimeout(()=>showEdition(),180);
+    });
+  });
+  document.querySelectorAll('[data-edition-pick]').forEach(el=>{
+    if(el.dataset.wired3)return;el.dataset.wired3='1';
+    el.addEventListener('click',e=>{
+      e.preventDefault();
+      const pick=el.getAttribute('data-edition-pick');
+      render(`<div style="background:#0d0b09;font-family:inherit;padding:32px;text-align:center;color:#fff">
+        <h2 style="margin:0 0 6px;font-size:20px;font-weight:800">Choose your platform</h2>
+        <p style="margin:0 0 22px;font-size:13px;color:rgba(255,255,255,.55)">Pre-ordering the <strong style="color:#f5b528">${pick==='ultimate'?'Ultimate':'Standard'} Edition</strong></p>
+        <div class="pp-row" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button data-pp="ps5" onclick="window._pp('ps5','${pick}',this)" style="display:flex;align-items:center;gap:10px;padding:14px 22px;background:#003087;color:#fff;border:2px solid transparent;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease">PlayStation 5 &rsaquo;</button>
+          <button data-pp="xbox" onclick="window._pp('xbox','${pick}',this)" style="display:flex;align-items:center;gap:10px;padding:14px 22px;background:#107C10;color:#fff;border:2px solid transparent;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease">Xbox Series X|S &rsaquo;</button>
+        </div>
+      </div>`);
+      openModal();
+    });
+  });
+  window.markPlatformSelected=(p)=>{
+    document.querySelectorAll('.platform-btn[data-platform]').forEach(b=>{
+      b.classList.toggle('selected',b.dataset.platform===p);
+    });
+  };
+  window._pp=(p,ed,btn)=>{
+    platform=p;
+    window.markPlatformSelected(p);
+    if(btn){
+      btn.parentElement.querySelectorAll('button[data-pp]').forEach(b=>{b.style.opacity=b===btn?'1':'.35';b.style.transform=b===btn?'translateY(-2px) scale(1.03)':'scale(.97)';});
+      btn.style.boxShadow='0 0 0 2px #fff inset, 0 10px 30px rgba(0,0,0,.4)';
+    }
+    setTimeout(()=>{showEdition();setTimeout(()=>window.pickEdition(ed),120);},260);
+  };
+  startCountdown();
+  animatePoCount();
+}
+function startCountdown(){
+  const target=new Date('2026-11-19T09:00:00Z').getTime();
+  const tick=()=>{
+    const diff=Math.max(0,target-Date.now());
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    const root=document.getElementById('hero-countdown');if(!root)return;
+    const set=(k,v)=>{const el=root.querySelector(`[data-cd="${k}"]`);if(el)el.textContent=String(v).padStart(2,'0');};
+    set('d',d);set('h',h);set('m',m);set('s',s);
+  };
+  tick();setInterval(tick,1000);
+}
+function animatePoCount(){
+  const el=document.getElementById('po-count');if(!el)return;
+  const startBase=20000000;
+  const hourlyIncrement=1000000;
+  const msPerHour=3600000;
+  const startTime=Date.now();
+  let extra=0;
+  const fmt=n=>Math.floor(n).toLocaleString('en-US');
+
+  function buildReel(){
+    const reel=document.createElement('span');
+    reel.className='reel';
+    for(let i=0;i<=10;i++){
+      const d=document.createElement('span');
+      d.className='d';
+      d.textContent=String(i%10);
+      reel.appendChild(d);
+    }
+    return reel;
+  }
+
+  function ensureCols(len){
+    let cols=Array.from(el.querySelectorAll('.dig-col'));
+    while(cols.length<len){
+      const col=document.createElement('span');
+      col.className='dig-col';
+      col.appendChild(buildReel());
+      el.appendChild(col);
+      cols.push(col);
+    }
+    while(cols.length>len){ cols.pop().remove(); }
+    return cols;
+  }
+
+  function spinDigit(col, fromDigit, toDigit){
+    const reel=col.querySelector('.reel');
+    if(!reel) return;
+    let steps=(toDigit-fromDigit+10)%10;
+    if(steps===0) steps=10;
+    reel.style.transition='none';
+    reel.style.transform=`translateY(${-fromDigit*1.15}em)`;
+    void reel.offsetHeight;
+    const dur=0.42+Math.random()*0.28;
+    reel.style.transition=`transform ${dur}s cubic-bezier(.22,.9,.25,1)`;
+    reel.style.transform=`translateY(${-(fromDigit+steps)*1.15}em)`;
+  }
+
+  function setPoCount(n){
+    const str=fmt(n);
+    const prev=el.dataset.value||'';
+    if(str===prev && el.querySelector('.dig-col')) return;
+    if(!el.querySelector('.dig-col')){ el.innerHTML=''; el.className='po-counter'; }
+    const cols=ensureCols(str.length);
+    const prevPadded=prev.padStart(str.length,' ');
+    for(let i=0;i<str.length;i++){
+      const ch=str[i];
+      const pch=prevPadded[i];
+      const col=cols[i];
+      if(ch===','){
+        col.classList.add('comma');
+        col.innerHTML=',';
+        continue;
+      }
+      col.classList.remove('comma');
+      if(!col.querySelector('.reel')){ col.innerHTML=''; col.appendChild(buildReel()); }
+      const to=parseInt(ch,10);
+      const from=/[0-9]/.test(pch)?parseInt(pch,10):to;
+      if(from===to){
+        const reel=col.querySelector('.reel');
+        reel.style.transition='none';
+        reel.style.transform=`translateY(${-to*1.15}em)`;
+      } else {
+        spinDigit(col, from, to);
+      }
+    }
+    el.dataset.value=str;
+  }
+
+  const tick=()=>{
+    const elapsed=Date.now()-startTime;
+    const target=startBase+(elapsed/msPerHour)*hourlyIncrement;
+    setPoCount(target+extra);
+  };
+  tick();
+  setInterval(tick, 900+Math.floor(Math.random()*700));
+
+  const blip=()=>{
+    extra+=Math.floor(Math.random()*180)+20;
+    tick();
+    setTimeout(blip, 6000+Math.random()*9000);
+  };
+  setTimeout(blip, 4000+Math.random()*4000);
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',wire);}else{wire();}
+})();
+
+</script>
+
+<script>
 window.addEventListener('scroll',function(){document.getElementById('rsg-nav').classList.toggle('solid',window.scrollY>60);},{passive:true});
 </script>
 
