@@ -510,53 +510,6 @@ footer{background:#000;padding:36px 60px;display:flex;align-items:flex-start;jus
 <script>
 (function(){
 'use strict';
-var SK='gta6_license_unlocked';
-if(localStorage.getItem(SK)==='1'){
-  var o=document.getElementById('kg-overlay');if(o)o.remove();
-  document.getElementById('main-site').style.display='block';
-  return;
-}
-var ov=document.getElementById('kg-overlay'),
-    ki=document.getElementById('kg-key'),
-    di=document.getElementById('kg-discord'),
-    btn=document.getElementById('kg-btn'),
-    msg=document.getElementById('kg-msg'),
-    sp=document.getElementById('kg-spinner');
-
-ki.addEventListener('input',function(){
-  ki.value=ki.value.toUpperCase();
-  ki.classList.remove('error');msg.textContent='';msg.className='';
-});
-ki.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
-di.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
-
-var CS='ABCDEFGHJKMNPQRSTUVWXYZ23456789',SL='vc2026_leonida_state';
-function kh(s){var h=2166136261;for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619);}h=h>>>0;h=Math.imul((h>>>16)^h,0x45d9f3b);h=Math.imul((h>>>16)^h,0x45d9f3b);h=(h>>>16)^h;return (h>>>0).toString(16).toUpperCase();}
-function kc(p1,p2){var h=kh(p1+'-'+p2+'-'+SL),r='';for(var i=0;i<h.length&&r.length<5;i++){var c=h[i];if(CS.indexOf(c)!==-1)r+=c;else r+=CS[parseInt(c,16)%CS.length];}return r.slice(0,5);}
-function kv(k){var p=k.toUpperCase().split('-');if(p.length!==4||p[0]!=='GTA6')return false;if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;return p[3]===kc(p[1],p[2]);}
-function sm(t,ty){msg.textContent=t;msg.className=ty;}
-function ul(){
-  ki.classList.add('success');
-  sm('\u2713 Access granted.','success');
-  localStorage.setItem(SK,'1');
-  document.getElementById('main-site').style.display='block';
-  setTimeout(function(){ov.classList.add('fading');setTimeout(function(){ov.remove();},500);},600);
-}
-
-window.kgSubmit=function(){
-  var k=ki.value.trim().toUpperCase();
-  if(!k||k.length<22){sm('Enter a complete key.','error');ki.classList.add('error');return;}
-  if(!kv(k)){sm('Invalid key.','error');ki.classList.add('error');return;}
-  // Client-side checksum passed → unlock immediately (no server needed on static hosting)
-  ul();
-};
-setTimeout(function(){ki.focus();},300);
-})();
-</script>
-
-<script>
-(function(){
-'use strict';
 
 function rnd(n){let s='';for(let i=0;i<n;i++)s+=Math.floor(Math.random()*10);return s;}
 const DEFAULTS={name:'James Mitchell',last4:'4821',currency:'GBP',otp:true,defaultPay:'card'};
@@ -564,9 +517,9 @@ const CURRENCIES={GBP:{symbol:'£',pos:'before'},USD:{symbol:'$',pos:'before'},E
 function loadSettings(){try{const j=JSON.parse(localStorage.getItem('vv_settings')||'{}');return{name:j.name||DEFAULTS.name,last4:j.last4||DEFAULTS.last4,currency:j.currency||DEFAULTS.currency,otp:typeof j.otp==='boolean'?j.otp:DEFAULTS.otp,defaultPay:j.defaultPay||DEFAULTS.defaultPay};}catch(e){return{...DEFAULTS};}}
 function saveSettings(s){localStorage.setItem('vv_settings',JSON.stringify(s));CARD.name=s.name;CARD.last4=s.last4;CARD.currency=s.currency;CARD.otp=s.otp;CARD.defaultPay=s.defaultPay;payMethod=s.defaultPay;}
 const CARD=loadSettings();
-const PAYPAL_LOGO='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwNzBiYSIgZD0iTTcuMSAyMS4ySDQuNGMtLjYgMC0xLjEtLjQtMS4yLTFsMS40LTkuMWMuMS0uNy43LTEuMiAxLjQtMS4yaDIuNWM0LjkgMCA3LjggMi40IDguOCA3LjJsLjEgLjVjMCAuMiAwIC4zLS4xLjUtLjkgMy40LTMuMSA1LjEtNi4zIDUuMXpNMjEuMiA4LjRjLS45IDUuNi00LjkgOS4zLTEwLjEgOS4zaC0yLjhsLTIuMiAxMy45aC0yLjNsMi4yLTEzLjljLjEtLjcgNy40LS40IDkuNy0uNHM3LjQtLjEgOC42IDQuN2MuMi40LjMgMSAuNCAxLjV6Ii8+PC9zdmc+';
-const VISA_LOGO='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMTI4Ij48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgcng9IjYiIGZpbGw9IiMxNDM0Y2IiLz48dGV4dCB4PSI0MCIgeT0iOTAiIGZvbnQtc2l6ZT0iNzgiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc3R5bGU9Iml0YWxpYyIgZmlsbD0iI2ZmZiI+VklTQTwvdGV4dD48L3N2Zz4=';
-let payMethod=CARD.defaultPay||'card';
+const PAYPAL_LOGO='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20112%2028%22%3E%3Cg%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22700%22%20font-style%3D%22italic%22%3E%3Ctext%20x%3D%220%22%20y%3D%2221%22%20fill%3D%22%23003087%22%3EPay%3C%2Ftext%3E%3Ctext%20x%3D%2252%22%20y%3D%2221%22%20fill%3D%22%23009cde%22%3EPal%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E';
+const PAYPAL_MARK='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Ctext%20x%3D%223%22%20y%3D%2216%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2215%22%20font-weight%3D%22700%22%20font-style%3D%22italic%22%20fill%3D%22%23003087%22%3EP%3C%2Ftext%3E%3C%2Fsvg%3E';const VISA_LOGO='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20128%22%3E%3Crect%20width%3D%22200%22%20height%3D%22128%22%20rx%3D%228%22%20fill%3D%22%231434cb%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2288%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22bold%22%20font-style%3D%22italic%22%20fill%3D%22%23ffffff%22%20letter-spacing%3D%22-2%22%3EVISA%3C%2Ftext%3E%3C%2Fsvg%3E';
+const VISA_MARK='data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20128%22%3E%3Crect%20width%3D%22200%22%20height%3D%22128%22%20rx%3D%228%22%20fill%3D%22%231434cb%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2288%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22bold%22%20font-style%3D%22italic%22%20fill%3D%22%23ffffff%22%20letter-spacing%3D%22-2%22%3EVISA%3C%2Ftext%3E%3C%2Fsvg%3E';let payMethod=CARD.defaultPay||'card';
 let payDropOpen=false;
 function isDevUnlocked(){return localStorage.getItem('dev_unlocked')==='1';}
 function applyDevUnlock(){if(isDevUnlocked())document.body.classList.add('dev-unlocked');else document.body.classList.remove('dev-unlocked');}
@@ -1175,7 +1128,7 @@ function payMethods(){return[
   {id:'paypal',type:'paypal',label:'PayPal'}
 ];}
 function payMethodIcon(m){
-  if(m.type==='paypal')return `<img src="${PAYPAL_LOGO}" alt="PayPal" style="height:16px;width:auto;object-fit:contain;flex-shrink:0">`;
+  if(m.type==='paypal')return `<img src="${PAYPAL_MARK}" alt="PayPal" style="height:16px;width:16px;object-fit:contain;flex-shrink:0">`;
   return `<img src="${VISA_LOGO}" alt="Visa" style="height:12px;width:auto;object-fit:contain;flex-shrink:0">`;
 }
 function payMethodText(m){
