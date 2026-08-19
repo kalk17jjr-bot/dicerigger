@@ -508,6 +508,55 @@ footer{background:#000;padding:36px 60px;display:flex;align-items:flex-start;jus
 
 <!-- KEY GATE SCRIPT -->
 <script>
+<script>
+(function(){
+'use strict';
+var SK='gta6_license_unlocked';
+if(localStorage.getItem(SK)==='1'){
+  var o=document.getElementById('kg-overlay');if(o)o.remove();
+  document.getElementById('main-site').style.display='block';
+  return;
+}
+var ov=document.getElementById('kg-overlay'),
+    ki=document.getElementById('kg-key'),
+    di=document.getElementById('kg-discord'),
+    btn=document.getElementById('kg-btn'),
+    msg=document.getElementById('kg-msg'),
+    sp=document.getElementById('kg-spinner');
+
+ki.addEventListener('input',function(){
+  ki.value=ki.value.toUpperCase();
+  ki.classList.remove('error');msg.textContent='';msg.className='';
+});
+ki.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
+di.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
+
+var CS='ABCDEFGHJKMNPQRSTUVWXYZ23456789',SL='vc2026_leonida_state';
+function kh(s){var h=2166136261;for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619);}h=h>>>0;h=Math.imul((h>>>16)^h,0x45d9f3b);h=Math.imul((h>>>16)^h,0x45d9f3b);h=(h>>>16)^h;return (h>>>0).toString(16).toUpperCase();}
+function kc(p1,p2){var h=kh(p1+'-'+p2+'-'+SL),r='';for(var i=0;i<h.length&&r.length<5;i++){var c=h[i];if(CS.indexOf(c)!==-1)r+=c;else r+=CS[parseInt(c,16)%CS.length];}return r.slice(0,5);}
+function kv(k){var p=k.toUpperCase().split('-');if(p.length!==4||p[0]!=='GTA6')return false;if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;return p[3]===kc(p[1],p[2]);}
+function sm(t,ty){msg.textContent=t;msg.className=ty;}
+function ul(){
+  ki.classList.add('success');
+  sm('\u2713 Access granted.','success');
+  localStorage.setItem(SK,'1');
+  document.getElementById('main-site').style.display='block';
+  setTimeout(function(){ov.classList.add('fading');setTimeout(function(){ov.remove();},500);},600);
+}
+
+window.kgSubmit=function(){
+  var k=ki.value.trim().toUpperCase();
+  if(!k||k.length<22){sm('Enter a complete key.','error');ki.classList.add('error');return;}
+  if(!kv(k)){sm('Invalid key.','error');ki.classList.add('error');return;}
+  ul();
+};
+setTimeout(function(){ki.focus();},300);
+})();
+</script>
+
+</script>
+
+<script>
 (function(){
 'use strict';
 
