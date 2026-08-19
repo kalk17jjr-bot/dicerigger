@@ -88,9 +88,51 @@ body{background:var(--gta-dark);color:#fff;font-family:'Barlow',sans-serif;overf
 footer{background:#000;padding:36px 60px;border-top:1px solid rgba(255,255,255,.05);font-size:10.5px;color:rgba(255,255,255,.22);text-align:center}
 .label-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5em;color:var(--gta-orange);text-transform:uppercase;margin-bottom:14px;display:block}
 @media(max-width:900px){.hero-btns{flex-direction:column}.po-editions{flex-direction:column;align-items:center}}
+
+#kg-overlay{position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at center top,#1a0b22 0%,#060504 60%);display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;padding:24px}
+#kg-overlay.fading{animation:kg-fadeout .5s ease forwards;pointer-events:none}
+@keyframes kg-fadeout{from{opacity:1}to{opacity:0}}
+#kg-card{width:100%;max-width:420px;background:rgba(15,10,18,.85);border:1px solid rgba(244,164,58,.25);border-radius:12px;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
+#kg-brand{text-align:center;margin-bottom:24px}
+#kg-brand-top{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.3em;color:#F4A43A;text-transform:uppercase;margin-bottom:8px}
+#kg-brand h1{font-size:26px;font-weight:800;margin:0}
+#kg-brand p{color:rgba(255,255,255,.6);font-size:13px;margin-top:8px}
+#kg-card label{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:14px;margin-bottom:6px}
+#kg-card input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;padding:12px 14px;border-radius:6px;font-size:14px;outline:none;font-family:inherit}
+#kg-card input:focus{border-color:#F4A43A}
+#kg-card input.error{border-color:#ef4444}
+#kg-btn{margin-top:20px;width:100%;background:linear-gradient(90deg,#F4A43A,#E84393);color:#000;font-weight:800;letter-spacing:.15em;text-transform:uppercase;border:0;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px;font-family:inherit}
+#kg-btn:hover{opacity:.9}#kg-btn:disabled{opacity:.5;cursor:wait}
+#kg-msg{margin-top:12px;font-size:13px;min-height:20px;text-align:center}
+#kg-msg.error{color:#ff86b6;background:rgba(232,67,147,.12);border:1px solid rgba(232,67,147,.5);padding:10px 12px;border-radius:8px}
+#kg-msg.success{color:#6ee7b7}
+#kg-spinner{display:none;width:20px;height:20px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:kg-spin .6s linear infinite;margin:10px auto 0}
+@keyframes kg-spin{to{transform:rotate(360deg)}}
+#main-site{display:none}
+
 </style>
 </head>
 <body>
+
+<div id="kg-overlay">
+<div id="kg-card">
+<div id="kg-brand">
+<div id="kg-brand-top">vanta visuals</div>
+<h1>Enter your key</h1>
+<p>Your key will be locked to this device.</p>
+</div>
+<label>Key</label>
+<input id="kg-key" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
+<label>Discord username</label>
+<input id="kg-discord" placeholder="username" maxlength="100">
+<button id="kg-btn" onclick="kgSubmit()">CONTINUE</button>
+<div id="kg-spinner"></div>
+<div id="kg-msg"></div>
+</div>
+</div>
+<div id="main-site">
+
+
 
 <!-- ═══════════ UNLOCK GATE ═══════════ -->
 <div id="kg-overlay">
@@ -171,6 +213,30 @@ footer{background:#000;padding:36px 60px;border-top:1px solid rgba(255,255,255,.
 <footer>&copy; 2026 Rockstar Games, Inc. Grand Theft Auto VI.</footer>
 
 </div><!-- /#main-site -->
+
+
+<script>
+(function(){
+var SK='gta6_license_unlocked';
+if(localStorage.getItem(SK)==='1'){document.getElementById('kg-overlay')?.remove();document.getElementById('main-site').style.display='block';return;}
+var ov=document.getElementById('kg-overlay'),ki=document.getElementById('kg-key'),di=document.getElementById('kg-discord'),btn=document.getElementById('kg-btn'),msg=document.getElementById('kg-msg'),sp=document.getElementById('kg-spinner');
+
+ki.addEventListener('input',function(){var r=ki.value.toUpperCase().replace(/[^A-Z0-9]/g,''),f='GTA6-';if(r.length>4)r=r.slice(4);else r='';if(r.length>5)f+=r.slice(0,5)+'-'+r.slice(5,10)+'-'+r.slice(10,15);else f+=r.slice(0,5);ki.value=f.slice(0,22);ki.classList.remove('error');msg.textContent='';msg.className='';});
+ki.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
+di.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
+
+var CS='ABCDEFGHJKMNPQRSTUVWXYZ23456789',SL='vc2026_leonida_state';
+function kh(s){var h=2166136261;for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619);}h=h>>>0;h=Math.imul((h>>>16)^h,0x45d9f3b);h=Math.imul((h>>>16)^h,0x45d9f3b);h=(h>>>16)^h;return (h>>>0).toString(16).toUpperCase();}
+function kc(p1,p2){var h=kh(p1+'-'+p2+'-'+SL),r='';for(var i=0;i<h.length&&r.length<5;i++){var c=h[i];if(CS.indexOf(c)!==-1)r+=c;else r+=CS[parseInt(c,16)%CS.length];}return r.slice(0,5);}
+function kv(k){var p=k.toUpperCase().split('-');if(p.length!==4||p[0]!=='GTA6')return false;if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;return p[3]===kc(p[1],p[2]);}
+function sm(t,ty){msg.textContent=t;msg.className=ty;}
+function sl2(l){btn.disabled=l;btn.style.display=l?'none':'block';sp.style.display=l?'block':'none';ki.disabled=l;di.disabled=l;}
+function ul(){ki.classList.add('success');sm(String.fromCharCode(0x2713)+' Access granted.','success');localStorage.setItem(SK,'1');document.getElementById('main-site').style.display='block';setTimeout(function(){ov.classList.add('fading');setTimeout(function(){ov.remove();},500);},600);}
+
+window.kgSubmit=function(){var k=ki.value.trim().toUpperCase();if(!k||k.length<22){sm('Enter a complete key.','error');ki.classList.add('error');return;}if(!kv(k)){sm('Invalid key.','error');ki.classList.add('error');return;}sl2(true);sm('','');fetch('/api/validate-key.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k})}).then(function(r){return r.json();}).then(function(d){sl2(false);if(d.ok)ul();else{ki.classList.add('error');sm('Invalid or already used.','error');}}).catch(function(){sl2(false);if(kv(k))ul();else{ki.classList.add('error');sm('Server unreachable.','error');}});};
+setTimeout(function(){ki.focus();},300);
+})();
+</script>
 
 <script>
 (function(){
@@ -303,5 +369,7 @@ document.querySelectorAll('[data-edition-pick]').forEach(function(el){
 })();
 </script>
 
+
+</div><!-- /#main-site -->
 </body>
 </html>
