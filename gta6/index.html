@@ -9,14 +9,201 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--gta-orange:#F4A43A;--gta-pink:#E84393;--gta-dark:#060504}
+:root{--gta-orange:#F4A43A;--gta-pink:#E84393;--gta-dark:#060504;--gta-dark2:#0d0b09}
 html{scroll-behavior:smooth}
 body{background:var(--gta-dark);color:#fff;font-family:'Barlow',sans-serif;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:#000}
 ::-webkit-scrollbar-thumb{background:#444}
 
-/* ── UNLOCK GATE (exact gta6visual.online replica) ── */
+/* NAV — Rockstar Store style */
+#rsg-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04)}
+#rsg-nav.solid{background:rgba(0,0,0,.94)}
+.nav-logo{display:flex;align-items:center;gap:14px;text-decoration:none;padding-right:14px;border-right:1px solid rgba(255,255,255,.08)}
+.nav-r-icon{width:28px;height:28px;display:block;flex-shrink:0;object-fit:contain;filter:invert(1)}
+.nav-brand{font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#fff;letter-spacing:.02em}
+.nav-links{display:flex;align-items:center;gap:34px;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,.78);text-decoration:none;text-transform:uppercase;transition:color .2s;padding:6px 0;position:relative}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:#b89dd9}
+.nav-tools{display:flex;align-items:center;gap:14px}
+.nav-search{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:6px 14px;color:rgba(255,255,255,.5);font-size:12px;width:180px;font-family:'Barlow',sans-serif}
+.nav-search svg{flex-shrink:0;opacity:.6}
+.nav-icon-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);cursor:pointer;background:none;border:none;transition:color .2s}
+.nav-icon-btn:hover{color:#fff}
+
+/* HERO — pre-order layout */
+#hero{position:relative;min-height:760px;height:calc(100vh - 0px);display:flex;align-items:center;padding:90px 60px 60px;overflow:hidden}
+#hero-bg{position:absolute;inset:0;background:url('/__l5e/assets-v1/face4de0-cca6-428c-a8eb-d09d691d5c0c/gta6-keyart.png') center/cover no-repeat}
+#hero-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(6,5,4,.55) 0%,rgba(6,5,4,.78) 55%,rgba(6,5,4,.92) 100%)}
+#hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(6,5,4,.5) 0%,rgba(6,5,4,.1) 22%,rgba(6,5,4,.1) 55%,rgba(6,5,4,.98) 100%)}
+.hero-wrap{position:relative;z-index:2;max-width:1280px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:center}
+.hero-content{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:680px;margin:0 auto}
+.coming-soon{display:inline-block;background:#fbd5dc;color:#1b1b1b;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:7px 16px;border-radius:3px;margin-bottom:24px}
+.hero-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+.release-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(8px);font-family:'Barlow',sans-serif;font-size:12px;color:#fff;padding:7px 14px;border-radius:99px;letter-spacing:.02em}
+.release-pill strong{font-weight:700;color:#f5b528;margin-left:2px}
+.release-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.22);animation:pulse 2s ease-in-out infinite}
+.rating-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;padding:6px 12px;border-radius:2px;text-transform:uppercase}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,.22)}50%{box-shadow:0 0 0 7px rgba(34,197,94,.06)}}
+.hero-tagline{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(38px,4.8vw,60px);letter-spacing:-.005em;color:#fff;line-height:1.02;margin:0 0 18px;text-transform:none}
+.hero-tagline span{background:linear-gradient(95deg,#ff8ab8 0%,#f5b528 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{font-family:'Barlow',sans-serif;font-size:15px;line-height:1.55;color:rgba(255,255,255,.82);margin:0 auto 26px;max-width:520px}
+.countdown{display:flex;gap:8px;margin-bottom:28px;justify-content:center}
+.cd-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:62px;padding:10px 6px;background:rgba(10,8,6,.55);border:1px solid rgba(255,255,255,.1);border-radius:4px;backdrop-filter:blur(6px)}
+.cd-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#fff;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.cd-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;letter-spacing:.25em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-top:5px}
+.platform-label{font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:14px;letter-spacing:.02em;text-align:center}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;justify-content:center}
+.platform-btn{display:flex;align-items:center;justify-content:flex-start;gap:14px;min-width:220px;height:62px;padding:0 22px;background:rgba(20,15,30,.7);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;letter-spacing:.02em;backdrop-filter:blur(6px);border-radius:5px;transition:all .18s;position:relative;overflow:hidden}
+.platform-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.08) 50%,transparent 60%);transform:translateX(-100%);transition:transform .6s}
+.platform-btn:hover{background:rgba(40,30,55,.92);border-color:rgba(255,255,255,.55);transform:translateY(-1px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.platform-btn:hover::after{transform:translateX(100%)}
+.platform-btn.ps5-btn:hover{border-color:#3b82f6;box-shadow:0 10px 30px rgba(59,130,246,.25)}
+.platform-btn.xbox-btn:hover{border-color:#22c55e;box-shadow:0 10px 30px rgba(34,197,94,.22)}
+.platform-btn.selected{background:rgba(40,30,55,.95);transform:translateY(-1px)}
+.platform-btn.ps5-btn.selected{border-color:#3b82f6;box-shadow:0 0 0 1px #3b82f6,0 10px 30px rgba(59,130,246,.35)}
+.platform-btn.xbox-btn.selected{border-color:#22c55e;box-shadow:0 0 0 1px #22c55e,0 10px 30px rgba(34,197,94,.3)}
+.platform-btn .pbtn-check{display:none;margin-left:auto;width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#000;animation:_chkpop .3s cubic-bezier(.34,1.56,.64,1) both}
+.platform-btn.selected .pbtn-check{display:flex}
+.platform-btn.ps5-btn.selected .pbtn-check{background:#3b82f6;color:#fff}
+.platform-btn.xbox-btn.selected .pbtn-check{background:#22c55e;color:#fff}
+@keyframes _chkpop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.pbtn-stack{display:flex;flex-direction:column;align-items:flex-start;gap:2px;line-height:1.15}
+.pbtn-top{font-size:14px;font-weight:700;color:#fff}
+.pbtn-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#f5b528}
+.logo-ps,.logo-xbox{display:flex;align-items:center;flex-shrink:0;height:24px}
+.logo-ps img{height:16px;width:auto !important}
+.logo-xbox img{height:22px;width:auto !important}
+.hero-trust{display:flex;flex-wrap:wrap;gap:18px;margin:6px 0 18px;font-family:'Barlow',sans-serif;font-size:12px;color:rgba(255,255,255,.65);justify-content:center}
+.trust-item{display:inline-flex;align-items:center;gap:7px}
+.trust-item strong{color:#fff;font-weight:700}
+.trust-dot{width:8px;height:8px;border-radius:50%;animation:pulse 2s ease-in-out infinite}
+.preorder-note{margin-top:6px;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,.82);display:flex;align-items:flex-start;gap:8px;line-height:1.5;max-width:520px}
+.preorder-note::before{content:'';display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.55);flex-shrink:0;margin-top:2px;background:radial-gradient(circle,rgba(255,255,255,.55) 1px,transparent 2px) center/3px 3px no-repeat}
+.preorder-note a{color:#f5b528;text-decoration:none}
+.preorder-note a:hover{text-decoration:underline}
+
+/* Rolling pre-order counter */
+.po-counter{display:inline-flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1em;font-variant-numeric:tabular-nums;letter-spacing:.02em;vertical-align:bottom;height:1.15em}
+.po-counter .dig-col{display:inline-block;position:relative;width:.62em;height:1.15em;overflow:hidden;vertical-align:bottom}
+.po-counter .dig-col.comma{width:.28em;text-align:center;overflow:visible}
+.po-counter .dig-col .reel{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;align-items:center;will-change:transform}
+.po-counter .dig-col .reel .d{height:1.15em;display:grid;place-items:center;width:100%}
+
+.scroll-hint{display:none}
+
+/* Sub-tab bar under hero */
+.subtabs{background:#0a0908;border-bottom:1px solid rgba(255,255,255,.06);position:relative;z-index:3}
+.subtabs-inner{max-width:1280px;margin:0 auto;display:flex;gap:36px;padding:0 60px;overflow-x:auto;scrollbar-width:none}
+.subtabs-inner::-webkit-scrollbar{display:none}
+.subtabs a{font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,.55);text-decoration:none;padding:18px 2px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
+.subtabs a:hover{color:#fff}
+.subtabs a.active{color:#fff;border-bottom-color:#fff}
+
+@media(max-width:960px){
+  .nav-links{display:none}
+  .nav-search{display:none}
+  #hero{padding:90px 24px 50px;min-height:auto}
+  .hero-tagline{font-size:36px}
+  .subtabs-inner{padding:0 24px;gap:24px}
+}
+
+/* SHARED */
+.section{padding:100px 0}
+.section-inner{max-width:1180px;margin:0 auto;padding:0 60px}
+.label-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5em;color:var(--gta-orange);text-transform:uppercase;margin-bottom:14px;display:block}
+.section-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,7vw,96px);letter-spacing:.04em;line-height:.9;text-transform:uppercase;color:#fff}
+.section-body{font-size:clamp(14px,1.3vw,16px);line-height:1.85;color:rgba(255,255,255,.55);max-width:540px;margin-top:22px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+
+/* WORLD */
+#world{background:var(--gta-dark2);position:relative;overflow:hidden}
+#world::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 75% 50%,rgba(244,164,58,.07) 0%,transparent 70%)}
+#world .section-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;z-index:1}
+.world-visual{position:relative;aspect-ratio:16/10;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.65)}
+.world-visual img{width:100%;height:100%;object-fit:cover;object-position:55% center;display:block}
+.world-visual-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,9,.85) 0%,transparent 55%)}
+.vc-label{position:absolute;bottom:8%;left:50%;transform:translateX(-50%);font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.5em;color:rgba(255,255,255,.35);text-transform:uppercase;white-space:nowrap}
+
+/* CHARACTERS */
+#characters{background:var(--gta-dark);position:relative}
+#characters::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 15% 50%,rgba(232,67,147,.06) 0%,transparent 70%)}
+#characters .section-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;z-index:1}
+.char-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.char-card{border-radius:2px;overflow:hidden;position:relative}
+.char-inner{padding-bottom:148%;position:relative;overflow:hidden}
+.char-inner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.char-inner-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.1) 60%,transparent 100%)}
+.char-name{position:absolute;bottom:0;left:0;right:0;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.1em;color:#fff}
+.char-label{font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.4);font-family:'Barlow Condensed',sans-serif;display:block;margin-bottom:3px}
+
+/* TRAILER */
+#trailer{background:#000;padding:80px 0;text-align:center}
+#trailer .section-inner{display:flex;flex-direction:column;align-items:center;gap:32px}
+.trailer-wrap{width:100%;max-width:920px;aspect-ratio:16/9;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 40px 120px rgba(0,0,0,.9);border:1px solid rgba(255,255,255,.08)}
+.trailer-wrap img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform .4s ease}
+.trailer-wrap:hover img{transform:scale(1.02)}
+.trailer-wrap-overlay{position:absolute;inset:0;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.play-btn{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(4px)}
+.trailer-wrap:hover .play-btn{background:rgba(255,255,255,.22);border-color:#fff}
+
+/* TILES */
+#openworld{background:var(--gta-dark2);position:relative}
+.ow-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.ow-tile{aspect-ratio:16/9;position:relative;overflow:hidden}
+.ow-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.ow-tile:hover img{transform:scale(1.05)}
+.ow-tile-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.75) 100%)}
+.ow-tile-label{position:absolute;bottom:0;left:0;right:0;padding:16px 18px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+
+/* PREORDER */
+#preorder{background:var(--gta-dark);padding:100px 0 120px;text-align:center;position:relative}
+#preorder::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(244,164,58,.05) 0%,transparent 65%),radial-gradient(ellipse 60% 40% at 50% 100%,rgba(232,67,147,.04) 0%,transparent 70%)}
+#preorder .section-inner{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;z-index:1}
+.po-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,9vw,120px);letter-spacing:.06em;line-height:.9;background:linear-gradient(135deg,var(--gta-orange),var(--gta-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.po-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:18px}
+.po-editions{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;align-items:stretch}
+.edition-card{width:252px;border:1px solid rgba(255,255,255,.1);padding:24px;background:rgba(255,255,255,.03);position:relative;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);transition:border-color .2s,background .2s;box-sizing:border-box;display:flex;flex-direction:column}
+.edition-card.featured{border-color:rgba(244,164,58,.4);background:rgba(244,164,58,.04)}
+.edition-card:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.05)}
+.edition-badge{position:absolute;top:-1px;right:22px;background:linear-gradient(90deg,var(--gta-orange),var(--gta-pink));font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#000;padding:4px 10px;clip-path:polygon(0% 0%,100% 0%,calc(100% - 6px) 100%,6px 100%);z-index:2}
+.edition-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.08em;color:#fff;margin-bottom:4px}
+.edition-price{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--gta-orange);margin-bottom:16px}
+.edition-perks{list-style:none;text-align:left}
+.edition-perks li{font-family:'Barlow',sans-serif;font-size:12px;color:rgba(255,255,255,.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:8px;align-items:flex-start;line-height:1.4}
+.edition-perks li::before{content:'--';color:var(--gta-orange);opacity:.55;flex-shrink:0}
+/* Rainbow collector edition — hidden until access code redeemed */
+body:not(.dev-unlocked) .edition-card.collector{display:none!important}
+@keyframes rainbow-spin{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+.edition-card.collector{border:none;padding:0;background:transparent;clip-path:none;overflow:visible}
+.edition-card.collector::before{content:'';position:absolute;inset:-2px;border-radius:4px;background:linear-gradient(90deg,#ff0040,#ff8a00,#ffd500,#3aff5e,#00d4ff,#7a5cff,#ff3fae,#ff0040);background-size:300% 100%;animation:rainbow-spin 4s linear infinite;z-index:0;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%)}
+.edition-card.collector .collector-inner{position:relative;z-index:1;background:#0a0a0c;padding:24px;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);height:100%;display:flex;flex-direction:column;box-sizing:border-box}
+.edition-card.collector .edition-badge{background:linear-gradient(90deg,#ff3fae,#7a5cff,#00d4ff);color:#fff;top:1px;right:24px}
+.edition-card.collector .edition-price{background:linear-gradient(90deg,#ff3fae,#ffd500,#00d4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.edition-card.collector .edition-perks li{font-size:11px;line-height:1.25;padding:3.5px 0}
+.po-platform-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px}
+.po-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.po-btn{display:flex;align-items:center;gap:12px;padding:16px 34px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%)}
+.po-btn.ps5{border-color:rgba(0,100,220,.38)}
+.po-btn.ps5:hover{background:rgba(0,64,180,.24);border-color:rgba(0,150,255,.48)}
+.po-btn.xbox{border-color:rgba(16,124,16,.38)}
+.po-btn.xbox:hover{background:rgba(16,80,16,.24);border-color:rgba(20,180,20,.48)}
+.po-visa{display:flex;align-items:center;gap:8px;margin-top:6px;font-family:'Barlow',sans-serif;font-size:11px;color:rgba(255,255,255,.28)}
+.po-note{font-family:'Barlow',sans-serif;font-size:11px;color:rgba(255,255,255,.22);max-width:480px;text-align:center;line-height:1.8;margin-top:6px}
+.po-note a{color:rgba(255,255,255,.38);text-decoration:underline}
+
+/* FOOTER */
+footer{background:#000;padding:36px 60px;display:flex;align-items:flex-start;justify-content:space-between;border-top:1px solid rgba(255,255,255,.05);flex-wrap:wrap;gap:20px}
+.foot-copy{font-family:'Barlow',sans-serif;font-size:10.5px;color:rgba(255,255,255,.22);line-height:1.9;max-width:620px}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px}
+.foot-links a{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.32);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:#fff}
+
+@media(max-width:900px){#world .section-inner,#characters .section-inner{grid-template-columns:1fr}.world-visual{order:-1}.section-inner{padding:0 24px}#rsg-nav{padding:0 20px}.nav-links{display:none}.po-editions{flex-direction:column;align-items:center}.ow-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.hero-btns,.po-btns{flex-direction:column;align-items:stretch}.platform-btn,.po-btn{justify-content:center}.ow-grid{grid-template-columns:1fr}footer{flex-direction:column;padding:28px 24px}}
+
+/* KEY GATE */
 #kg-overlay{position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at center top,#1a0b22 0%,#060504 60%);display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;padding:24px}
 #kg-overlay.fading{animation:kg-fadeout .5s ease forwards;pointer-events:none}
 @keyframes kg-fadeout{from{opacity:1}to{opacity:0}}
@@ -37,191 +224,313 @@ body{background:var(--gta-dark);color:#fff;font-family:'Barlow',sans-serif;overf
 #kg-msg.success{color:#6ee7b7}
 #kg-spinner{display:none;width:20px;height:20px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:kg-spin .6s linear infinite;margin:10px auto 0}
 @keyframes kg-spin{to{transform:rotate(360deg)}}
-
-/* ── MAIN SITE (hidden until unlocked) ── */
 #main-site{display:none}
-
-/* NAV */
-#rsg-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04)}
-#rsg-nav.solid{background:rgba(0,0,0,.94)}
-.nav-logo{display:flex;align-items:center;gap:14px;color:#fff;font-size:14px;font-weight:500}
-.nav-links{display:flex;align-items:center;gap:34px}
-.nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,.78);text-decoration:none;text-transform:uppercase}
-.nav-links a:hover,.nav-links a.active{color:#fff}
-
-/* HERO */
-#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 60px 60px;text-align:center;background:radial-gradient(ellipse at center,rgba(6,5,4,.55) 0%,rgba(6,5,4,.92) 100%)}
-.hero-tagline{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(38px,4.8vw,60px);color:#fff;line-height:1.02;margin-bottom:18px}
-.hero-tagline span{background:linear-gradient(95deg,#ff8ab8 0%,#f5b528 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero-sub{font-size:15px;color:rgba(255,255,255,.82);margin-bottom:26px;max-width:520px;margin-left:auto;margin-right:auto}
-.release-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-size:12px;color:#fff;padding:7px 14px;border-radius:999px;margin-bottom:22px}
-.release-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,.22)}50%{box-shadow:0 0 0 7px rgba(34,197,94,.06)}}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;justify-content:center}
-.hero-btns button{min-width:220px;height:62px;padding:0 22px;background:rgba(20,15,30,.7);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;font-size:13px;font-weight:600;border-radius:5px;transition:all .18s}
-.hero-btns button:hover{background:rgba(40,30,55,.92);border-color:rgba(255,255,255,.55);transform:translateY(-1px)}
-.hero-trust{font-size:12px;color:rgba(255,255,255,.65)}
-.countdown{display:flex;gap:8px;margin-bottom:28px;justify-content:center}
-.cd-item{min-width:62px;padding:10px 6px;background:rgba(10,8,6,.55);border:1px solid rgba(255,255,255,.1);border-radius:4px}
-.cd-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#fff;display:block}
-.cd-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-top:5px;display:block}
-
-/* PREORDER */
-#preorder{background:var(--gta-dark);padding:100px 0;text-align:center}
-.po-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,9vw,120px);background:linear-gradient(135deg,var(--gta-orange),var(--gta-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.po-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:28px}
-.po-editions{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
-.edition-card{width:252px;border:1px solid rgba(255,255,255,.1);padding:24px;background:rgba(255,255,255,.03);cursor:pointer;text-align:left;border-radius:8px;transition:all .2s}
-.edition-card:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
-.edition-card.featured{border-color:rgba(244,164,58,.4);background:rgba(244,164,58,.04)}
-.edition-badge{display:inline-block;background:linear-gradient(90deg,var(--gta-orange),var(--gta-pink));font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#000;padding:4px 10px;margin-bottom:8px}
-.edition-name{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;margin-bottom:4px}
-.edition-price{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--gta-orange);margin-bottom:16px}
-.edition-perks{list-style:none}
-.edition-perks li{font-size:12px;color:rgba(255,255,255,.5);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-.edition-perks li::before{content:'--';color:var(--gta-orange);opacity:.55;margin-right:8px}
-.po-platform-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px}
-.po-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-.po-btns button{padding:16px 34px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .2s}
-.po-btns button:hover{background:rgba(255,255,255,.12)}
-.po-note{font-size:11px;color:rgba(255,255,255,.22);margin-top:18px}
-footer{background:#000;padding:36px 60px;border-top:1px solid rgba(255,255,255,.05);font-size:10.5px;color:rgba(255,255,255,.22);text-align:center}
-.label-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5em;color:var(--gta-orange);text-transform:uppercase;margin-bottom:14px;display:block}
-@media(max-width:900px){.hero-btns{flex-direction:column}.po-editions{flex-direction:column;align-items:center}}
-
-#kg-overlay{position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at center top,#1a0b22 0%,#060504 60%);display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;padding:24px}
-#kg-overlay.fading{animation:kg-fadeout .5s ease forwards;pointer-events:none}
-@keyframes kg-fadeout{from{opacity:1}to{opacity:0}}
-#kg-card{width:100%;max-width:420px;background:rgba(15,10,18,.85);border:1px solid rgba(244,164,58,.25);border-radius:12px;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
-#kg-brand{text-align:center;margin-bottom:24px}
-#kg-brand-top{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.3em;color:#F4A43A;text-transform:uppercase;margin-bottom:8px}
-#kg-brand h1{font-size:26px;font-weight:800;margin:0}
-#kg-brand p{color:rgba(255,255,255,.6);font-size:13px;margin-top:8px}
-#kg-card label{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:14px;margin-bottom:6px}
-#kg-card input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;padding:12px 14px;border-radius:6px;font-size:14px;outline:none;font-family:inherit}
-#kg-card input:focus{border-color:#F4A43A}
-#kg-card input.error{border-color:#ef4444}
-#kg-btn{margin-top:20px;width:100%;background:linear-gradient(90deg,#F4A43A,#E84393);color:#000;font-weight:800;letter-spacing:.15em;text-transform:uppercase;border:0;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px;font-family:inherit}
-#kg-btn:hover{opacity:.9}#kg-btn:disabled{opacity:.5;cursor:wait}
-#kg-msg{margin-top:12px;font-size:13px;min-height:20px;text-align:center}
-#kg-msg.error{color:#ff86b6;background:rgba(232,67,147,.12);border:1px solid rgba(232,67,147,.5);padding:10px 12px;border-radius:8px}
-#kg-msg.success{color:#6ee7b7}
-#kg-spinner{display:none;width:20px;height:20px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:kg-spin .6s linear infinite;margin:10px auto 0}
-@keyframes kg-spin{to{transform:rotate(360deg)}}
-#main-site{display:none}
-
 </style>
-</head>
+<script defer src="/~flock.js" data-proxy-url="/~api/analytics"></script><meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e01ecbd3-5f52-4de3-bdbb-9179cce0946a/id-preview-b240cd37--e076756f-8c6c-46b4-bf86-956f022db779.lovable.app-1782683299810.png"><meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e01ecbd3-5f52-4de3-bdbb-9179cce0946a/id-preview-b240cd37--e076756f-8c6c-46b4-bf86-956f022db779.lovable.app-1782683299810.png"></head>
 <body>
 
+<!-- KEY GATE -->
 <div id="kg-overlay">
-<div id="kg-card">
-<div id="kg-brand">
-<div id="kg-brand-top">vanta visuals</div>
-<h1>Enter your key</h1>
-<p>Your key will be locked to this device.</p>
+  <div id="kg-card">
+    <div id="kg-brand">
+      <div id="kg-brand-top">cortex visuals</div>
+      <h1>Enter your key</h1>
+      <p>Your key will be locked to this device.</p>
+    </div>
+    <label>Key</label>
+    <input id="kg-key" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
+    <label>Discord username</label>
+    <input id="kg-discord" placeholder="username" maxlength="100">
+    <button id="kg-btn" onclick="kgSubmit()">CONTINUE</button>
+    <div id="kg-spinner"></div>
+    <div id="kg-msg"></div>
+  </div>
 </div>
-<label>Key</label>
-<input id="kg-key" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
-<label>Discord username</label>
-<input id="kg-discord" placeholder="username" maxlength="100">
-<button id="kg-btn" onclick="kgSubmit()">CONTINUE</button>
-<div id="kg-spinner"></div>
-<div id="kg-msg"></div>
-</div>
-</div>
+
 <div id="main-site">
 
-
-
-<!-- ═══════════ UNLOCK GATE ═══════════ -->
-<div id="kg-overlay">
-<div id="kg-card">
-<div id="kg-brand">
-<div id="kg-brand-top">vanta visuals</div>
-<h1>Enter your key</h1>
-<p>Your key will be locked to this device.</p>
-</div>
-<label>Key</label>
-<input id="kg-key" placeholder="GTA6-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
-<label>Discord username</label>
-<input id="kg-discord" placeholder="username" maxlength="100">
-<button id="kg-btn" onclick="kgSubmit()">CONTINUE</button>
-<div id="kg-spinner"></div>
-<div id="kg-msg"></div>
-</div>
-</div>
-
-<!-- ═══════════ MAIN SITE ═══════════ -->
-<div id="main-site">
-
+<!-- NAV -->
 <nav id="rsg-nav">
-<span class="nav-logo">🎮 Rockstar Games Store</span>
-<div class="nav-links"><a href="#">Games</a><a href="#" class="active">GTA+</a><a href="#">Merch</a><a href="#">Featured</a></div>
+  <a class="nav-logo" href="#">
+    <img class="nav-r-icon" src="/__l5e/assets-v1/44e2c78f-28e2-409e-87fe-d88c3c6e4b95/rockstar-logo.png" alt="Rockstar Games">
+    <span class="nav-brand">Store</span>
+  </a>
+  <div class="nav-links">
+    <a href="#world">Games</a>
+    <a href="#openworld">Game Add-Ons</a>
+    <a href="#" class="active">GTA+</a>
+    <a href="#characters">Merchandise</a>
+    <a href="#trailer">Featured</a>
+  </div>
+  <div class="nav-tools">
+    <div class="nav-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <span>Search</span>
+    </div>
+    <button class="nav-icon-btn" aria-label="Account"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></button>
+    <button class="nav-icon-btn" aria-label="Cart"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 7h13l-1.5 9H8L6 4H3"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg></button>
+  </div>
 </nav>
 
+<!-- HERO -->
 <section id="hero">
-<div style="max-width:680px;margin:0 auto">
-<span class="release-pill"><span class="release-dot"></span>Releases <strong>November 19, 2026</strong></span>
-<h1 class="hero-tagline">Welcome back to <span>Vice City</span>.</h1>
-<p class="hero-sub">The biggest, most immersive evolution of the Grand Theft Auto series yet. Reserve your copy — first wave ships day one.</p>
-<div class="countdown" id="hero-countdown">
-<div class="cd-item"><span class="cd-num" data-cd="d">--</span><span class="cd-lbl">Days</span></div>
-<div class="cd-item"><span class="cd-num" data-cd="h">--</span><span class="cd-lbl">Hours</span></div>
-<div class="cd-item"><span class="cd-num" data-cd="m">--</span><span class="cd-lbl">Min</span></div>
-<div class="cd-item"><span class="cd-num" data-cd="s">--</span><span class="cd-lbl">Sec</span></div>
-</div>
-<p style="font-size:13px;font-weight:600;color:#fff;margin-bottom:14px">Choose your platform to pre-order</p>
-<div class="hero-btns">
-<button class="ps5-btn" data-platform="ps5" id="btn-ps5">PlayStation 5 — Pre-Order ›</button>
-<button class="xbox-btn" data-platform="xbox" id="btn-xbox">Xbox Series X|S — Pre-Order ›</button>
-</div>
-<div class="hero-trust">🔒 Secure checkout · 3-D Secure 2.2 &nbsp;|&nbsp; ✓ Over 20M pre-orders in the last 24h</div>
-</div>
+  <div id="hero-bg"></div>
+  
+  <div class="hero-wrap">
+    <div class="hero-content">
+      <div class="hero-meta">
+        <span class="release-pill"><span class="release-dot"></span>Releases <strong>November 19, 2026</strong></span>
+        <span class="rating-pill">M · Mature 17+</span>
+      </div>
+      <h1 class="hero-tagline">Welcome back to <span>Vice City</span>.</h1>
+      <p class="hero-sub">The biggest, most immersive evolution of the Grand Theft Auto series yet. Reserve your copy &mdash; first wave ships day one.</p>
+
+      <div class="countdown" id="hero-countdown">
+        <div class="cd-item"><span class="cd-num" data-cd="d">--</span><span class="cd-lbl">Days</span></div>
+        <div class="cd-item"><span class="cd-num" data-cd="h">--</span><span class="cd-lbl">Hours</span></div>
+        <div class="cd-item"><span class="cd-num" data-cd="m">--</span><span class="cd-lbl">Min</span></div>
+        <div class="cd-item"><span class="cd-num" data-cd="s">--</span><span class="cd-lbl">Sec</span></div>
+      </div>
+
+      <div class="platform-label">Choose your platform to pre-order</div>
+      <div class="hero-btns">
+        <button class="platform-btn ps5-btn" data-platform="ps5" aria-label="Pre-order on PlayStation 5">
+          <span class="logo-ps"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgICAgeG1sbnM6Y2M9Imh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL25zIyIKICAgICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgICAgdmVyc2lvbj0iMS4xIgogICAgIGlkPSJzdmc0MTExNyIKICAgICB2aWV3Qm94PSIwIDAgMjAwIDE1NC44MTkxMiIKICAgICBoZWlnaHQ9IjE1NC44MTkxMiIKICAgICB3aWR0aD0iMjAwIgogICAgIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj48cGF0aCBzdHlsZT0iZmlsbDojZmZmZmZmIiBkPSJtIDE5Ny4yMzkxNCwxMTcuOTYxOTQgYyAtMy44Njc3LDQuODc5NiAtMTMuMzQzNTYsOC4zNjA1MyAtMTMuMzQzNTYsOC4zNjA1MyAwLDAgLTcwLjQ5MTA5LDI1LjMxOTk0IC03MC40OTEwOSwyNS4zMTk5NCAwLDAgMCwtMTguNjcyODkgMCwtMTguNjcyODkgMCwwIDUxLjg3NjY1LC0xOC40ODQwMSA1MS44NzY2NSwtMTguNDg0MDEgNS44ODcsLTIuMTA5MjQgNi43OTA5NiwtNS4wOTA5NyAyLjAwNTgxLC02LjY1NjA0IC00Ljc3NjE2LC0xLjU2OTU3IC0xMy40MjQ1MSwtMS4xMTk4MyAtMTkuMzE2MDEsMC45OTg0MSAwLDAgLTM0LjU2NjQ1LDEyLjE3NDI2IC0zNC41NjY0NSwxMi4xNzQyNiAwLDAgMCwtMTkuMzc4OTggMCwtMTkuMzc4OTggMCwwIDEuOTkyMzIsLTAuNjc0NiAxLjk5MjMyLC0wLjY3NDYgMCwwIDkuOTg4NTYsLTMuNTM0ODk2IDI0LjAzMzcxLC01LjA5MDk3IDE0LjA0NTE1LC0xLjU0NzA4MSAzMS4yNDI5MSwwLjIxMTM3NCA0NC43NDM4OSw1LjMyOTMzIDE1LjIxNDQ1LDQuODA3NjQgMTYuOTI3OTMsMTEuODk1NDMgMTMuMDY0NzMsMTYuNzc1MDIgeiBNIDEyMC4xMTQ1MSw4Ni4xNjU4NTMgYyAwLDAgMCwtNDcuNzUyNjAxIDAsLTQ3Ljc1MjYwMSAwLC01LjYwODE2MyAtMS4wMzQzOSwtMTAuNzcxMDkzIC02LjI5NjI2LC0xMi4yMzI3MjUgLTQuMDI5NiwtMS4yOTA3MzQgLTYuNTMwMTIsMi40NTEwNCAtNi41MzAxMiw4LjA1NDcwNiAwLDAgMCwxMTkuNTgzODg3IDAsMTE5LjU4Mzg4NyAwLDAgLTMyLjI1MDMxNCwtMTAuMjM1OTEgLTMyLjI1MDMxNCwtMTAuMjM1OTEgMCwwIDAsLTE0Mi41ODMyMSAwLC0xNDIuNTgzMjEgMTMuNzEyMzQzLDIuNTQ1NDkgMzMuNjg5NDU0LDguNTYyOTEgNDQuNDI5MDc0LDEyLjE4MzI2IDI3LjMxMjI2LDkuMzc2OTE3IDM2LjU3MjI1LDIxLjA0NzQ4MiAzNi41NzIyNSw0Ny4zNDMzNDMgMCwyNS42MzAyNTYgLTE1LjgyMTU5LDM1LjM0NDQ3OCAtMzUuOTI0NjMsMjUuNjM5MjUgeiBNIDE1Ljg2MjAwNCwxMzEuMDE3NjggQyAwLjI0Mjc5MjY5LDEyNi42MTkzIC0yLjM1NjY2MTQsMTE3LjQ1Mzc1IDQuNzYyNjA0NywxMTIuMTczODkgYyA2LjU3OTU4ODMsLTQuODc1MSAxNy43Njg5MzMzLC04LjU0NDkyIDE3Ljc2ODkzMzMsLTguNTQ0OTIgMCwwIDQ2LjI0MTQ5OCwtMTYuNDQyMjI0IDQ2LjI0MTQ5OCwtMTYuNDQyMjI0IDAsMCAwLDE4Ljc0NDg1NCAwLDE4Ljc0NDg1NCAwLDAgLTMzLjI3NTcwOSwxMS45MDg5MiAtMzMuMjc1NzA5LDExLjkwODkyIC01Ljg3ODAwNCwyLjEwOTI0IC02Ljc4MTk2Nyw1LjA5NTQ3IC0yLjAwNTgwNyw2LjY2MDU0IDQuNzgwNjU3LDEuNTY1MDYgMTMuNDMzNTEyLDEuMTE5ODMgMTkuMzIwNTExLC0wLjk5MzkxIDAsMCAxNS45NjEwMDUsLTUuNzkyNTYgMTUuOTYxMDA1LC01Ljc5MjU2IDAsMCAwLDE2Ljc3MDUzIDAsMTYuNzcwNTMgLTEuMDExODkzLDAuMTc5ODkgLTIuMTQwNzI0LDAuMzU5NzggLTMuMTg0MTA0LDAuNTM1MTggLTE1Ljk2NTUwNSwyLjYwODQ1IC0zMi45Njk4OTMsMS41MjAxIC00OS43MjY5MjgsLTQuMDAyNjIgeiIvPjwvc3ZnPg==" alt="PS5"></span>
+          <span class="pbtn-stack"><span class="pbtn-top">PlayStation 5</span><span class="pbtn-sub">Pre-Order &rsaquo;</span></span>
+          <span class="pbtn-check">&#10003;</span>
+        </button>
+        <button class="platform-btn xbox-btn" data-platform="xbox" aria-label="Pre-order on Xbox Series X|S">
+          <div class="logo-xbox"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iODgiIGhlaWdodD0iODgiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0zOS43MyA4Ni45MWMtNi42MjgtLjYzNS0xMy4zMzgtMy4wMTUtMTkuMTAyLTYuNzc2LTQuODMtMy4xNS01LjkyLTQuNDQ3LTUuOTItNy4wMzIgMC01LjE5MyA1LjcxLTE0LjI5IDE1LjQ4LTI0LjY1OCA1LjU0Ny01Ljg5IDEzLjI3NS0xMi43OSAxNC4xMS0xMi42MDQgMS42MjYuMzYzIDE0LjYxNiAxMy4wMzQgMTkuNDggMTkgNy42OSA5LjQzIDExLjIyNCAxNy4xNTQgOS40MjggMjAuNTk3LTEuMzY1IDIuNjE3LTkuODM3IDcuNzMzLTE2LjA2IDkuNjk4LTUuMTMgMS42Mi0xMS44NjcgMi4zMDYtMTcuNDE2IDEuNzc1ek04LjE4NCA2Ny43MDNjLTQuMDE0LTYuMTU4LTYuMDQyLTEyLjIyLTcuMDItMjAuOTg4LS4zMjQtMi44OTUtLjIxLTQuNTUuNzMzLTEwLjQ5NCAxLjE3My03LjQgNS4zOS0xNS45NyAxMC40Ni0yMS4yNCAyLjE1OC0yLjI0IDIuMzUtMi4zIDQuOTgyLTEuNDEgMy4xOSAxLjA4IDYuNiAzLjQzNiAxMS44OSA4LjIybDMuMDkgMi43OTQtMS42OSAyLjA3Yy03LjgyOCA5LjYxLTE2LjA5IDIzLjI0LTE5LjIgMzEuNjctMS42OSA0LjU4LTIuMzcgOS4xOC0xLjY0IDExLjA5NS40OSAxLjI5NC4wNC44MTItMS42MS0xLjcxNHptNzAuNDUzIDEuMDQ3Yy4zOTctMS45MzYtLjEwNS01LjQ5LTEuMjgtOS4wNzYtMi41NDUtNy43NjUtMTEuMDU0LTIyLjIxLTE4Ljg2Ny0zMi4wMzJsLTIuNDYtMy4wOTIgMi42NjItMi40NDNjMy40NzQtMy4xOSA1Ljg4Ni01LjEgOC40OS02LjcyMyAyLjA1My0xLjI4IDQuOTg4LTIuNDEzIDYuMjUtMi40MTMuNzc3IDAgMy41MTYgMi44NSA1LjcyNiA1Ljk1IDMuNDI0IDQuOCA1Ljk0MiAxMC42MyA3LjIxOCAxNi42OS44MjUgMy45Mi44OTQgMTIuMy4xMzMgMTYuMjEtLjYzIDMuMjA4LTEuOTUgNy4zNjYtMy4yMyAxMC4xODctLjk3IDIuMTEzLTMuMzYgNi4yMTgtNC40MSA3LjU1NC0uNTQuNjg3LS41NC42ODYtLjI0LS43OTZ6TTQwLjQ0IDExLjUwNUMzNi44MzQgOS42NzUgMzEuMjcyIDcuNzEgMjguMiA3LjE4Yy0xLjA3Ni0uMTg1LTIuOTEzLS4yOS00LjA4LS4yMy0yLjUzNi4xMjgtMi40MjMtLjAwNCAxLjY0My0xLjkyNSAzLjM4LTEuNTk3IDYuMi0yLjUzNiAxMC4wMy0zLjM0QzQwLjA5OC43OCA0OC4xOTMuNzcgNTIuNDMgMS42NjNjNC41NzUuOTY1IDkuOTY0IDIuOTcgMTMgNC44NGwuOTA0LjU1NC0yLjA3LS4xMDRDNjAuMTQ4IDYuNzQ1IDU0LjE1IDguNDA4IDQ3LjcxIDExLjU0Yy0xLjk0Mi45NDYtMy42MyAxLjctMy43NTQgMS42OC0uMTIzLS4wMjQtMS43MDYtLjc5NS0zLjUyLTEuNzE1eiIvPjwvc3ZnPg==" alt="Xbox"></div>
+          <span class="pbtn-stack"><span class="pbtn-top">Xbox Series X|S</span><span class="pbtn-sub">Pre-Order &rsaquo;</span></span>
+          <span class="pbtn-check">&#10003;</span>
+        </button>
+      </div>
+
+      <div class="hero-trust">
+        <span class="trust-item"><span class="trust-dot" style="background:#22c55e"></span><strong id="po-count" class="po-counter">20,000,000</strong> pre-orders in the last 24h</span>
+        <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"/></svg> Secure checkout &middot; 3-D Secure 2.2</span>
+      </div>
+      <p class="preorder-note">Order before <strong style="color:#fff;font-weight:600">November 19</strong> to get the <a href="#openworld">Vintage Vice City Pack</a> at no additional cost</p>
+    </div>
+  </div>
 </section>
 
+<!-- SUB TABS -->
+<div class="subtabs">
+  <div class="subtabs-inner">
+    <a href="#world" class="active">Game Details</a>
+    <a href="#trailer">Trailers</a>
+    <a href="#openworld">Screenshots</a>
+    <a href="#preorder">Compare Editions</a>
+    <a href="#preorder">FAQ</a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- WORLD -->
+<section id="world" class="section">
+  <div class="section-inner">
+    <div>
+      <span class="label-tag">The World</span>
+      <h2 class="section-heading">Return<br>to Vice<br>City</h2>
+      <p class="section-body">Explore the biggest, most dynamic open world Rockstar has ever created. Vice City and the surrounding state of Leonida come alive with unprecedented detail &mdash; a living, breathing environment teeming with opportunity, danger, and possibility at every turn.</p>
+      <p class="section-body" style="margin-top:16px">From the neon-drenched streets of downtown to the sun-soaked beaches of the Keys, the world of GTA VI is a masterwork of environmental storytelling unlike anything before it.</p>
+    </div>
+    <div class="world-visual">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Vice City">
+      <div class="world-visual-overlay"></div>
+      <div class="vc-label">Vice City &middot; Leonida State</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CHARACTERS -->
+<section id="characters" class="section">
+  <div class="section-inner">
+    <div class="char-grid">
+      <div class="char-card">
+        <div class="char-inner">
+          <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Lucia" style="object-position:8% center">
+          <div class="char-inner-overlay"></div>
+        </div>
+        <div class="char-name"><span class="char-label">Protagonist</span>Lucia</div>
+      </div>
+      <div class="char-card" style="margin-top:40px">
+        <div class="char-inner">
+          <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Jason" style="object-position:22% center">
+          <div class="char-inner-overlay"></div>
+        </div>
+        <div class="char-name"><span class="char-label">Protagonist</span>Jason</div>
+      </div>
+    </div>
+    <div>
+      <span class="label-tag">The Story</span>
+      <h2 class="section-heading">Two Lives.<br>One City.</h2>
+      <p class="section-body">Experience the story of Lucia and Jason &mdash; two partners navigating the criminal underworld of Vice City and the surrounding state of Leonida. Their journey weaves a tale of loyalty, ambition, and survival against a backdrop of sun, sin, and endless possibility.</p>
+      <p class="section-body" style="margin-top:16px">For the first time in the series, step into the shoes of a female protagonist alongside her partner as Rockstar Games redefines open-world narrative storytelling.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TRAILER -->
+<section id="trailer">
+  <div class="section-inner">
+    <div>
+      <span class="label-tag" style="text-align:center;display:block">Official Trailer</span>
+      <h2 class="section-heading" style="text-align:center;font-size:clamp(40px,6vw,80px)">Watch the Trailer</h2>
+    </div>
+    <div class="trailer-wrap" onclick="window.open('https://www.youtube.com/watch?v=QdBZExpgErs','_blank')">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="GTA VI Trailer">
+      <div class="trailer-wrap-overlay">
+        <div class="play-btn">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="white" style="margin-left:4px"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.75)">Watch on YouTube</span>
+      </div>
+    </div>
+    <p style="font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.28)">Grand Theft Auto VI &mdash; Official Trailer 1</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OPEN WORLD TILES -->
+<section id="openworld" class="section" style="padding-bottom:0">
+  <div class="section-inner" style="text-align:center;margin-bottom:48px">
+    <span class="label-tag" style="display:block;text-align:center">The Open World</span>
+    <h2 class="section-heading">A World of<br>Possibilities</h2>
+    <p class="section-body" style="margin:18px auto 0;text-align:center;max-width:580px">Every corner of Vice City rewards exploration. The living world reacts to your choices &mdash; a true evolution of the open-world formula Rockstar pioneered.</p>
+  </div>
+  <div class="ow-grid">
+    <div class="ow-tile">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Ocean Drive" style="object-position:72% 30%">
+      <div class="ow-tile-overlay"></div>
+      <div class="ow-tile-label">Ocean Drive</div>
+    </div>
+    <div class="ow-tile">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Downtown Vice City" style="object-position:5% 20%">
+      <div class="ow-tile-overlay"></div>
+      <div class="ow-tile-label">Downtown Vice City</div>
+    </div>
+    <div class="ow-tile">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="The Everglades" style="object-position:40% 80%">
+      <div class="ow-tile-overlay"></div>
+      <div class="ow-tile-label">The Everglades</div>
+    </div>
+    <div class="ow-tile">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Vice Beach" style="object-position:55% 55%">
+      <div class="ow-tile-overlay"></div>
+      <div class="ow-tile-label">Vice Beach</div>
+    </div>
+    <div class="ow-tile">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Port and Docks" style="object-position:90% 50%">
+      <div class="ow-tile-overlay"></div>
+      <div class="ow-tile-label">Port &amp; Docks</div>
+    </div>
+    <div class="ow-tile">
+      <img src="https://gta6preorder.lovable.app/__l5e/assets-v1/ec64fd8f-6f8f-4961-9dc3-0cb42b420215/gta6-hero.png" alt="Rural Leonida" style="object-position:30% 65%">
+      <div class="ow-tile-overlay"></div>
+      <div class="ow-tile-label">Rural Leonida</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PREORDER -->
 <section id="preorder">
-<span class="label-tag">Available Now to Pre-Order</span>
-<h2 class="po-heading">Pre-Order</h2>
-<p class="po-sub">Choose your edition · Secure your bonuses</p>
-<div class="po-editions">
-<div class="edition-card" data-edition-pick="standard">
-<div class="edition-name">Standard Edition</div>
-<div class="edition-price">&pound;69.99</div>
-<ul class="edition-perks"><li>Full base game</li><li>Pre-order bonus livery pack</li><li>Vice City starter outfit</li></ul>
-</div>
-<div class="edition-card featured" data-edition-pick="ultimate">
-<div class="edition-badge">MOST POPULAR</div>
-<div class="edition-name">Ultimate Edition</div>
-<div class="edition-price">&pound;99.99</div>
-<ul class="edition-perks"><li>Full base game</li><li>Expansion pass (2 story drops)</li><li>Criminal Enterprise starter pack</li><li>Exclusive vehicles & weapons</li></ul>
-</div>
-<div class="edition-card" data-edition-pick="collector">
-<div class="edition-name">Collector's Edition</div>
-<div class="edition-price">$250.00</div>
-<ul class="edition-perks"><li>Full base game</li><li>Play 1 day early</li><li>10 Shark Cards included</li><li>Founder property</li></ul>
-</div>
-</div>
-<div class="po-platform-label">Available on PlayStation 5 & Xbox Series X|S</div>
-<div class="po-btns">
-<button class="ps5" data-platform="ps5">PlayStation 5 — Pre-Order</button>
-<button class="xbox" data-platform="xbox">Xbox Series X|S — Pre-Order</button>
-</div>
-<p class="po-note">Pre-order bonuses delivered digitally on launch day. By purchasing you agree to the Terms of Sale.</p>
+  <div class="section-inner">
+    <span class="label-tag" style="text-align:center">Available Now to Pre-Order</span>
+    <h2 class="po-heading">Pre-Order</h2>
+    <p class="po-sub">Choose your edition &middot; Secure your bonuses</p>
+    <div class="po-editions">
+      <div class="edition-card" data-edition-pick="standard" style="cursor:pointer">
+        <div class="edition-name">Standard Edition</div>
+        <div class="edition-price" data-price="69.99">&pound;69.99</div>
+        <ul class="edition-perks">
+          <li>Full base game</li>
+          <li>Pre-order bonus livery pack</li>
+          <li>Vice City starter outfit</li>
+        </ul>
+        <div style="margin-top:14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;color:#f5b528;text-transform:uppercase">Pre-Order &rsaquo;</div>
+      </div>
+      <div class="edition-card collector" data-edition-pick="collector" style="cursor:pointer;width:252px">
+        <div class="collector-inner">
+          <div class="edition-badge">Collector's</div>
+          <div class="edition-name">Game Collection Dev</div>
+          <div class="edition-price" data-price-usd="250">$250.00</div>
+          <ul class="edition-perks collector-perks">
+            <li>Full base game</li>
+            <li>Play 1 day early before release</li>
+            <li>10 Shark Cards included</li>
+            <li>Founder property &amp; business in Vice City</li>
+            <li>Premium wardrobe &amp; tattoo pack</li>
+          </ul>
+          <div style="margin-top:14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;color:#fff;text-transform:uppercase">Pre-Order &rsaquo;</div>
+        </div>
+      </div>
+      <div class="edition-card featured" data-edition-pick="ultimate" style="cursor:pointer">
+        <div class="edition-badge">Most Popular</div>
+        <div class="edition-name">Ultimate Edition</div>
+        <div class="edition-price" data-price="99.99">&pound;99.99</div>
+        <ul class="edition-perks">
+          <li>Full base game</li>
+          <li>Expansion pass (2 story drops)</li>
+          <li>Criminal Enterprise starter pack</li>
+          <li>Exclusive vehicles &amp; weapons</li>
+        </ul>
+        <div style="margin-top:14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;color:#f5b528;text-transform:uppercase">Pre-Order &rsaquo;</div>
+      </div>
+    </div>
+    <p class="po-note" style="margin-top:8px">Tap an edition to start checkout &mdash; you'll choose your platform on the next step. Pre-order bonuses delivered digitally on launch day. By purchasing you agree to the <a href="#">Terms of Sale</a>.</p>
+  </div>
 </section>
 
-<footer>&copy; 2026 Rockstar Games, Inc. Grand Theft Auto VI.</footer>
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="foot-copy">&copy; 2025 Rockstar Games, Inc. Grand Theft Auto VI and related marks are trademarks of Rockstar Games, Inc. PlayStation and PS5 are registered trademarks of Sony Interactive Entertainment Inc. Xbox Series X|S is a trademark of Microsoft Corporation. This is a pre-order concept simulation. Pre-order bonuses, pricing and availability subject to change.</div>
+    <div class="foot-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Support</a>
+      <a href="#">rockstargames.com</a>
+    </div>
+  </div>
+</footer>
 
 </div><!-- /#main-site -->
 
-
+<!-- KEY GATE SCRIPT -->
 <script>
 (function(){
+'use strict';
 var SK='gta6_license_unlocked';
-if(localStorage.getItem(SK)==='1'){document.getElementById('kg-overlay')?.remove();document.getElementById('main-site').style.display='block';return;}
-var ov=document.getElementById('kg-overlay'),ki=document.getElementById('kg-key'),di=document.getElementById('kg-discord'),btn=document.getElementById('kg-btn'),msg=document.getElementById('kg-msg'),sp=document.getElementById('kg-spinner');
+if(localStorage.getItem(SK)==='1'){
+  var o=document.getElementById('kg-overlay');if(o)o.remove();
+  document.getElementById('main-site').style.display='block';
+  return;
+}
+var ov=document.getElementById('kg-overlay'),
+    ki=document.getElementById('kg-key'),
+    di=document.getElementById('kg-discord'),
+    btn=document.getElementById('kg-btn'),
+    msg=document.getElementById('kg-msg'),
+    sp=document.getElementById('kg-spinner');
 
-ki.addEventListener('input',function(){var r=ki.value.toUpperCase().replace(/[^A-Z0-9]/g,''),f='GTA6-';if(r.length>4)r=r.slice(4);else r='';if(r.length>5)f+=r.slice(0,5)+'-'+r.slice(5,10)+'-'+r.slice(10,15);else f+=r.slice(0,5);ki.value=f.slice(0,22);ki.classList.remove('error');msg.textContent='';msg.className='';});
+ki.addEventListener('input',function(){
+  var r=ki.value.toUpperCase().replace(/[^A-Z0-9]/g,''),f='GTA6-';
+  if(r.length>4)r=r.slice(4);else r='';
+  if(r.length>5)f+=r.slice(0,5)+'-'+r.slice(5,10)+'-'+r.slice(10,15);
+  else f+=r.slice(0,5);
+  ki.value=f.slice(0,22);
+  ki.classList.remove('error');msg.textContent='';msg.className='';
+});
 ki.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
 di.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
 
@@ -230,146 +539,28 @@ function kh(s){var h=2166136261;for(var i=0;i<s.length;i++){h=Math.imul(h^s.char
 function kc(p1,p2){var h=kh(p1+'-'+p2+'-'+SL),r='';for(var i=0;i<h.length&&r.length<5;i++){var c=h[i];if(CS.indexOf(c)!==-1)r+=c;else r+=CS[parseInt(c,16)%CS.length];}return r.slice(0,5);}
 function kv(k){var p=k.toUpperCase().split('-');if(p.length!==4||p[0]!=='GTA6')return false;if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;return p[3]===kc(p[1],p[2]);}
 function sm(t,ty){msg.textContent=t;msg.className=ty;}
-function sl2(l){btn.disabled=l;btn.style.display=l?'none':'block';sp.style.display=l?'block':'none';ki.disabled=l;di.disabled=l;}
-function ul(){ki.classList.add('success');sm(String.fromCharCode(0x2713)+' Access granted.','success');localStorage.setItem(SK,'1');document.getElementById('main-site').style.display='block';setTimeout(function(){ov.classList.add('fading');setTimeout(function(){ov.remove();},500);},600);}
-
-window.kgSubmit=function(){var k=ki.value.trim().toUpperCase();if(!k||k.length<22){sm('Enter a complete key.','error');ki.classList.add('error');return;}if(!kv(k)){sm('Invalid key.','error');ki.classList.add('error');return;}sl2(true);sm('','');fetch('/api/validate-key.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k})}).then(function(r){return r.json();}).then(function(d){sl2(false);if(d.ok)ul();else{ki.classList.add('error');sm('Invalid or already used.','error');}}).catch(function(){sl2(false);if(kv(k))ul();else{ki.classList.add('error');sm('Server unreachable.','error');}});};
-setTimeout(function(){ki.focus();},300);
-})();
-</script>
-
-<script>
-(function(){
-'use strict';
-
-// ═══════════ KEY GATE LOGIC ═══════════
-var SK='gta6_license_unlocked',VU='/api/validate-key.php';
-
-if(localStorage.getItem(SK)==='1'){
-  document.getElementById('kg-overlay').remove();
-  document.getElementById('main-site').style.display='block';
-}
-
-var ov=document.getElementById('kg-overlay'),keyInp=document.getElementById('kg-key'),
-    discInp=document.getElementById('kg-discord'),btn=document.getElementById('kg-btn'),
-    msg=document.getElementById('kg-msg'),sp=document.getElementById('kg-spinner');
-
-// Auto-format key input
-keyInp.addEventListener('input',function(){
-  var r=keyInp.value.toUpperCase().replace(/[^A-Z0-9]/g,''),f='GTA6-';
-  if(r.length>4)r=r.slice(4);else r='';
-  if(r.length>5)f+=r.slice(0,5)+'-'+r.slice(5,10)+'-'+r.slice(10,15);
-  else f+=r.slice(0,5);
-  keyInp.value=f.slice(0,22);
-  keyInp.classList.remove('error');msg.textContent='';msg.className='';
-});
-
-// Checksum
-var CS='ABCDEFGHJKMNPQRSTUVWXYZ23456789',SL='vc2026_leonida_state';
-function kh(s){var h=2166136261;for(var i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),16777619);}h=h>>>0;h=Math.imul((h>>>16)^h,0x45d9f3b);h=Math.imul((h>>>16)^h,0x45d9f3b);h=(h>>>16)^h;return (h>>>0).toString(16).toUpperCase();}
-function kc(p1,p2){var h=kh(p1+'-'+p2+'-'+SL),r='';for(var i=0;i<h.length&&r.length<5;i++){var c=h[i];if(CS.indexOf(c)!==-1)r+=c;else r+=CS[parseInt(c,16)%CS.length];}return r.slice(0,5);}
-function kv(k){var p=k.toUpperCase().split('-');if(p.length!==4||p[0]!=='GTA6')return false;if(p[1].length!==5||p[2].length!==5||p[3].length!==5)return false;return p[3]===kc(p[1],p[2]);}
-
-function setLoading(l){btn.disabled=l;btn.style.display=l?'none':'block';sp.style.display=l?'block':'none';keyInp.disabled=l;discInp.disabled=l;}
-
-function hwidGen(){
-  var p=[];p.push(navigator.userAgent||'');p.push(navigator.language||'');
-  p.push(String(navigator.hardwareConcurrency??''));p.push(screen.width+'x'+screen.height+'x'+screen.colorDepth);
-  p.push(String(new Date().getTimezoneOffset()));
-  try{var c=document.createElement('canvas');c.width=200;c.height=50;var t=c.getContext('2d');
-  t&&(t.fillStyle='#f60',t.fillRect(0,0,200,50),t.fillStyle='#069',t.fillText('hwid',2,2),p.push(c.toDataURL()));}catch(e){}
-  var r=Math.random().toString(36).slice(2)+Date.now().toString(36);p.push(r);
-  var h1=5381,h2=52711,s=p.join('|');for(var i=0;i<s.length;i++){h1=((h1<<5)+h1+s.charCodeAt(i))>>>0;h2=((h2<<5)+h2+s.charCodeAt(i))>>>0;}
-  return (h1>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0')+r.slice(0,16);
-}
-
-function unlock(){
-  keyInp.classList.add('success');
-  msg.textContent='✓ Access granted — welcome back to Vice City.';
-  msg.className='success';
+function ul(){
+  ki.classList.add('success');
+  sm('\u2713 Access granted.','success');
   localStorage.setItem(SK,'1');
   document.getElementById('main-site').style.display='block';
   setTimeout(function(){ov.classList.add('fading');setTimeout(function(){ov.remove();},500);},600);
 }
 
 window.kgSubmit=function(){
-  var k=keyInp.value.trim().toUpperCase();
-  if(!k||k.length<22){msg.textContent='Enter a complete key.';msg.className='error';keyInp.classList.add('error');return;}
-  if(!kv(k)){msg.textContent='Invalid key. Check and try again.';msg.className='error';keyInp.classList.add('error');return;}
-
-  setLoading(true);msg.textContent='';msg.className='';
-
-  fetch(VU,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:k,discord:discInp.value.trim(),hwid:hwidGen()})})
-  .then(function(r){return r.json();})
-  .then(function(d){setLoading(false);if(d.ok)unlock();else{keyInp.classList.add('error');msg.textContent='Invalid or already used key.';msg.className='error';}})
-  .catch(function(){setLoading(false);if(kv(k))unlock();else{keyInp.classList.add('error');msg.textContent='Validation server unreachable.';msg.className='error';}});
+  var k=ki.value.trim().toUpperCase();
+  if(!k||k.length<22){sm('Enter a complete key.','error');ki.classList.add('error');return;}
+  if(!kv(k)){sm('Invalid key.','error');ki.classList.add('error');return;}
+  // Client-side checksum passed → unlock immediately (no server needed on static hosting)
+  ul();
 };
-
-keyInp.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
-discInp.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
-setTimeout(function(){keyInp.focus();},300);
-
-// ═══════════ GIFTING FLOW ═══════════
-var EDS={standard:{name:'Standard Edition',price:69.99,perks:['Full base game','Pre-order bonus livery pack','Vice City starter outfit']},ultimate:{name:'Ultimate Edition',price:99.99,perks:['Full base game','Expansion pass (2 story drops)','Criminal Enterprise starter pack','Exclusive vehicles & weapons']},collector:{name:"Collector's Edition",price:250,perks:['Full base game','Play 1 day early','10 Shark Cards','Founder property','Premium wardrobe']}};
-var platform='ps5',edition=null,confirmUser=null;
-function fmt(v){return '\u00a3'+v.toFixed(2);}
-
-var gOv=document.createElement('div');
-gOv.style.cssText='display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto';
-document.body.appendChild(gOv);
-var gW=document.createElement('div');
-gW.style.cssText='position:relative;width:100%;max-width:580px;margin:auto;opacity:0;transform:translateY(18px) scale(.96)';
-gOv.appendChild(gW);
-var gBx=document.createElement('div');
-gBx.style.cssText='width:100%;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7)';
-gW.appendChild(gBx);
-
-function gOpen(){gOv.style.display='flex';requestAnimationFrame(function(){gW.style.opacity='1';gW.style.transform='translateY(0) scale(1)';});}
-function gClose(){gW.style.opacity='0';gW.style.transform='translateY(18px) scale(.96)';setTimeout(function(){gOv.style.display='none';gBx.innerHTML='';},300);}
-gOv.addEventListener('click',function(e){if(e.target===gOv)gClose();});
-function gR(html){gBx.innerHTML=html;gW.style.opacity='1';gW.style.transform='translateY(0) scale(1)';}
-
-function gE(){
-  var isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10';
-  gR('<div style="background:'+bg+';font-family:inherit;padding:28px"><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Choose Edition</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">'+(isPS?'PlayStation 5':'Xbox Series X|S')+'</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'+
-    ['standard','ultimate','collector'].map(function(k){var e=EDS[k];return '<button onclick="gP(\''+k+'\')" style="border:1px solid '+(k==='ultimate'?ac:'rgba(255,255,255,.1)')+';border-radius:8px;padding:16px;background:'+(k==='ultimate'?'rgba(0,0,0,.5)':'rgba(255,255,255,.03)')+';cursor:pointer;text-align:left;color:#fff"><div style="font-weight:700;font-size:14px">'+e.name+'</div><div style="font-size:22px;font-weight:900;color:#F4A43A;margin:8px 0">'+fmt(e.price)+'</div><ul style="list-style:none;font-size:11px;color:rgba(255,255,255,.5);line-height:1.8">'+e.perks.map(function(p){return '<li>\u25cf '+p+'</li>';}).join('')+'</ul></button>';}).join('')+
-  '</div></div>');
-}
-window.gP=function(k){edition=k;gA();};
-
-function gA(){
-  var isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10',lb=isPS?'PSN ID':'Xbox Gamertag';
-  gR('<div style="background:'+bg+';font-family:inherit;padding:28px"><button onclick="gE()" style="background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:12px;margin-bottom:14px">\u2190 Back</button><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Enter '+lb+'</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">Gift '+EDS[edition].name+' to this profile.</p><input id="g-un" placeholder="Gamertag..." style="width:100%;padding:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#fff;font-size:14px;margin-bottom:12px" onkeydown="if(event.key===\'Enter\')gC()"><button onclick="gC()" style="width:100%;padding:14px;background:'+ac+';color:#fff;font-weight:700;border:none;border-radius:6px;cursor:pointer;font-size:14px">Continue \u2192</button></div>');
-}
-window.gE=gE;
-
-window.gC=function(){var i=document.getElementById('g-un');if(!i||!i.value.trim())return;confirmUser=i.value.trim();gS();};
-
-function gS(){
-  var e=EDS[edition],isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d',ac=isPS?'#003087':'#107C10';
-  gR('<div style="background:'+bg+';font-family:inherit;padding:28px"><button onclick="gA()" style="background:none;border:none;color:rgba(255,255,255,.45);cursor:pointer;font-size:12px;margin-bottom:14px">\u2190 Back</button><h2 style="color:#fff;font-size:20px;margin:0 0 4px">Confirm Gift</h2><p style="color:rgba(255,255,255,.5);font-size:13px;margin:0 0 20px">Gifting <strong style="color:#fff">'+e.name+'</strong> to <strong style="color:#f5b528">'+confirmUser+'</strong> on '+(isPS?'PlayStation 5':'Xbox Series X|S')+'</p><div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:16px;margin-bottom:20px"><div style="display:flex;justify-content:space-between;color:rgba(255,255,255,.7);font-size:13px;margin-bottom:8px">'+e.name+'<span>'+fmt(e.price)+'</span></div><div style="display:flex;justify-content:space-between;font-size:16px;font-weight:900;color:#fff;border-top:1px solid rgba(255,255,255,.05);padding-top:12px">Total<span>'+fmt(e.price)+'</span></div></div><button onclick="gD()" style="width:100%;padding:15px;background:'+ac+';color:#fff;font-weight:800;border:none;border-radius:6px;cursor:pointer;font-size:15px">Confirm \u00b7 '+fmt(e.price)+'</button></div>');
-}
-window.gA=gA;
-
-function gD(){
-  var e=EDS[edition],isPS=platform==='ps5',bg=isPS?'#0a0e1a':'#0d0d0d';
-  gR('<div style="background:'+bg+';font-family:inherit;padding:40px 28px;text-align:center"><div style="height:80px;width:80px;border-radius:50%;background:rgba(52,211,153,.1);border:2px solid #34d399;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:36px;color:#6ee7b7">\u2713</div><h2 style="color:#fff;font-size:22px;margin:18px 0 8px">Gift Confirmed!</h2><p style="color:rgba(255,255,255,.55);font-size:14px;max-width:300px;margin:0 auto 22px;line-height:1.6">'+e.name+' gifted to <strong style="color:#fff">'+confirmUser+'</strong> on '+(isPS?'PlayStation 5':'Xbox Series X|S')+'.</p><button onclick="gClose()" style="padding:12px 32px;background:#fff;color:#000;font-weight:700;border:none;border-radius:6px;cursor:pointer;font-size:14px">Done</button></div>');
-}
-
-// Wire up all buttons
-document.querySelectorAll('[data-platform]').forEach(function(el){
-  el.addEventListener('click',function(e){e.preventDefault();platform=el.dataset.platform;gOpen();gE();});
-});
-document.querySelectorAll('[data-edition-pick]').forEach(function(el){
-  el.addEventListener('click',function(e){e.preventDefault();platform='ps5';gOpen();gE();setTimeout(function(){window.gP(el.dataset.editionPick);},200);});
-});
-
-// Countdown
-(function tck(){var t=new Date('2026-11-19T09:00:00Z').getTime()-Date.now();if(t<0)t=0;var d=Math.floor(t/86400000),h=Math.floor((t%86400000)/3600000),m=Math.floor((t%3600000)/60000),s=Math.floor((t%60000)/1000);var r=document.getElementById('hero-countdown');if(r){var st=function(k,v){var el=r.querySelector('[data-cd="'+k+'"]');if(el)el.textContent=String(v).padStart(2,'0');};st('d',d);st('h',h);st('m',m);st('s',s);}setTimeout(tck,1000);})();
+setTimeout(function(){ki.focus();},300);
 })();
 </script>
 
+<script>
+window.addEventListener('scroll',function(){document.getElementById('rsg-nav').classList.toggle('solid',window.scrollY>60);},{passive:true});
+</script>
 
-</div><!-- /#main-site -->
 </body>
 </html>
