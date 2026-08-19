@@ -524,11 +524,7 @@ var ov=document.getElementById('kg-overlay'),
     sp=document.getElementById('kg-spinner');
 
 ki.addEventListener('input',function(){
-  var r=ki.value.toUpperCase().replace(/[^A-Z0-9]/g,''),f='GTA6-';
-  if(r.length>4)r=r.slice(4);else r='';
-  if(r.length>5)f+=r.slice(0,5)+'-'+r.slice(5,10)+'-'+r.slice(10,15);
-  else f+=r.slice(0,5);
-  ki.value=f.slice(0,22);
+  ki.value=ki.value.toUpperCase();
   ki.classList.remove('error');msg.textContent='';msg.className='';
 });
 ki.addEventListener('keydown',function(e){if(e.key==='Enter')kgSubmit();});
